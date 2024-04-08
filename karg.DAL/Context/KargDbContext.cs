@@ -36,6 +36,12 @@ namespace karg.DAL.Context
                 .HasForeignKey<Advice>(advice => advice.ImageId)
                 .IsRequired();
 
+            builder.Entity<Rescuer>()
+                .HasOne(rescuer => rescuer.Image)
+                .WithOne(image => image.Rescuer)
+                .HasForeignKey<Rescuer>(rescuer => rescuer.ImageId)
+                .IsRequired();
+
             builder.Entity<Partner>()
                 .HasOne(partner => partner.Image)
                 .WithOne(image => image.Partner)

@@ -8,6 +8,7 @@
         public Advice? Advice { get; set; }
         public YearResult? YearResult { get; set; }
         public Partner? Partner { get; set; }
+        public Rescuer? Rescuer { get; set; }
         public Animal? Animal { get; set; }
     }
 }
