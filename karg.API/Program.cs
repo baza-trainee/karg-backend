@@ -1,3 +1,6 @@
+using karg.DAL.Context;
+using Microsoft.EntityFrameworkCore;
+
 namespace karg.API
 {
     public class Program
@@ -12,6 +15,11 @@ namespace karg.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<KargDbContext>((serviceProvider, options) =>
+            {
+                options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"), new MySqlServerVersion(new Version(8, 0, 30)));
+            });
 
             var app = builder.Build();
 
