@@ -19,6 +19,7 @@ namespace karg.DAL.Context
         public DbSet<YearResult> YearResults { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<JwtToken> Tokens { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new AdviceConfiguration());
@@ -29,11 +30,18 @@ namespace karg.DAL.Context
             builder.ApplyConfiguration(new YearResultConfiguration());
             builder.ApplyConfiguration(new PartnerConfiguration());
             builder.ApplyConfiguration(new ContactConfiguration());
+            builder.ApplyConfiguration(new JwtTokenConfiguration());
 
             builder.Entity<Advice>()
                 .HasOne(advice => advice.Image)
                 .WithOne(image => image.Advice)
                 .HasForeignKey<Advice>(advice => advice.ImageId)
+                .IsRequired();
+
+            builder.Entity<Rescuer>()
+                .HasOne(rescuer => rescuer.Token)
+                .WithOne(token => token.Rescuer)
+                .HasForeignKey<Rescuer>(rescuer => rescuer.TokenId)
                 .IsRequired();
 
             builder.Entity<Rescuer>()
