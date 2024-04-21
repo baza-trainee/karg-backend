@@ -18,10 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\karg.BLL\karg.BLL.csproj" />
     <ProjectReference Include="..\karg.DAL\karg.DAL.csproj" />
   </ItemGroup>
 
