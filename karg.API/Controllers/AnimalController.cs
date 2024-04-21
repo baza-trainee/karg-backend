@@ -9,7 +9,7 @@ namespace karg.API.Controllers
     [Route("karg/animal")]
     public class AnimalController : Controller
     {
-        private IAnimalService _animalService {  get; set; }
+        private IAnimalService _animalService;
 
         public AnimalController(IAnimalService animalService)
         {
