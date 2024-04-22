@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace karg.BLL.DTO
 {
-    public class AllImageDTO
+    public class AllImagesDTO
     {
         public Uri? Uri { get; set; }
     }

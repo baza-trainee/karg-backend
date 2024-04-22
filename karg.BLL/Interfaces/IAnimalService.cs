@@ -9,6 +9,6 @@ namespace karg.BLL.Interfaces
 {
     public interface IAnimalService
     {
-        Task<List<AllAnimalDTO>> GetAnimals(AnimalsFilterDTO filter);
+        Task<List<AllAnimalsDTO>> GetAnimals(AnimalsFilterDTO filter);
     }
 }

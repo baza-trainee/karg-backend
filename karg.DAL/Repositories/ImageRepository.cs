@@ -19,7 +19,7 @@ namespace karg.DAL.Repositories
             _context = context;
         }
 
-        public async Task<List<Image>> GetAllImages()
+        public async Task<List<Image>> GetImages()
         {
             return await _context.Images.AsNoTracking().ToListAsync();
         }

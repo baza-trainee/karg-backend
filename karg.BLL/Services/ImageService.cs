@@ -18,14 +18,14 @@ namespace karg.BLL.Services
             _repository = repository;
         }
 
-        public async Task<List<AllImageDTO>> GetAnimalsImages(int animalId)
+        public async Task<List<AllImagesDTO>> GetAnimalsImages(int animalId)
         {
             try
             {
-                var allImages = await _repository.GetAllImages();
+                var allImages = await _repository.GetImages();
                 var animalsImages = allImages
                     .Where(image => image.AnimalId == animalId)
-                    .Select(image => new AllImageDTO
+                    .Select(image => new AllImagesDTO
                     {
                         Uri = image.Uri
                     })

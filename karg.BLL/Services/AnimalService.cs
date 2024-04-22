@@ -21,18 +21,18 @@ namespace karg.BLL.Services
             _imageService = imageService;
         }
 
-        public async Task<List<AllAnimalDTO>> GetAnimals(AnimalsFilterDTO filter)
+        public async Task<List<AllAnimalsDTO>> GetAnimals(AnimalsFilterDTO filter)
         {
             try
             {
                 var animals = await _animalRepository.GetAnimals(filter.Page, filter.PageSize, filter.CategoryFilter, filter.NameSearch);
-                var animalsDto = new List<AllAnimalDTO>();
+                var animalsDto = new List<AllAnimalsDTO>();
 
                 foreach (var animal in animals)
                 {
                     var animalImages = await _imageService.GetAnimalsImages(animal.Id);
 
-                    var animalDto = new AllAnimalDTO
+                    var animalDto = new AllAnimalsDTO
                     {
                         Name = animal.Name,
                         Category = animal.Category.ToString(),
