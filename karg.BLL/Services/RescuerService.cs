@@ -24,24 +24,24 @@ namespace karg.BLL.Services
 
         public async Task ResetPassword(string email, string newPassword)
         {
-            var rescuer = await _rescuerRepository.GetUserByEmail(email);
+            var rescuer = await _rescuerRepository.GetRescuerByEmail(email);
             if (rescuer == null)
             {
-                throw new InvalidOperationException("User not found.");
+                throw new InvalidOperationException("Rescuer not found.");
             }
 
             var isValidPassword = _passwordValidationService.IsValidPassword(newPassword, rescuer.Current_Password);
-            if(!isValidPassword)
+            if (!isValidPassword)
             {
                 throw new InvalidOperationException("Invalid new password.");
             }
-            
+
             var newPasswordHash = _passwordHashService.HashPassword(newPassword);
 
             rescuer.Previous_Password = rescuer.Current_Password;
             rescuer.Current_Password = newPasswordHash;
 
             _rescuerRepository.UpdateRescuer(rescuer);
-        }     
+        }
     }
 }

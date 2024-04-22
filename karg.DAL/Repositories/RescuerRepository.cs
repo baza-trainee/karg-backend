@@ -19,7 +19,7 @@ namespace karg.DAL.Repositories
             _context = context;
         }
 
-        public async Task<Rescuer> GetUserByEmail(string email)
+        public async Task<Rescuer> GetRescuerByEmail(string email)
         {
             return await _context.Rescuers.FirstOrDefaultAsync(rescuer => rescuer.Email == email);
         }

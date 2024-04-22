@@ -16,7 +16,7 @@ namespace karg.API.Controllers
         }
 
         [HttpPost("resetpassword")]
-        public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordDTO credentials)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO credentials)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace karg.API.Controllers
 
                 return Ok("Password reset successfully.");
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }

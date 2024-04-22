@@ -3,7 +3,6 @@ using karg.BLL.Services;
 using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Repositories;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace karg.API

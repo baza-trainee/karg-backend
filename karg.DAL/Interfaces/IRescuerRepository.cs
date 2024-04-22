@@ -10,6 +10,6 @@ namespace karg.DAL.Interfaces
     public interface IRescuerRepository
     {
         Task<Rescuer> UpdateRescuer(Rescuer updatedRescuer);
-        Task<Rescuer> GetUserByEmail(string email);
+        Task<Rescuer> GetRescuerByEmail(string email);
     }
 }
