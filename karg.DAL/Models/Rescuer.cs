@@ -11,7 +11,7 @@ namespace karg.DAL.Models
         public RescuerRole Role { get; set; } = RescuerRole.Employee;
         public string? Current_Password { get; set; }
         public string? Previous_Password { get; set; }
-        public int? ImageId { get; set; }
+        public int ImageId { get; set; }
         public Image Image { get; set; }
         public int TokenId { get; set; }
         public JwtToken Token { get; set; }
