@@ -30,7 +30,7 @@ namespace karg.BLL.Services
 
                 foreach (var animal in animals)
                 {
-                    var animalImages = await _imageService.GetAnimalsImages(animal.Id);
+                    var animalImages = await _imageService.GetAnimalImages(animal.Id);
 
                     var animalDto = new AllAnimalsDTO
                     {

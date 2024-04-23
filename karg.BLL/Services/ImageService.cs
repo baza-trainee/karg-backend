@@ -18,7 +18,7 @@ namespace karg.BLL.Services
             _repository = repository;
         }
 
-        public async Task<List<AllImagesDTO>> GetAnimalsImages(int animalId)
+        public async Task<List<AllImagesDTO>> GetAnimalImages(int animalId)
         {
             try
             {

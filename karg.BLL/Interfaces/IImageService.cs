@@ -9,6 +9,6 @@ namespace karg.BLL.Interfaces
 {
     public interface IImageService
     {
-        Task<List<AllImagesDTO>> GetAnimalsImages(int animalId);
+        Task<List<AllImagesDTO>> GetAnimalImages(int animalId);
     }
 }
