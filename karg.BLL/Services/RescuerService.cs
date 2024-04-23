@@ -41,7 +41,7 @@ namespace karg.BLL.Services
             rescuer.Previous_Password = rescuer.Current_Password;
             rescuer.Current_Password = newPasswordHash;
 
-            _rescuerRepository.UpdateRescuer(rescuer);
+            await _rescuerRepository.UpdateRescuer(rescuer);
         }
     }
 }
