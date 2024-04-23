@@ -25,9 +25,10 @@ namespace karg.API
                 options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"), new MySqlServerVersion(new Version(8, 0, 30)));
             });
 
-
-            builder.Services.AddScoped<IAnimalService, AnimalService>();
+            builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
+            builder.Services.AddScoped<IPasswordValidationService, PasswordValidationService>();
             builder.Services.AddScoped<IRescuerService, RescuerService>();
+            builder.Services.AddScoped<IAnimalService, AnimalService>();
             builder.Services.AddScoped<IImageService, ImageService>();
           
             builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
@@ -46,7 +47,6 @@ namespace karg.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

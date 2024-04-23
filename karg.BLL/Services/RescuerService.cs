@@ -12,12 +12,38 @@ namespace karg.BLL.Services
     public class RescuerService : IRescuerService
     {
         private readonly IRescuerRepository _rescuerRepository;
+        private readonly IPasswordValidationService _passwordValidationService;
+        private readonly IPasswordHashService _passwordHashService;
         private readonly IImageService _imageService;
 
-        public RescuerService(IRescuerRepository rescuerRepository, IImageService imageService)
+        public RescuerService(IRescuerRepository rescuerRepository, IPasswordValidationService passwordValidationService, IPasswordHashService passwordHashService, IImageService imageService)
         {
             _rescuerRepository = rescuerRepository;
+            _passwordValidationService = passwordValidationService;
+            _passwordHashService = passwordHashService;
             _imageService = imageService;
+        }
+
+        public async Task ResetPassword(string email, string newPassword)
+        {
+            var rescuer = await _rescuerRepository.GetRescuerByEmail(email);
+            if (rescuer == null)
+            {
+                throw new InvalidOperationException("Rescuer not found.");
+            }
+
+            var isValidPassword = _passwordValidationService.IsValidPassword(newPassword, rescuer.Current_Password);
+            if (!isValidPassword)
+            {
+                throw new InvalidOperationException("Invalid new password.");
+            }
+
+            var newPasswordHash = _passwordHashService.HashPassword(newPassword);
+
+            rescuer.Previous_Password = rescuer.Current_Password;
+            rescuer.Current_Password = newPasswordHash;
+
+            await _rescuerRepository.UpdateRescuer(rescuer);
         }
 
         public async Task<List<AllRescuersDTO>> GetRescuers()
