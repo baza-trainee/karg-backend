@@ -25,9 +25,12 @@ namespace karg.API
                 options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"), new MySqlServerVersion(new Version(8, 0, 30)));
             });
 
+
+            builder.Services.AddScoped<IAnimalService, AnimalService>();
             builder.Services.AddScoped<IRescuerService, RescuerService>();
             builder.Services.AddScoped<IImageService, ImageService>();
-
+          
+            builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
             builder.Services.AddScoped<IRescuerRepository, RescuerRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
 

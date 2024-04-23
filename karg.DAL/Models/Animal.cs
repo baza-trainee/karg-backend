@@ -6,7 +6,7 @@ namespace karg.DAL.Models
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public AnimalCategory Сategory { get; set; }
+        public AnimalCategory Category { get; set; }
         public string? Short_Description { get; set; }
         public DateOnly Date_Of_Birth { get; set; }
         public string? Description { get; set; }
