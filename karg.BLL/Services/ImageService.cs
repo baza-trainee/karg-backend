@@ -18,25 +18,43 @@ namespace karg.BLL.Services
             _repository = repository;
         }
 
-        public async Task<List<AllImagesDTO>> GetAnimalImages(int animalId)
-        {
-            try
-            {
-                var allImages = await _repository.GetImages();
-                var animalsImages = allImages
-                    .Where(image => image.AnimalId == animalId)
-                    .Select(image => new AllImagesDTO
-                    {
-                        Uri = image.Uri
-                    })
-                    .ToList();
 
-                return animalsImages;
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException("Error retrieving images of animals.", exception);
-            }
+        public async Task<AllImagesDTO> GetRescuerImage(int imageId)
+         {
+             try
+             {
+                 var allImages = await _repository.GetImages();
+                 var rescuerImage = allImages.FirstOrDefault(image => image.Id == imageId);
+
+                 return new AllImagesDTO { Uri = rescuerImage.Uri };
+             }
+             catch (Exception exception)
+             {
+                 throw new ApplicationException("Error retrieving image of rescuer.", exception);
+             }
+         }
+         
+      public async Task<List<AllImagesDTO>> GetAnimalImages(int animalId)
+      {
+          try
+          {
+              var allImages = await _repository.GetImages();
+              var animalsImages = allImages
+                  .Where(image => image.AnimalId == animalId)
+                  .Select(image => new AllImagesDTO
+                  {
+                      Uri = image.Uri
+                  })
+                  .ToList();
+
+              return animalsImages;
+          }
+          catch (Exception exception)
+          {
+              throw new ApplicationException("Error retrieving images of animals.", exception);
+          }
         }
+
+        
     }
 }
