@@ -44,5 +44,10 @@ namespace karg.DAL.Repositories
             await _context.SaveChangesAsync();
             return existingRescuer;
         }
+
+        public async Task<List<Rescuer>> GetRescuers()
+        {
+            return await _context.Rescuers.AsNoTracking().ToListAsync();
+        }
     }
 }
