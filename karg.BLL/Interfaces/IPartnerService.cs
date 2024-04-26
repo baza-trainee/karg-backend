@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace karg.BLL.Interfaces
 {
-    public interface IImageService
+    public interface IPartnerService
     {
-        Task<List<AllImagesDTO>> GetAnimalImages(int animalId);
-        Task<AllImagesDTO> GetImageById(int imageId);
+        Task<List<AllPartnersDTO>> GetPartners();
     }
 }

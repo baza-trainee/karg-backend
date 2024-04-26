@@ -65,8 +65,8 @@ namespace karg.DAL.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasMaxLength(800)
+                        .HasColumnType("varchar(800)");
 
                     b.Property<decimal>("Donats")
                         .HasColumnType("decimal(65,30)");
@@ -83,8 +83,8 @@ namespace karg.DAL.Migrations
 
                     b.Property<string>("Story")
                         .IsRequired()
-                        .HasMaxLength(600)
-                        .HasColumnType("varchar(600)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.HasKey("Id");
 
@@ -118,8 +118,8 @@ namespace karg.DAL.Migrations
 
                     b.Property<string>("Answer")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasMaxLength(1500)
+                        .HasColumnType("varchar(1500)");
 
                     b.Property<string>("Question")
                         .IsRequired()
@@ -137,7 +137,8 @@ namespace karg.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AnimalId")
+                    b.Property<int?>("AnimalId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Uri")
@@ -216,8 +217,7 @@ namespace karg.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int?>("ImageId")
-                        .IsRequired()
+                    b.Property<int>("ImageId")
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")

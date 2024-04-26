@@ -19,8 +19,8 @@ namespace karg.DAL.Context.EntityConfigurations
             builder.Property(animal => animal.Id).IsRequired();
             builder.Property(animal => animal.Name).HasMaxLength(30).IsRequired();
             builder.Property(animal => animal.Short_Description).HasMaxLength(50).IsRequired();
-            builder.Property(animal => animal.Description).HasMaxLength(500).IsRequired();
-            builder.Property(animal => animal.Story).HasMaxLength(600).IsRequired();
+            builder.Property(animal => animal.Description).HasMaxLength(800).IsRequired();
+            builder.Property(animal => animal.Story).HasMaxLength(1000).IsRequired();
             builder.Property(animal => animal.Category).HasConversion(animalCategoryConverter).IsRequired();
         }
     }

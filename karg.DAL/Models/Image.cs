@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public Uri? Uri { get; set; }
-        public int AnimalId { get; set; }
+        public int? AnimalId { get; set; }
         public Advice? Advice { get; set; }
         public YearResult? YearResult { get; set; }
         public Partner? Partner { get; set; }

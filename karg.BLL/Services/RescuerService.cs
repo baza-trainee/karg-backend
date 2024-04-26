@@ -55,7 +55,7 @@ namespace karg.BLL.Services
 
                 foreach (var rescuer in rescuers)
                 {
-                    var rescuerImage = await _imageService.GetRescuerImage(rescuer.ImageId);
+                    var rescuerImage = await _imageService.GetImageById(rescuer.ImageId);
                     var rescuerDto = new AllRescuersDTO
                     {
                         FullName = rescuer.FullName,
