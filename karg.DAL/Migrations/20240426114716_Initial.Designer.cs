@@ -11,8 +11,8 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    [Migration("20240408203021_Added-photo-to-rescuer")]
-    partial class Addedphototorescuer
+    [Migration("20240426114716_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,13 +58,17 @@ namespace karg.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateOnly>("Date_Of_Birth")
                         .HasColumnType("date");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasMaxLength(800)
+                        .HasColumnType("varchar(800)");
 
                     b.Property<decimal>("Donats")
                         .HasColumnType("decimal(65,30)");
@@ -81,12 +85,8 @@ namespace karg.DAL.Migrations
 
                     b.Property<string>("Story")
                         .IsRequired()
-                        .HasMaxLength(600)
-                        .HasColumnType("varchar(600)");
-
-                    b.Property<string>("Сategory")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.HasKey("Id");
 
@@ -120,8 +120,8 @@ namespace karg.DAL.Migrations
 
                     b.Property<string>("Answer")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasMaxLength(1500)
+                        .HasColumnType("varchar(1500)");
 
                     b.Property<string>("Question")
                         .IsRequired()
@@ -139,7 +139,8 @@ namespace karg.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AnimalId")
+                    b.Property<int?>("AnimalId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Uri")
@@ -151,6 +152,24 @@ namespace karg.DAL.Migrations
                     b.HasIndex("AnimalId");
 
                     b.ToTable("Image", (string)null);
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.JwtToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("RescuerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Token", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Partner", b =>
@@ -200,8 +219,7 @@ namespace karg.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int?>("ImageId")
-                        .IsRequired()
+                    b.Property<int>("ImageId")
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
@@ -215,9 +233,15 @@ namespace karg.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("TokenId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ImageId")
+                        .IsUnique();
+
+                    b.HasIndex("TokenId")
                         .IsUnique();
 
                     b.ToTable("Rescuer", (string)null);
@@ -289,7 +313,15 @@ namespace karg.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("karg.DAL.Models.JwtToken", "Token")
+                        .WithOne("Rescuer")
+                        .HasForeignKey("karg.DAL.Models.Rescuer", "TokenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Image");
+
+                    b.Navigation("Token");
                 });
 
             modelBuilder.Entity("karg.DAL.Models.YearResult", b =>
@@ -317,6 +349,11 @@ namespace karg.DAL.Migrations
                     b.Navigation("Rescuer");
 
                     b.Navigation("YearResult");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.JwtToken", b =>
+                {
+                    b.Navigation("Rescuer");
                 });
 #pragma warning restore 612, 618
         }

@@ -30,10 +30,12 @@ namespace karg.API
             builder.Services.AddScoped<IRescuerService, RescuerService>();
             builder.Services.AddScoped<IAnimalService, AnimalService>();
             builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<IPartnerService, PartnerService>();
           
             builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
             builder.Services.AddScoped<IRescuerRepository, RescuerRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
+            builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
 
             var app = builder.Build();
 
