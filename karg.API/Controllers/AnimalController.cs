@@ -16,20 +16,31 @@ namespace karg.API.Controllers
             _animalService = animalService;
         }
 
+        /// <summary>
+        /// Gets a list of animals filtered by the specified criteria.
+        /// </summary>
+        /// <param name="filter">Filter object to filter the list of animals.</param>
+        /// <response code="200">Successful request. Returns a list of animals with the total number of pages.</response>
+        /// <response code="404">No animals found based on the specified filters.</response>
+        /// <response code="500">An internal server error occurred while trying to get the list of animals.</response>
+        /// <returns>List of animals with total number of pages.</returns>
         [HttpGet("getall")]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllAnimals([FromQuery]AnimalsFilterDTO filter)
         {
             try
             {
-                var animals = await _animalService.GetAnimals(filter);
+                var paginatedAnimals = await _animalService.GetAnimals(filter);
 
-                if(animals.Count() == 0) 
+                if (paginatedAnimals.Animals.Count == 0)
                 {
                     return NotFound("Animals not found.");
                 }
 
-                return Ok(animals);
+                return Ok(paginatedAnimals);
             }
             catch(Exception exception)
             {

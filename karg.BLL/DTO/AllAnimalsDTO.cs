@@ -13,5 +13,6 @@ namespace karg.BLL.DTO
         public string Category { get; set; }
         public string Story { get; set; }
         public Uri Image { get; set; }
+        public List<Uri> Images { get; set; }
     }
 }
