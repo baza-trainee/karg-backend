@@ -48,6 +48,7 @@ namespace karg.API
             builder.Services.AddScoped<IAnimalMappingService, AnimalMappingService>();
             builder.Services.AddScoped<IPartnerMappingService, PartnerMappingService>();
             builder.Services.AddScoped<IRescuerMappingService, RescuerMappingService>();
+            builder.Services.AddScoped<IFAQMappingService, FAQMappingService>();
             builder.Services.AddScoped(typeof(IPaginationService<>), typeof(PaginationService<>));
             builder.Services.AddScoped<IFAQService, FAQService>();
 

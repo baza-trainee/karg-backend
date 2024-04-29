@@ -12,10 +12,12 @@ namespace karg.BLL.Services
     public class FAQService : IFAQService
     {
         private readonly IFAQRepository _faqRepository;
+        private readonly IFAQMappingService _faqMappingService;
 
-        public FAQService(IFAQRepository faqRepository)
+        public FAQService(IFAQRepository faqRepository, IFAQMappingService faqMappingService)
         {
             _faqRepository = faqRepository;
+            _faqMappingService = faqMappingService;
         }
 
         public async Task<List<AllFAQsDTO>> GetFAQs()
@@ -23,11 +25,7 @@ namespace karg.BLL.Services
             try
             {
                 var faqs = await _faqRepository.GetFAQs();
-                var faqsDto = faqs.Select(faq => new AllFAQsDTO
-                {
-                    Question = faq.Question,
-                    Answer = faq.Answer
-                }).ToList();
+                var faqsDto = await _faqMappingService.MapToAllFAQsDTO(faqs);
 
                 return faqsDto;
             }
