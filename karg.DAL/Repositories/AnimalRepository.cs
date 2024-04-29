@@ -20,27 +20,22 @@ namespace karg.DAL.Repositories
             _context = context;
         }
 
-        public async Task<List<Animal>> GetAnimals(int page, int pageSize, string categoryFilter = null, string nameSearch = null)
+        public async Task<List<Animal>> GetAnimals(string categoryFilter = null, string nameSearch = null)
         {
-            var animalsQuery = _context.Animals.AsNoTracking();
+            var animals = _context.Animals.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(categoryFilter))
             {
                 var category = Enum.Parse<AnimalCategory>(categoryFilter, true);
-                animalsQuery = animalsQuery.Where(animal => animal.Category == category);
+                animals = animals.Where(animal => animal.Category == category);
             }
 
             if (!string.IsNullOrWhiteSpace(nameSearch))
             {
-                animalsQuery = animalsQuery.Where(animal => animal.Name.ToLower().Contains(nameSearch.ToLower()));
+                animals = animals.Where(animal => animal.Name.ToLower().Contains(nameSearch.ToLower()));
             }
 
-            var animals = await animalsQuery
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return animals;
+            return await animals.ToListAsync();
         }
     }
 }

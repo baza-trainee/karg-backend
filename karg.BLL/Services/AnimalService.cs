@@ -1,6 +1,7 @@
 ﻿using karg.BLL.DTO;
 using karg.BLL.Interfaces;
 using karg.DAL.Interfaces;
+using karg.DAL.Models;
 using karg.DAL.Repositories;
 using System;
 using System.Collections.Generic;
@@ -13,38 +14,31 @@ namespace karg.BLL.Services
     public class AnimalService : IAnimalService
     {
         private readonly IAnimalRepository _animalRepository;
-        private readonly IImageService _imageService;
+        private readonly IPaginationService<Animal> _paginationService;
+        private readonly IAnimalMappingService _animalMappingService;
 
-        public AnimalService(IAnimalRepository animalRepository, IImageService imageService)
+        public AnimalService(IAnimalRepository animalRepository, IPaginationService<Animal> paginationService, IAnimalMappingService animalMappingService)
         {
             _animalRepository = animalRepository;
-            _imageService = imageService;
+            _paginationService = paginationService;
+            _animalMappingService = animalMappingService;
         }
 
-        public async Task<List<AllAnimalsDTO>> GetAnimals(AnimalsFilterDTO filter)
+        public async Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter)
         {
             try
             {
-                var animals = await _animalRepository.GetAnimals(filter.Page, filter.PageSize, filter.CategoryFilter, filter.NameSearch);
-                var animalsDto = new List<AllAnimalsDTO>();
+                var animals = await _animalRepository.GetAnimals(filter.CategoryFilter, filter.NameSearch);
+                var paginatedAnimals = await _paginationService.PaginateWithTotalPages(animals, filter.Page, filter.PageSize);
+                var paginatedAnimalItems = paginatedAnimals.Items;
+                var totalPages = paginatedAnimals.TotalPages;
+                var animalsDto = await _animalMappingService.MapToAllAnimalsDTO(paginatedAnimalItems);
 
-                foreach (var animal in animals)
+                return new PaginatedAnimalsDTO
                 {
-                    var animalImages = await _imageService.GetAnimalImages(animal.Id);
-
-                    var animalDto = new AllAnimalsDTO
-                    {
-                        Name = animal.Name,
-                        Category = animal.Category.ToString(),
-                        Description = animal.Description,
-                        Story = animal.Story,
-                        Image = animalImages.FirstOrDefault().Uri
-                    };
-
-                    animalsDto.Add(animalDto);
-                }
-
-                return animalsDto;
+                    Animals = animalsDto,
+                    TotalPages = totalPages
+                };
             }
             catch (Exception exception)
             {

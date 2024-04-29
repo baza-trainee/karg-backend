@@ -15,7 +15,7 @@ namespace karg.API.Controllers
         {
             _rescuerService = rescuerService;
         }
-        
+
         [HttpGet("getall")]
         public async Task<IActionResult> GetAllRescuers()
         {
