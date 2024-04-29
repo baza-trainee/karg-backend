@@ -13,12 +13,12 @@ namespace karg.BLL.Services
     public class PartnerService : IPartnerService
     {
         private readonly IPartnerRepository _partnerRepository;
-        private readonly IImageService _imageService;
+        private readonly IPartnerMappingService _partnerMappingService;
 
-        public PartnerService(IPartnerRepository partnerRepository, IImageService imageService)
+        public PartnerService(IPartnerRepository partnerRepository, IPartnerMappingService partnerMappingService)
         {
             _partnerRepository = partnerRepository;
-            _imageService = imageService;
+            _partnerMappingService = partnerMappingService;
         }
 
         public async Task<List<AllPartnersDTO>> GetPartners()
@@ -26,20 +26,7 @@ namespace karg.BLL.Services
             try
             {
                 var partners = await _partnerRepository.GetPartners();
-                var partnersDto = new List<AllPartnersDTO>();
-
-                foreach (var partner in partners)
-                {
-                    var partnerImage = await _imageService.GetImageById(partner.ImageId);
-                    var partnerDto = new AllPartnersDTO
-                    {
-                        Name = partner.Name,
-                        Image = partnerImage.Uri,
-                        Uri = partner.Uri
-                    };
-
-                    partnersDto.Add(partnerDto);
-                }
+                var partnersDto = await _partnerMappingService.MapToAllPartnersDTO(partners);
 
                 return partnersDto;
             }

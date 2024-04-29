@@ -14,14 +14,14 @@ namespace karg.BLL.Services
         private readonly IRescuerRepository _rescuerRepository;
         private readonly IPasswordValidationService _passwordValidationService;
         private readonly IPasswordHashService _passwordHashService;
-        private readonly IImageService _imageService;
+        private readonly IRescuerMappingService _rescuerMappingService;
 
-        public RescuerService(IRescuerRepository rescuerRepository, IPasswordValidationService passwordValidationService, IPasswordHashService passwordHashService, IImageService imageService)
+        public RescuerService(IRescuerRepository rescuerRepository, IPasswordValidationService passwordValidationService, IPasswordHashService passwordHashService, IRescuerMappingService rescuerMappingService)
         {
             _rescuerRepository = rescuerRepository;
             _passwordValidationService = passwordValidationService;
             _passwordHashService = passwordHashService;
-            _imageService = imageService;
+            _rescuerMappingService = rescuerMappingService;
         }
 
         public async Task ResetPassword(string email, string newPassword)
@@ -51,20 +51,7 @@ namespace karg.BLL.Services
             try
             {
                 var rescuers = await _rescuerRepository.GetRescuers();
-                var rescuersDto = new List<AllRescuersDTO>();
-
-                foreach (var rescuer in rescuers)
-                {
-                    var rescuerImage = await _imageService.GetImageById(rescuer.ImageId);
-                    var rescuerDto = new AllRescuersDTO
-                    {
-                        FullName = rescuer.FullName,
-                        PhoneNumber = rescuer.PhoneNumber,
-                        Image = rescuerImage.Uri,
-                    };
-
-                    rescuersDto.Add(rescuerDto);
-                }
+                var rescuersDto = await _rescuerMappingService.MapToAllRescuersDTO(rescuers);
 
                 return rescuersDto;
             }
