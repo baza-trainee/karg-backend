@@ -1,5 +1,5 @@
-﻿using karg.BLL.DTO;
-using karg.BLL.Interfaces;
+﻿using karg.BLL.DTO.Animals;
+using karg.BLL.Interfaces.Animals;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

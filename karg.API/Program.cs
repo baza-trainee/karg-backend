@@ -1,5 +1,15 @@
-using karg.BLL.Interfaces;
-using karg.BLL.Services;
+using karg.BLL.Interfaces.Animals;
+using karg.BLL.Interfaces.Authentication;
+using karg.BLL.Interfaces.FAQs;
+using karg.BLL.Interfaces.Partners;
+using karg.BLL.Interfaces.Rescuers;
+using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Services.Animals;
+using karg.BLL.Services.Authentication;
+using karg.BLL.Services.FAQs;
+using karg.BLL.Services.Partners;
+using karg.BLL.Services.Rescuers;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Repositories;

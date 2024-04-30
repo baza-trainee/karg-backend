@@ -1,4 +1,4 @@
-﻿using karg.BLL.Interfaces;
+﻿using karg.BLL.Interfaces.Partners;
 using karg.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 

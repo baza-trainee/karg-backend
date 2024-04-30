@@ -1,4 +1,4 @@
-﻿using karg.BLL.Interfaces;
+﻿using karg.BLL.Interfaces.FAQs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace karg.API.Controllers
