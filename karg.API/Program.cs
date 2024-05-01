@@ -1,5 +1,15 @@
-using karg.BLL.Interfaces;
-using karg.BLL.Services;
+using karg.BLL.Interfaces.Animals;
+using karg.BLL.Interfaces.Authentication;
+using karg.BLL.Interfaces.FAQs;
+using karg.BLL.Interfaces.Partners;
+using karg.BLL.Interfaces.Rescuers;
+using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Services.Animals;
+using karg.BLL.Services.Authentication;
+using karg.BLL.Services.FAQs;
+using karg.BLL.Services.Partners;
+using karg.BLL.Services.Rescuers;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Repositories;
@@ -46,12 +56,17 @@ namespace karg.API
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IPartnerService, PartnerService>();
             builder.Services.AddScoped<IAnimalMappingService, AnimalMappingService>();
+            builder.Services.AddScoped<IPartnerMappingService, PartnerMappingService>();
+            builder.Services.AddScoped<IRescuerMappingService, RescuerMappingService>();
+            builder.Services.AddScoped<IFAQMappingService, FAQMappingService>();
             builder.Services.AddScoped(typeof(IPaginationService<>), typeof(PaginationService<>));
+            builder.Services.AddScoped<IFAQService, FAQService>();
 
             builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
             builder.Services.AddScoped<IRescuerRepository, RescuerRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
             builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
+            builder.Services.AddScoped<IFAQRepository, FAQRepository>();
 
             var app = builder.Build();
 
