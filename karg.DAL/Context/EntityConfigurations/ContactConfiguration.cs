@@ -21,6 +21,7 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.HasKey(contact => contact.Id);
 
+            builder.Property(contact => contact.Id).ValueGeneratedOnAdd();
             builder.Property(contact => contact.Uri).IsRequired();
             builder.Property(contact => contact.Category).HasConversion(contactCategoryConverter).IsRequired();
         }

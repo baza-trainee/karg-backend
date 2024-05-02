@@ -10,5 +10,6 @@ namespace karg.DAL.Interfaces
     public interface IAnimalRepository
     {
         Task<List<Animal>> GetAnimals(string categoryFilter = null, string nameSearch = null);
+        Task<int> AddAnimal(Animal animal);
     }
 }

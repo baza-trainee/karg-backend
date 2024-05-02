@@ -12,6 +12,7 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.HasKey(image => image.Id);
 
+            builder.Property(image => image.Id).ValueGeneratedOnAdd();
             builder.Property(image => image.Uri).IsRequired();
             builder.Property(image => image.AnimalId).IsRequired(false);
         }

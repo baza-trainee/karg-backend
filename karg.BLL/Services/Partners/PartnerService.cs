@@ -1,5 +1,7 @@
-﻿using karg.BLL.DTO.Partners;
+﻿using AutoMapper;
+using karg.BLL.DTO.Partners;
 using karg.BLL.Interfaces.Partners;
+using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Repositories;
 using System;
@@ -13,12 +15,14 @@ namespace karg.BLL.Services.Partners
     public class PartnerService : IPartnerService
     {
         private readonly IPartnerRepository _partnerRepository;
-        private readonly IPartnerMappingService _partnerMappingService;
+        private readonly IImageService _imageService;
+        private readonly IMapper _mapper;
 
-        public PartnerService(IPartnerRepository partnerRepository, IPartnerMappingService partnerMappingService)
+        public PartnerService(IPartnerRepository partnerRepository, IMapper mapper, IImageService imageService)
         {
             _partnerRepository = partnerRepository;
-            _partnerMappingService = partnerMappingService;
+            _mapper = mapper;
+            _imageService = imageService;
         }
 
         public async Task<List<AllPartnersDTO>> GetPartners()
@@ -26,7 +30,16 @@ namespace karg.BLL.Services.Partners
             try
             {
                 var partners = await _partnerRepository.GetPartners();
-                var partnersDto = await _partnerMappingService.MapToAllPartnersDTO(partners);
+                var partnersDto = new List<AllPartnersDTO>();
+
+                foreach (var partner in partners)
+                {
+                    var partnerImage = await _imageService.GetImageById(partner.ImageId);
+                    var partnerDto = _mapper.Map<AllPartnersDTO>(partner);
+
+                    partnerDto.Image = partnerImage.Uri;
+                    partnersDto.Add(partnerDto);
+                }
 
                 return partnersDto;
             }

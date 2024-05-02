@@ -25,7 +25,6 @@ namespace karg.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Short_Description = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Date_Of_Birth = table.Column<DateOnly>(type: "date", nullable: false),
                     Description = table.Column<string>(type: "varchar(800)", maxLength: 800, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Story = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: false)
@@ -96,7 +95,7 @@ namespace karg.DAL.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Uri = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    AnimalId = table.Column<int?>(type: "int", nullable: true)
+                    AnimalId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -10,5 +10,6 @@ namespace karg.DAL.Interfaces
     public interface IImageRepository
     {
         Task<List<Image>> GetImages();
+        Task<int> AddImage(Image image);
     }
 }

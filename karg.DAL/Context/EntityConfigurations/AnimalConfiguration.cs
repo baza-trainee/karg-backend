@@ -16,7 +16,7 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.HasKey(animal => animal.Id);
 
-            builder.Property(animal => animal.Id).IsRequired();
+            builder.Property(animal => animal.Id).ValueGeneratedOnAdd().IsRequired();
             builder.Property(animal => animal.Name).HasMaxLength(30).IsRequired();
             builder.Property(animal => animal.Short_Description).HasMaxLength(50).IsRequired();
             builder.Property(animal => animal.Description).HasMaxLength(800).IsRequired();

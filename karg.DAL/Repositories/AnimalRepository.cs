@@ -37,5 +37,14 @@ namespace karg.DAL.Repositories
 
             return await animals.ToListAsync();
         }
+
+        public async Task<int> AddAnimal(Animal animal)
+        {
+
+            _context.Animals.Add(animal);
+            await _context.SaveChangesAsync();
+
+            return animal.Id;
+        }
     }
 }

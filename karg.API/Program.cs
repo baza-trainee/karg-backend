@@ -4,6 +4,7 @@ using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Partners;
 using karg.BLL.Interfaces.Rescuers;
 using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Profiles;
 using karg.BLL.Services.Animals;
 using karg.BLL.Services.Authentication;
 using karg.BLL.Services.FAQs;
@@ -27,6 +28,7 @@ namespace karg.API
 
             // Add services to the container.
 
+            builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -55,10 +57,6 @@ namespace karg.API
             builder.Services.AddScoped<IAnimalService, AnimalService>();
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IPartnerService, PartnerService>();
-            builder.Services.AddScoped<IAnimalMappingService, AnimalMappingService>();
-            builder.Services.AddScoped<IPartnerMappingService, PartnerMappingService>();
-            builder.Services.AddScoped<IRescuerMappingService, RescuerMappingService>();
-            builder.Services.AddScoped<IFAQMappingService, FAQMappingService>();
             builder.Services.AddScoped(typeof(IPaginationService<>), typeof(PaginationService<>));
             builder.Services.AddScoped<IFAQService, FAQService>();
 
@@ -67,6 +65,12 @@ namespace karg.API
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
             builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
             builder.Services.AddScoped<IFAQRepository, FAQRepository>();
+
+            builder.Services.AddAutoMapper(typeof(AnimalProfile));
+            builder.Services.AddAutoMapper(typeof(FAQProfile));
+            builder.Services.AddAutoMapper(typeof(RescuerProfile));
+            builder.Services.AddAutoMapper(typeof(PartnerProfile));
+            builder.Services.AddAutoMapper(typeof(ImageProfile));
 
             var app = builder.Build();
 

@@ -11,5 +11,6 @@ namespace karg.BLL.Interfaces.Utilities
     {
         Task<List<AllImagesDTO>> GetAnimalImages(int animalId);
         Task<AllImagesDTO> GetImageById(int imageId);
+        Task AddImage(CreateImageDTO imageDto);
     }
 }

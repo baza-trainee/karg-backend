@@ -10,5 +10,6 @@ namespace karg.BLL.Interfaces.Animals
     public interface IAnimalService
     {
         Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter);
+        Task CreateAnimal(CreateAnimalDTO animalDto);
     }
 }
