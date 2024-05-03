@@ -1,4 +1,6 @@
-﻿using karg.BLL.DTO.Animals;
+﻿using AutoMapper;
+using karg.BLL.DTO.Animals;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Animals;
 using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
@@ -16,13 +18,15 @@ namespace karg.BLL.Services.Animals
     {
         private readonly IAnimalRepository _animalRepository;
         private readonly IPaginationService<Animal> _paginationService;
-        private readonly IAnimalMappingService _animalMappingService;
+        private readonly IImageService _imageService;
+        private readonly IMapper _mapper;
 
-        public AnimalService(IAnimalRepository animalRepository, IPaginationService<Animal> paginationService, IAnimalMappingService animalMappingService)
+        public AnimalService(IAnimalRepository animalRepository, IPaginationService<Animal> paginationService, IImageService imageService, IMapper mapper)
         {
             _animalRepository = animalRepository;
             _paginationService = paginationService;
-            _animalMappingService = animalMappingService;
+            _imageService = imageService;
+            _mapper = mapper;
         }
 
         public async Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter)
@@ -33,7 +37,17 @@ namespace karg.BLL.Services.Animals
                 var paginatedAnimals = await _paginationService.PaginateWithTotalPages(animals, filter.Page, filter.PageSize);
                 var paginatedAnimalItems = paginatedAnimals.Items;
                 var totalPages = paginatedAnimals.TotalPages;
-                var animalsDto = await _animalMappingService.MapToAllAnimalsDTO(paginatedAnimalItems);
+                var animalsDto = new List<AllAnimalsDTO>();
+
+                foreach(var animal in paginatedAnimalItems)
+                {
+                    var animalDto = _mapper.Map<AllAnimalsDTO>(animal);
+                    var animalImages = await _imageService.GetAnimalImages(animal.Id);
+
+                    animalDto.Images = animalImages.Select(image => image.Uri).ToList();
+                    animalDto.Image = animalDto.Images.FirstOrDefault();
+                    animalsDto.Add(animalDto);
+                }
 
                 return new PaginatedAnimalsDTO
                 {
@@ -44,6 +58,30 @@ namespace karg.BLL.Services.Animals
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of animals.", exception);
+            }
+        }
+
+        public async Task CreateAnimal(CreateAnimalDTO animalDto)
+        {
+            try
+            {
+                var animal = _mapper.Map<Animal>(animalDto);
+                var animalId = await _animalRepository.AddAnimal(animal);
+
+                foreach (var image in animalDto.Images)
+                {
+                    var newImage = new CreateImageDTO
+                    {
+                        Uri = image,
+                        AnimalId = animalId,
+                    };
+
+                    await _imageService.AddImage(newImage);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error adding the animal.", exception);
             }
         }
     }

@@ -39,6 +39,7 @@ namespace karg.DAL.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -59,9 +60,6 @@ namespace karg.DAL.Migrations
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<DateOnly>("Date_Of_Birth")
-                        .HasColumnType("date");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -138,7 +136,6 @@ namespace karg.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("AnimalId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Uri")

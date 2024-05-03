@@ -1,4 +1,5 @@
-﻿using karg.BLL.DTO.FAQs;
+﻿using AutoMapper;
+using karg.BLL.DTO.FAQs;
 using karg.BLL.Interfaces.FAQs;
 using karg.DAL.Interfaces;
 using System;
@@ -12,12 +13,12 @@ namespace karg.BLL.Services.FAQs
     public class FAQService : IFAQService
     {
         private readonly IFAQRepository _faqRepository;
-        private readonly IFAQMappingService _faqMappingService;
+        private readonly IMapper _mapper;
 
-        public FAQService(IFAQRepository faqRepository, IFAQMappingService faqMappingService)
+        public FAQService(IFAQRepository faqRepository, IMapper mapper)
         {
             _faqRepository = faqRepository;
-            _faqMappingService = faqMappingService;
+            _mapper = mapper;
         }
 
         public async Task<List<AllFAQsDTO>> GetFAQs()
@@ -25,7 +26,7 @@ namespace karg.BLL.Services.FAQs
             try
             {
                 var faqs = await _faqRepository.GetFAQs();
-                var faqsDto = await _faqMappingService.MapToAllFAQsDTO(faqs);
+                var faqsDto = _mapper.Map<List<AllFAQsDTO>>(faqs);
 
                 return faqsDto;
             }

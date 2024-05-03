@@ -17,6 +17,7 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.HasKey(partner => partner.Id);
 
+            builder.Property(partner => partner.Id).ValueGeneratedOnAdd();
             builder.Property(partner => partner.Uri).IsRequired();
             builder.Property(partner => partner.Name).HasMaxLength(50).IsRequired();
         }

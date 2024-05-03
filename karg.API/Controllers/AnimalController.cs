@@ -1,5 +1,6 @@
 ﻿using karg.BLL.DTO.Animals;
 using karg.BLL.Interfaces.Animals;
+using karg.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +42,30 @@ namespace karg.API.Controllers
                 }
 
                 return Ok(paginatedAnimals);
+            }
+            catch(Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new animal.
+        /// </summary>
+        /// <param name="animalDto">The data for the new animal.</param>
+        /// <returns>The newly created animal.</returns>
+        /// <response code="201">Returns the newly created animal.</response>
+        /// <response code="500">If an error occurs while trying to create the animal.</response>
+        [HttpPost("add")]
+        [ProducesResponseType(typeof(CreateAnimalDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateAnimal([FromBody] CreateAnimalDTO animalDto)
+        {
+            try
+            {
+                await _animalService.CreateAnimal(animalDto);
+
+                return Created("CreateAnimal", animalDto);
             }
             catch(Exception exception)
             {

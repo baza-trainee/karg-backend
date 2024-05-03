@@ -23,5 +23,13 @@ namespace karg.DAL.Repositories
         {
             return await _context.Images.AsNoTracking().ToListAsync();
         }
+
+        public async Task<int> AddImage(Image image)
+        {
+            _context.Images.Add(image);
+            await _context.SaveChangesAsync();
+
+            return image.Id;
+        }
     }
 }

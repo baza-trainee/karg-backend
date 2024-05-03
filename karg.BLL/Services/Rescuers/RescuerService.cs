@@ -1,6 +1,8 @@
-﻿using karg.BLL.DTO.Rescuers;
+﻿using AutoMapper;
+using karg.BLL.DTO.Rescuers;
 using karg.BLL.Interfaces.Authentication;
 using karg.BLL.Interfaces.Rescuers;
+using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,14 +17,16 @@ namespace karg.BLL.Services.Rescuers
         private readonly IRescuerRepository _rescuerRepository;
         private readonly IPasswordValidationService _passwordValidationService;
         private readonly IPasswordHashService _passwordHashService;
-        private readonly IRescuerMappingService _rescuerMappingService;
+        private readonly IImageService _imageService;
+        private readonly IMapper _mapper;
 
-        public RescuerService(IRescuerRepository rescuerRepository, IPasswordValidationService passwordValidationService, IPasswordHashService passwordHashService, IRescuerMappingService rescuerMappingService)
+        public RescuerService(IRescuerRepository rescuerRepository, IPasswordValidationService passwordValidationService, IPasswordHashService passwordHashService, IMapper mapper, IImageService imageService)
         {
             _rescuerRepository = rescuerRepository;
             _passwordValidationService = passwordValidationService;
             _passwordHashService = passwordHashService;
-            _rescuerMappingService = rescuerMappingService;
+            _imageService = imageService;
+            _mapper = mapper;
         }
 
         public async Task ResetPassword(string email, string newPassword)
@@ -52,7 +56,16 @@ namespace karg.BLL.Services.Rescuers
             try
             {
                 var rescuers = await _rescuerRepository.GetRescuers();
-                var rescuersDto = await _rescuerMappingService.MapToAllRescuersDTO(rescuers);
+                var rescuersDto = new List<AllRescuersDTO>();
+
+                foreach (var rescuer in rescuers)
+                {
+                    var rescuerImage = await _imageService.GetImageById(rescuer.ImageId);
+                    var rescuerDto = _mapper.Map<AllRescuersDTO>(rescuer);
+
+                    rescuerDto.Image = rescuerImage.Uri;
+                    rescuersDto.Add(rescuerDto);
+                }
 
                 return rescuersDto;
             }

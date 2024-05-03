@@ -1,6 +1,9 @@
-﻿using karg.BLL.DTO.Utilities;
+﻿using AutoMapper;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
+using karg.DAL.Models;
+using karg.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +15,26 @@ namespace karg.BLL.Services.Utilities
     public class ImageService : IImageService
     {
         private readonly IImageRepository _repository;
+        private IMapper _mapper;
 
-        public ImageService(IImageRepository repository)
+        public ImageService(IImageRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
+        }
+
+        public async Task AddImage(CreateImageDTO imageDto)
+        {
+            try
+            {
+                var image = _mapper.Map<Image>(imageDto);
+
+                await _repository.AddImage(image);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error adding the image.", exception);
+            }
         }
 
         public async Task<AllImagesDTO> GetImageById(int imageId)
