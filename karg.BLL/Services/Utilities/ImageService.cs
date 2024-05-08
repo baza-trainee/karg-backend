@@ -82,7 +82,7 @@ namespace karg.BLL.Services.Utilities
 
                 foreach (var image in deletedImages)
                 {
-                    await _repository.DeleteImage(image.Id);
+                    await _repository.DeleteImage(image);
                 }
 
                 foreach (var image in newImages)

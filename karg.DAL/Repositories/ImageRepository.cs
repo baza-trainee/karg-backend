@@ -24,9 +24,8 @@ namespace karg.DAL.Repositories
             return await _context.Images.AsNoTracking().ToListAsync();
         }
 
-        public async Task DeleteImage(int id)
+        public async Task DeleteImage(Image image)
         {
-            var image = await _context.Images.SingleOrDefaultAsync(image => image.Id == id);
             _context.Images.Remove(image);
             await _context.SaveChangesAsync();
         }
