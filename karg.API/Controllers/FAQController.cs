@@ -1,4 +1,5 @@
 ﻿using karg.BLL.Interfaces.FAQs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace karg.API.Controllers
@@ -22,6 +23,7 @@ namespace karg.API.Controllers
         /// <response code="500">An internal server error occurred while trying to get the list of FAQs.</response>
         /// <returns>List of all FAQs.</returns>
         [HttpGet("getall")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -50,6 +50,37 @@ namespace karg.API.Controllers
         }
 
         /// <summary>
+        /// Gets the details of a specific animal by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the animal.</param>
+        /// <response code="200">Successful request. Returns the details of the specified animal.</response>
+        /// <response code="404">No animal found with the specified identifier.</response>
+        /// <response code="500">An internal server error occurred while trying to retrieve the animal details.</response>
+        /// <returns>The details of the specified animal.</returns>
+        [HttpGet("getbyid")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAnimalById(int id)
+        {
+            try
+            {
+                var animal = await _animalService.GetAnimalById(id);
+
+                if (animal == null)
+                {
+                    return NotFound("Animal not found.");
+                }
+
+                return Ok(animal);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
         /// Creates a new animal.
         /// </summary>
         /// <param name="animalDto">The data for the new animal.</param>
@@ -57,9 +88,9 @@ namespace karg.API.Controllers
         /// <response code="201">Returns the newly created animal.</response>
         /// <response code="500">If an error occurs while trying to create the animal.</response>
         [HttpPost("add")]
-        [ProducesResponseType(typeof(CreateAnimalDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CreateAndUpdateAnimalDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateAnimal([FromBody] CreateAnimalDTO animalDto)
+        public async Task<IActionResult> CreateAnimal([FromBody] CreateAndUpdateAnimalDTO animalDto)
         {
             try
             {
@@ -68,6 +99,32 @@ namespace karg.API.Controllers
                 return Created("CreateAnimal", animalDto);
             }
             catch(Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates the details of a specific animal.
+        /// </summary>
+        /// <param name="id">The unique identifier of the animal to be updated.</param>
+        /// <param name="animalDto">The object containing the updated details of the animal.</param>
+        /// <response code="200">Successful request. Returns the updated details of the animal.</response>
+        /// <response code="404">No animal found with the specified identifier.</response>
+        /// <response code="500">An internal server error occurred while trying to update the animal details.</response>
+        /// <returns>The updated details of the animal.</returns>
+        [HttpPut("update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateAnimal(int id, [FromBody] CreateAndUpdateAnimalDTO animalDto)
+        {
+            try
+            {
+                var resultAnimal = await _animalService.UpdateAnimal(id, animalDto);
+
+                return Ok(resultAnimal);
+            }
+            catch (Exception exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }

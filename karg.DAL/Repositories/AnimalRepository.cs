@@ -46,5 +46,24 @@ namespace karg.DAL.Repositories
 
             return animal.Id;
         }
+
+        public async Task<Animal> GetAnimal(int animalId)
+        {
+            return await _context.Animals.FirstOrDefaultAsync(animal => animal.Id == animalId);
+        }
+
+        public async Task<Animal> UpdateAnimal(Animal existingAnimal, Animal updatedAnimal)
+        {
+            existingAnimal.Name = updatedAnimal.Name;
+            existingAnimal.Category = updatedAnimal.Category;
+            existingAnimal.Description = updatedAnimal.Description;
+            existingAnimal.Story = updatedAnimal.Story;
+            existingAnimal.Short_Description = updatedAnimal.Short_Description;
+            existingAnimal.Donats = updatedAnimal.Donats;
+
+            await _context.SaveChangesAsync();
+
+            return existingAnimal;
+        }
     }
 }

@@ -63,7 +63,7 @@ namespace karg.BLL.Services.Rescuers
                     var rescuerImage = await _imageService.GetImageById(rescuer.ImageId);
                     var rescuerDto = _mapper.Map<AllRescuersDTO>(rescuer);
 
-                    rescuerDto.Image = rescuerImage.Uri;
+                    rescuerDto.Image = rescuerImage;
                     rescuersDto.Add(rescuerDto);
                 }
 

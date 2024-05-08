@@ -16,7 +16,17 @@ namespace karg.API.Controllers
             _rescuerService = rescuerService;
         }
 
+        /// <summary>
+        /// Gets all rescuers registered in the system.
+        /// </summary>
+        /// <response code="200">Successful request. Returns a list of rescuers.</response>
+        /// <response code="404">Rescuers not found. No rescuers are available in the system.</response>
+        /// <response code="500">An internal server error occurred while trying to get the list of rescuers.</response>
+        /// <returns>List of rescuers.</returns>
         [HttpGet("getall")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllRescuers()
         {
             try
@@ -35,8 +45,17 @@ namespace karg.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
-        
+
+        /// <summary>
+        /// Resets the password for the specified rescuer based on their email.
+        /// </summary>
+        /// <param name="credentials">Object containing the rescuer's email and new password.</param>
+        /// <response code="200">Successful password reset.</response>
+        /// <response code="500">Internal server error. Failed to process the request.</response>
+        /// <returns>Message indicating successful password reset.</returns>
         [HttpPost("resetpassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO credentials)
         {
             try

@@ -11,5 +11,6 @@ namespace karg.DAL.Interfaces
     {
         Task<List<Image>> GetImages();
         Task<int> AddImage(Image image);
+        Task DeleteImage(int id);
     }
 }

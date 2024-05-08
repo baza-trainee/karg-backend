@@ -51,6 +51,11 @@ namespace karg.API
                 options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"), new MySqlServerVersion(new Version(8, 0, 30)));
             });
 
+            builder.Services.AddCors(policy => policy.AddPolicy("corspolicy", build =>
+            {
+                build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+            }));
+
             builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
             builder.Services.AddScoped<IPasswordValidationService, PasswordValidationService>();
             builder.Services.AddScoped<IRescuerService, RescuerService>();
@@ -80,6 +85,8 @@ namespace karg.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("corspolicy");
 
             app.UseHttpsRedirection();
 

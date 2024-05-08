@@ -8,7 +8,7 @@ namespace karg.BLL.DTO.Animals
 {
     public class PaginatedAnimalsDTO
     {
-        public List<AllAnimalsDTO> Animals { get; set; }
+        public List<AnimalDTO> Animals { get; set; }
         public int TotalPages { get; set; }
     }
 }

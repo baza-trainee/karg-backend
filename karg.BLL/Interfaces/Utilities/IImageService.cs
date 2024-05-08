@@ -1,4 +1,5 @@
 ﻿using karg.BLL.DTO.Utilities;
+using karg.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,9 @@ namespace karg.BLL.Interfaces.Utilities
 {
     public interface IImageService
     {
-        Task<List<AllImagesDTO>> GetAnimalImages(int animalId);
-        Task<AllImagesDTO> GetImageById(int imageId);
+        Task<List<Image>> GetAnimalImages(int animalId);
+        Task<Uri> GetImageById(int imageId);
         Task AddImage(CreateImageDTO imageDto);
+        Task UpdateAnimalImages(int animalId, List<Uri> updatedImageUris);
     }
 }
