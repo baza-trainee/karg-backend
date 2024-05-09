@@ -14,8 +14,8 @@ namespace karg.BLL.Profiles
     {
         public AnimalProfile()
         {
-            CreateMap<Animal, AllAnimalsDTO>();
-            CreateMap<CreateAnimalDTO, Animal>()
+            CreateMap<Animal, AnimalDTO>();
+            CreateMap<CreateAndUpdateAnimalDTO, Animal>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => Enum.Parse(typeof(AnimalCategory), src.Category)))
                 .ForMember(dest => dest.Images, opt => opt.Ignore());
         }

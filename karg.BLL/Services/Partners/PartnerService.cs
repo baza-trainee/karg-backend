@@ -37,7 +37,7 @@ namespace karg.BLL.Services.Partners
                     var partnerImage = await _imageService.GetImageById(partner.ImageId);
                     var partnerDto = _mapper.Map<AllPartnersDTO>(partner);
 
-                    partnerDto.Image = partnerImage.Uri;
+                    partnerDto.Image = partnerImage;
                     partnersDto.Add(partnerDto);
                 }
 

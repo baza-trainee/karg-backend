@@ -37,11 +37,11 @@ namespace karg.BLL.Services.Animals
                 var paginatedAnimals = await _paginationService.PaginateWithTotalPages(animals, filter.Page, filter.PageSize);
                 var paginatedAnimalItems = paginatedAnimals.Items;
                 var totalPages = paginatedAnimals.TotalPages;
-                var animalsDto = new List<AllAnimalsDTO>();
+                var animalsDto = new List<AnimalDTO>();
 
                 foreach(var animal in paginatedAnimalItems)
                 {
-                    var animalDto = _mapper.Map<AllAnimalsDTO>(animal);
+                    var animalDto = _mapper.Map<AnimalDTO>(animal);
                     var animalImages = await _imageService.GetAnimalImages(animal.Id);
 
                     animalDto.Images = animalImages.Select(image => image.Uri).ToList();
@@ -61,7 +61,26 @@ namespace karg.BLL.Services.Animals
             }
         }
 
-        public async Task CreateAnimal(CreateAnimalDTO animalDto)
+        public async Task<AnimalDTO> GetAnimalById(int id)
+        {
+            try
+            {
+                var animal = await _animalRepository.GetAnimal(id);
+                var animalDto = _mapper.Map<AnimalDTO>(animal);
+                var animalImages = await _imageService.GetAnimalImages(animal.Id);
+
+                animalDto.Images = animalImages.Select(image => image.Uri).ToList();
+                animalDto.Image = animalDto.Images.FirstOrDefault();
+
+                return animalDto;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error retrieving animal by id.", exception);
+            }
+        }
+
+        public async Task CreateAnimal(CreateAndUpdateAnimalDTO animalDto)
         {
             try
             {
@@ -82,6 +101,24 @@ namespace karg.BLL.Services.Animals
             catch (Exception exception)
             {
                 throw new ApplicationException("Error adding the animal.", exception);
+            }
+        }
+
+        public async Task<CreateAndUpdateAnimalDTO> UpdateAnimal(int id, CreateAndUpdateAnimalDTO animalDto)
+        {
+            try
+            {
+                var updatedAnimal = _mapper.Map<Animal>(animalDto);
+                var existingAnimal = await _animalRepository.GetAnimal(id);
+
+                await _imageService.UpdateAnimalImages(id, animalDto.Images);
+                await _animalRepository.UpdateAnimal(existingAnimal, updatedAnimal);
+
+                return animalDto;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error update the animal.", exception);
             }
         }
     }

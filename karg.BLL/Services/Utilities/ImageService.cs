@@ -37,14 +37,14 @@ namespace karg.BLL.Services.Utilities
             }
         }
 
-        public async Task<AllImagesDTO> GetImageById(int imageId)
+        public async Task<Uri> GetImageById(int imageId)
         {
             try
             {
                 var allImages = await _repository.GetImages();
                 var image = allImages.FirstOrDefault(image => image.Id == imageId);
 
-                return new AllImagesDTO { Uri = image.Uri };
+                return image.Uri;
             }
             catch (Exception exception)
             {
@@ -52,17 +52,13 @@ namespace karg.BLL.Services.Utilities
             }
         }
 
-        public async Task<List<AllImagesDTO>> GetAnimalImages(int animalId)
+        public async Task<List<Image>> GetAnimalImages(int animalId)
         {
             try
             {
                 var allImages = await _repository.GetImages();
                 var animalsImages = allImages
                     .Where(image => image.AnimalId == animalId)
-                    .Select(image => new AllImagesDTO
-                    {
-                        Uri = image.Uri
-                    })
                     .ToList();
 
                 return animalsImages;
@@ -70,6 +66,34 @@ namespace karg.BLL.Services.Utilities
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving images of animals.", exception);
+            }
+        }
+
+        public async Task UpdateAnimalImages(int animalId, List<Uri> updatedImageUris)
+        {
+            try
+            {
+                var existingImages = await GetAnimalImages(animalId);
+                var existingImageUris = existingImages.Select(image => image.Uri).ToList();
+                var deletedImages = existingImages
+                    .Where(existingImage => !updatedImageUris.Any(updatedImageUri => updatedImageUri == existingImage.Uri))
+                    .ToList();
+                var newImages = updatedImageUris.Except(existingImageUris).ToList();
+
+                foreach (var image in deletedImages)
+                {
+                    await _repository.DeleteImage(image);
+                }
+
+                foreach (var image in newImages)
+                {
+                    var newAnimalImage = new CreateImageDTO { AnimalId = animalId, Uri = image };
+                    await AddImage(newAnimalImage);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error when updating animal images.", exception);
             }
         }
     }
