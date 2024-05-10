@@ -14,5 +14,6 @@ namespace karg.BLL.Interfaces.Animals
         Task CreateAnimal(CreateAndUpdateAnimalDTO animalDto);
         Task<CreateAndUpdateAnimalDTO> UpdateAnimal(int id, CreateAndUpdateAnimalDTO animalDto);
         Task<AnimalDTO> GetAnimalById(int id);
+        Task DeleteAnimal(int id);
     }
 }
