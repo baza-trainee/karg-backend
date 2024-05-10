@@ -65,5 +65,11 @@ namespace karg.DAL.Repositories
 
             return existingAnimal;
         }
+
+        public async Task Delete(Animal animal)
+        {
+            _context.Animals.Remove(animal);
+            await _context.SaveChangesAsync();
+        }
     }
 }

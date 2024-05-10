@@ -121,5 +121,18 @@ namespace karg.BLL.Services.Animals
                 throw new ApplicationException("Error update the animal.", exception);
             }
         }
+
+        public async Task DeleteAnimal(int id)
+        {
+            try
+            {
+                var removedAnimal = await _animalRepository.GetAnimal(id);
+                await _animalRepository.Delete(removedAnimal);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the animal.", exception);
+            }
+        }
     }
 }

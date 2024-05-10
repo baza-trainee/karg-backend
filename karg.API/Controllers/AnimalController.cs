@@ -129,5 +129,29 @@ namespace karg.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
+
+        /// <summary>
+        /// Deletes a specific animal.
+        /// </summary>
+        /// <param name="id">The unique identifier of the animal to be deleted.</param>
+        /// <response code="204">Successful request. The animal has been deleted.</response>
+        /// <response code="500">An internal server error occurred while trying to delete the animal.</response>
+        /// <returns>No content.</returns>
+        [HttpDelete("delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteAnimal(int id)
+        {
+            try
+            {
+                await _animalService.DeleteAnimal(id);
+
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
     }
 }
