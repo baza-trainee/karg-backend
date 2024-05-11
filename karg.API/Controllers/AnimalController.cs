@@ -2,6 +2,7 @@
 using karg.BLL.Interfaces.Animals;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace karg.API.Controllers
@@ -88,9 +89,9 @@ namespace karg.API.Controllers
         /// <response code="201">Returns the newly created animal.</response>
         /// <response code="500">If an error occurs while trying to create the animal.</response>
         [HttpPost("add")]
-        [ProducesResponseType(typeof(CreateAndUpdateAnimalDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CreateAnimalDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateAnimal([FromBody] CreateAndUpdateAnimalDTO animalDto)
+        public async Task<IActionResult> CreateAnimal([FromBody] CreateAnimalDTO animalDto)
         {
             try
             {
@@ -108,19 +109,25 @@ namespace karg.API.Controllers
         /// Updates the details of a specific animal.
         /// </summary>
         /// <param name="id">The unique identifier of the animal to be updated.</param>
-        /// <param name="animalDto">The object containing the updated details of the animal.</param>
+        /// <param name="patchDoc">The JSON Patch document containing the updates to apply.</param>
         /// <response code="200">Successful request. Returns the updated details of the animal.</response>
-        /// <response code="404">No animal found with the specified identifier.</response>
-        /// <response code="500">An internal server error occurred while trying to update the animal details.</response>
+        /// <response code="400">Bad request. If the JSON Patch document is null.</response>
+        /// <response code="500">Internal server error. An error occurred while trying to update the animal details.</response>
         /// <returns>The updated details of the animal.</returns>
-        [HttpPut("update")]
+        [HttpPatch("update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateAnimal(int id, [FromBody] CreateAndUpdateAnimalDTO animalDto)
+        public async Task<IActionResult> UpdateAnimal(int id, [FromBody] JsonPatchDocument<AnimalDTO> patchDoc)
         {
             try
             {
-                var resultAnimal = await _animalService.UpdateAnimal(id, animalDto);
+                if (patchDoc == null)
+                {
+                    return BadRequest();
+                }
+
+                var resultAnimal = await _animalService.UpdateAnimal(id, patchDoc);
 
                 return Ok(resultAnimal);
             }

@@ -40,7 +40,6 @@ namespace karg.DAL.Repositories
 
         public async Task<int> AddAnimal(Animal animal)
         {
-
             _context.Animals.Add(animal);
             await _context.SaveChangesAsync();
 
@@ -52,18 +51,12 @@ namespace karg.DAL.Repositories
             return await _context.Animals.FirstOrDefaultAsync(animal => animal.Id == animalId);
         }
 
-        public async Task<Animal> UpdateAnimal(Animal existingAnimal, Animal updatedAnimal)
+        public async Task UpdateAnimal(Animal updatedAnimal)
         {
-            existingAnimal.Name = updatedAnimal.Name;
-            existingAnimal.Category = updatedAnimal.Category;
-            existingAnimal.Description = updatedAnimal.Description;
-            existingAnimal.Story = updatedAnimal.Story;
-            existingAnimal.Short_Description = updatedAnimal.Short_Description;
-            existingAnimal.Donats = updatedAnimal.Donats;
+            var existingAnimal = await _context.Animals.FindAsync(updatedAnimal.Id);
 
+            _context.Entry(existingAnimal).CurrentValues.SetValues(updatedAnimal);
             await _context.SaveChangesAsync();
-
-            return existingAnimal;
         }
 
         public async Task Delete(Animal animal)

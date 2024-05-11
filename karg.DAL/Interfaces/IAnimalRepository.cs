@@ -12,7 +12,7 @@ namespace karg.DAL.Interfaces
         Task<List<Animal>> GetAnimals(string categoryFilter = null, string nameSearch = null);
         Task<int> AddAnimal(Animal animal);
         Task<Animal> GetAnimal(int animalId);
-        Task<Animal> UpdateAnimal(Animal existingAnimal, Animal updatedAnimal);
+        Task UpdateAnimal(Animal updatedAnimal);
         Task Delete(Animal animal);
     }
 }

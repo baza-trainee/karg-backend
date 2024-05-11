@@ -19,9 +19,6 @@ namespace karg.API.Controllers
         /// <summary>
         /// Gets a list of partners
         /// </summary>
-        /// <remarks>
-        /// This endpoint allows anonymous access.
-        /// </remarks>
         /// <response code="200">Successful request. Returns a list of partners.</response>
         /// <response code="404">Partners not found. No partners are available in the system.</response>
         /// <response code="500">An internal server error occurred while trying to get the list of partners.</response>

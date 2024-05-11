@@ -6,11 +6,8 @@ using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using karg.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 
 namespace karg.BLL.Services.Animals
 {
@@ -80,7 +77,7 @@ namespace karg.BLL.Services.Animals
             }
         }
 
-        public async Task CreateAnimal(CreateAndUpdateAnimalDTO animalDto)
+        public async Task CreateAnimal(CreateAnimalDTO animalDto)
         {
             try
             {
@@ -104,21 +101,23 @@ namespace karg.BLL.Services.Animals
             }
         }
 
-        public async Task<CreateAndUpdateAnimalDTO> UpdateAnimal(int id, CreateAndUpdateAnimalDTO animalDto)
+        public async Task<AnimalDTO> UpdateAnimal(int id, JsonPatchDocument<AnimalDTO> patchDoc)
         {
             try
             {
-                var updatedAnimal = _mapper.Map<Animal>(animalDto);
-                var existingAnimal = await _animalRepository.GetAnimal(id);
+                var existingAnimal = await GetAnimalById(id);
+                patchDoc.ApplyTo(existingAnimal);
 
-                await _imageService.UpdateAnimalImages(id, animalDto.Images);
-                await _animalRepository.UpdateAnimal(existingAnimal, updatedAnimal);
+                await _imageService.UpdateAnimalImages(id, existingAnimal.Images);
 
-                return animalDto;
+                var mappedAnimal = _mapper.Map<Animal>(existingAnimal);
+                await _animalRepository.UpdateAnimal(mappedAnimal);
+
+                return existingAnimal;
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error update the animal.", exception);
+                throw new ApplicationException("Error updating the animal.", exception);
             }
         }
 
