@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace karg.BLL.DTO.Animals
 {
-    public class CreateAndUpdateAnimalDTO
+    public class CreateAnimalDTO
     {
         public string Name { get; set; }
         public string Category { get; set; }
