@@ -16,6 +16,7 @@ namespace karg.DAL.Context.EntityConfigurations
             builder.ToTable("LocalizationSet");
 
             builder.HasKey(localizationSet => localizationSet.Id);
+            builder.Property(localizationSet => localizationSet.Id).ValueGeneratedOnAdd();
         }
     }
 }

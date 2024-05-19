@@ -13,6 +13,6 @@ namespace karg.DAL.Interfaces
         Task<int> AddAnimal(Animal animal);
         Task<Animal> GetAnimal(int animalId);
         Task UpdateAnimal(Animal updatedAnimal);
-        Task Delete(Animal animal);
+        Task DeleteAnimal(Animal animal);
     }
 }

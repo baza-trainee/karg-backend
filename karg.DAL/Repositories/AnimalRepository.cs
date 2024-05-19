@@ -72,7 +72,7 @@ namespace karg.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(Animal animal)
+        public async Task DeleteAnimal(Animal animal)
         {
             _context.Animals.Remove(animal);
             await _context.SaveChangesAsync();

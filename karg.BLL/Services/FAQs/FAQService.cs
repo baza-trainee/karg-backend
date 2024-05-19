@@ -36,7 +36,7 @@ namespace karg.BLL.Services.FAQs
                     var faqDto = new AllFAQsDTO
                     {
                         Answer = _localizationService.GetLocalizedValue(faq.Answer, cultureCode, faq.AnswerId),
-                        Question = _localizationService.GetLocalizedValue(faq.Question, cultureCode, faq.QuestionId))
+                        Question = _localizationService.GetLocalizedValue(faq.Question, cultureCode, faq.QuestionId)
                     };
 
                     faqsDto.Add(faqDto);
