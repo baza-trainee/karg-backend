@@ -1,5 +1,6 @@
 ﻿using karg.BLL.DTO.Animals;
 using karg.BLL.Interfaces.Animals;
+using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -12,10 +13,12 @@ namespace karg.API.Controllers
     public class AnimalController : Controller
     {
         private IAnimalService _animalService;
+        private ICultureService _cultureService;
 
-        public AnimalController(IAnimalService animalService)
+        public AnimalController(IAnimalService animalService, ICultureService cultureService)
         {
             _animalService = animalService;
+            _cultureService = cultureService;
         }
 
         /// <summary>
@@ -29,13 +32,21 @@ namespace karg.API.Controllers
         [HttpGet("getall")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllAnimals([FromQuery]AnimalsFilterDTO filter)
+        public async Task<IActionResult> GetAllAnimals([FromQuery]AnimalsFilterDTO filter, string cultureCode = "ua")
         {
             try
             {
-                var paginatedAnimals = await _animalService.GetAnimals(filter);
+                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+                if (ModelState.IsValid && !isValidCultureCode)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
 
                 if (paginatedAnimals.Animals.Count == 0)
                 {
@@ -60,13 +71,21 @@ namespace karg.API.Controllers
         /// <returns>The details of the specified animal.</returns>
         [HttpGet("getbyid")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAnimalById(int id)
+        public async Task<IActionResult> GetAnimalById(int id, string cultureCode = "ua")
         {
             try
             {
-                var animal = await _animalService.GetAnimalById(id);
+                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+                if (ModelState.IsValid && !isValidCultureCode)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var animal = await _animalService.GetAnimalById(id, cultureCode);
 
                 if (animal == null)
                 {

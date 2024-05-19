@@ -11,10 +11,10 @@ namespace karg.BLL.Interfaces.Animals
 {
     public interface IAnimalService
     {
-        Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter);
+        Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter, string cultureCode);
         Task CreateAnimal(CreateAnimalDTO animalDto);
         Task<AnimalDTO> UpdateAnimal(int id, JsonPatchDocument<AnimalDTO> patchDoc);
-        Task<AnimalDTO> GetAnimalById(int id);
+        Task<AnimalDTO> GetAnimalById(int id, string cultureCode);
         Task DeleteAnimal(int id);
     }
 }

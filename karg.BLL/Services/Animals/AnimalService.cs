@@ -16,17 +16,19 @@ namespace karg.BLL.Services.Animals
         private readonly IAnimalRepository _animalRepository;
         private readonly IPaginationService<Animal> _paginationService;
         private readonly IImageService _imageService;
+        private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public AnimalService(IAnimalRepository animalRepository, IPaginationService<Animal> paginationService, IImageService imageService, IMapper mapper)
+        public AnimalService(IAnimalRepository animalRepository, IPaginationService<Animal> paginationService, IImageService imageService,ILocalizationService localizationService, IMapper mapper)
         {
             _animalRepository = animalRepository;
             _paginationService = paginationService;
             _imageService = imageService;
+            _localizationService = localizationService;
             _mapper = mapper;
         }
 
-        public async Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter)
+        public async Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter, string cultureCode)
         {
             try
             {
@@ -36,11 +38,15 @@ namespace karg.BLL.Services.Animals
                 var totalPages = paginatedAnimals.TotalPages;
                 var animalsDto = new List<AnimalDTO>();
 
-                foreach(var animal in paginatedAnimalItems)
+                foreach (var animal in paginatedAnimalItems)
                 {
                     var animalDto = _mapper.Map<AnimalDTO>(animal);
                     var animalImages = await _imageService.GetAnimalImages(animal.Id);
 
+                    animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
+                    animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
+                    animalDto.Short_Description = _localizationService.GetLocalizedValue(animal.Short_Description, cultureCode, animal.Short_DescriptionId);
+                    animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
                     animalDto.Images = animalImages.Select(image => image.Uri).ToList();
                     animalDto.Image = animalDto.Images.FirstOrDefault();
                     animalsDto.Add(animalDto);
@@ -58,7 +64,7 @@ namespace karg.BLL.Services.Animals
             }
         }
 
-        public async Task<AnimalDTO> GetAnimalById(int id)
+        public async Task<AnimalDTO> GetAnimalById(int id, string cultureCode)
         {
             try
             {
@@ -66,6 +72,10 @@ namespace karg.BLL.Services.Animals
                 var animalDto = _mapper.Map<AnimalDTO>(animal);
                 var animalImages = await _imageService.GetAnimalImages(animal.Id);
 
+                animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
+                animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
+                animalDto.Short_Description = _localizationService.GetLocalizedValue(animal.Short_Description, cultureCode, animal.Short_DescriptionId);
+                animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
                 animalDto.Images = animalImages.Select(image => image.Uri).ToList();
                 animalDto.Image = animalDto.Images.FirstOrDefault();
 
@@ -105,7 +115,7 @@ namespace karg.BLL.Services.Animals
         {
             try
             {
-                var existingAnimal = await GetAnimalById(id);
+                /*var existingAnimal = await GetAnimalById(id);
                 patchDoc.ApplyTo(existingAnimal);
 
                 await _imageService.UpdateAnimalImages(id, existingAnimal.Images);
@@ -113,7 +123,8 @@ namespace karg.BLL.Services.Animals
                 var mappedAnimal = _mapper.Map<Animal>(existingAnimal);
                 await _animalRepository.UpdateAnimal(mappedAnimal);
 
-                return existingAnimal;
+                return existingAnimal;*/
+                return null;
             }
             catch (Exception exception)
             {

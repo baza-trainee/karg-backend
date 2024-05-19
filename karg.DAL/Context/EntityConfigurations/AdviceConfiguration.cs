@@ -12,8 +12,6 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.HasKey(advice => advice.Id);
 
-            builder.Property(advice => advice.Title).ValueGeneratedOnAdd().HasMaxLength(100).IsRequired();
-            builder.Property(advice => advice.Description).HasMaxLength(500).IsRequired();
             builder.Property(advice => advice.Created_At).IsRequired();
         }
     }

@@ -21,7 +21,11 @@ namespace karg.DAL.Repositories
 
         public async Task<List<FAQ>> GetFAQs()
         {
-            return await _context.FAQs.AsNoTracking().ToListAsync();
+            return await _context.FAQs
+                .AsNoTracking()
+                .Include(faq => faq.Question).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(faq => faq.Answer).ThenInclude(localizationSet => localizationSet.Localizations)
+                .ToListAsync();
         }
     }
 }

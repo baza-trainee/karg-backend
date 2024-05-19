@@ -1,6 +1,7 @@
 ﻿using karg.DAL.Context.EntityConfigurations;
 using karg.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace karg.DAL.Context
 {
@@ -20,6 +21,9 @@ namespace karg.DAL.Context
         public DbSet<Partner> Partners { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<JwtToken> Tokens { get; set; }
+        public DbSet<Culture> Cultures { get; set; }
+        public DbSet<Localization> Localizations { get; set; }
+        public DbSet<LocalizationSet> LocalizationSets { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new AdviceConfiguration());
@@ -31,6 +35,22 @@ namespace karg.DAL.Context
             builder.ApplyConfiguration(new PartnerConfiguration());
             builder.ApplyConfiguration(new ContactConfiguration());
             builder.ApplyConfiguration(new JwtTokenConfiguration());
+            builder.ApplyConfiguration(new CultureConfiguration());
+            builder.ApplyConfiguration(new LocalizationConfiguration());
+            builder.ApplyConfiguration(new LocalizationSetConfiguration());
+
+            builder.Entity<LocalizationSet>()
+                .HasMany(localizationSet => localizationSet.Localizations)
+                .WithOne(localization => localization.LocalizationSet)
+                .HasForeignKey(localization => localization.LocalizationSetId)
+                .IsRequired();
+
+            builder.Entity<Localization>()
+                .HasOne(localization => localization.Culture)
+                .WithMany()
+                .HasForeignKey(localization => localization.CultureCode)
+                .HasPrincipalKey(culture => culture.Code)
+                .IsRequired();
 
             builder.Entity<Advice>()
                 .HasOne(advice => advice.Image)

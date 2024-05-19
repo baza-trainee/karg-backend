@@ -1,4 +1,5 @@
 ﻿using karg.BLL.Interfaces.FAQs;
+using karg.BLL.Interfaces.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace karg.API.Controllers
     public class FAQController : Controller
     {
         private IFAQService _faqService;
+        private ICultureService _cultureService;
 
         public FAQController(IFAQService faqService)
         {
@@ -27,11 +29,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllFAQs()
+        public async Task<IActionResult> GetAllFAQs(string cultureCode = "ua")
         {
             try
             {
-                var faqs = await _faqService.GetFAQs();
+                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+                if (!isValidCultureCode)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var faqs = await _faqService.GetFAQs(cultureCode);
 
                 if (faqs.Count() == 0)
                 {
