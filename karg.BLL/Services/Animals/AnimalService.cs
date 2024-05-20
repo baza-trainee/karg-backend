@@ -47,7 +47,6 @@ namespace karg.BLL.Services.Animals
 
                     animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                     animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
-                    animalDto.Short_Description = _localizationService.GetLocalizedValue(animal.Short_Description, cultureCode, animal.Short_DescriptionId);
                     animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
                     animalDto.Images = animalImages.Select(image => image.Uri).ToList();
                     animalDto.Image = animalDto.Images.FirstOrDefault();
@@ -76,7 +75,6 @@ namespace karg.BLL.Services.Animals
 
                 animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                 animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
-                animalDto.Short_Description = _localizationService.GetLocalizedValue(animal.Short_Description, cultureCode, animal.Short_DescriptionId);
                 animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
                 animalDto.Images = animalImages.Select(image => image.Uri).ToList();
                 animalDto.Image = animalDto.Images.FirstOrDefault();
@@ -95,7 +93,6 @@ namespace karg.BLL.Services.Animals
             {
                 var animal = _mapper.Map<Animal>(animalDto);
                 animal.NameId = await _localizationSetService.CreateAndSaveLocalizationSet(animalDto.Name_en, animalDto.Name_ua);
-                animal.Short_DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(animalDto.Short_Description_en, animalDto.Short_Description_ua);
                 animal.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(animalDto.Description_en, animalDto.Description_ua);
                 animal.StoryId = await _localizationSetService.CreateAndSaveLocalizationSet(animalDto.Story_en, animalDto.Story_ua);
 
@@ -127,8 +124,6 @@ namespace karg.BLL.Services.Animals
                 
                 patchedAnimal.Name_ua = _localizationService.GetLocalizedValue(existingAnimal.Name, "ua", existingAnimal.NameId);
                 patchedAnimal.Name_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
-                patchedAnimal.Short_Description_ua = _localizationService.GetLocalizedValue(existingAnimal.Short_Description, "ua", existingAnimal.Short_DescriptionId);
-                patchedAnimal.Short_Description_en = _localizationService.GetLocalizedValue(existingAnimal.Short_Description, "en", existingAnimal.Short_DescriptionId);
                 patchedAnimal.Description_ua = _localizationService.GetLocalizedValue(existingAnimal.Description, "ua", existingAnimal.DescriptionId);
                 patchedAnimal.Description_en = _localizationService.GetLocalizedValue(existingAnimal.Description, "en", existingAnimal.DescriptionId);
                 patchedAnimal.Story_ua = _localizationService.GetLocalizedValue(existingAnimal.Description, "ua", existingAnimal.DescriptionId);
@@ -142,7 +137,6 @@ namespace karg.BLL.Services.Animals
                 await _imageService.UpdateAnimalImages(id, patchedAnimal.Images);
                 
                 existingAnimal.NameId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.NameId, patchedAnimal.Name_en, patchedAnimal.Name_ua);
-                existingAnimal.Short_DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.Short_DescriptionId, patchedAnimal.Short_Description_en, patchedAnimal.Short_Description_ua);
                 existingAnimal.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.DescriptionId, patchedAnimal.Description_en, patchedAnimal.Description_ua);
                 existingAnimal.StoryId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.StoryId, patchedAnimal.Story_en, patchedAnimal.Story_ua);
 
@@ -162,12 +156,11 @@ namespace karg.BLL.Services.Animals
             {
                 var removedAnimal = await _animalRepository.GetAnimal(id);
                 var removedAnimalNameId = removedAnimal.NameId;
-                var removedAnimalShortDescriptionId = removedAnimal.Short_DescriptionId;
                 var removedAnimalDescriptionId = removedAnimal.DescriptionId;
                 var removedAnimalStoryId = removedAnimal.StoryId;
 
                 await _animalRepository.DeleteAnimal(removedAnimal);
-                await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAnimalNameId, removedAnimalShortDescriptionId, removedAnimalDescriptionId, removedAnimalStoryId });
+                await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAnimalNameId, removedAnimalDescriptionId, removedAnimalStoryId });
             }
             catch (Exception exception)
             {

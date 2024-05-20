@@ -11,11 +11,9 @@ namespace karg.BLL.DTO.Animals
     {
         public string Category { get; set; }
         public string Name_en { get; set; }
-        public string Short_Description_en { get; set; }
         public string Description_en { get; set; }
         public string Story_en { get; set; }
         public string Name_ua { get; set; }
-        public string Short_Description_ua { get; set; }
         public string Description_ua { get; set; }
         public string Story_ua { get; set; }
         public List<Uri> Images { get; set; }

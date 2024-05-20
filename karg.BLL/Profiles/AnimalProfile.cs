@@ -21,14 +21,12 @@ namespace karg.BLL.Profiles
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.Name, opt => opt.Ignore())
                 .ForMember(dest => dest.Description, opt => opt.Ignore())
-                .ForMember(dest => dest.Short_Description, opt => opt.Ignore())
                 .ForMember(dest => dest.Story, opt => opt.Ignore());
             CreateMap<CreateAndUpdateAnimalDTO, Animal>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => Enum.Parse(typeof(AnimalCategory), src.Category)))
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.Name, opt => opt.Ignore())
                 .ForMember(dest => dest.Description, opt => opt.Ignore())
-                .ForMember(dest => dest.Short_Description, opt => opt.Ignore())
                 .ForMember(dest => dest.Story, opt => opt.Ignore());
         }
     }

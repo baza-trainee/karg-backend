@@ -26,7 +26,6 @@ namespace karg.DAL.Repositories
                 .AsNoTracking()
                 .Include(animal => animal.Name).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
-                .Include(animal => animal.Short_Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Story).ThenInclude(localizationSet => localizationSet.Localizations)
                 .AsQueryable();
 
@@ -59,7 +58,6 @@ namespace karg.DAL.Repositories
                 .AsNoTracking()
                 .Include(animal => animal.Name).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
-                .Include(animal => animal.Short_Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Story).ThenInclude(localizationSet => localizationSet.Localizations)
                 .FirstOrDefaultAsync(animal => animal.Id == animalId);
         }
