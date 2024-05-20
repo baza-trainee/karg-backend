@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  karg.api:
+    image: ${DOCKER_REGISTRY-}kargapi
+    build:
+      context: .
+      dockerfile: karg.API/Dockerfile

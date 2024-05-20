@@ -5,9 +5,11 @@ VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "karg.API", "karg.API\karg.API.csproj", "{9CAF2B64-2F35-4A1E-A167-A19C05B07CF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "karg.DAL", "karg.DAL\karg.DAL.csproj", "{A627D53E-8860-4D23-B760-97ECE1F5BAFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "karg.DAL", "karg.DAL\karg.DAL.csproj", "{A627D53E-8860-4D23-B760-97ECE1F5BAFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "karg.BLL", "karg.BLL\karg.BLL.csproj", "{EAFBD445-7EFD-43C2-B107-EE3AC02EDFF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "karg.BLL", "karg.BLL\karg.BLL.csproj", "{EAFBD445-7EFD-43C2-B107-EE3AC02EDFF7}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{026FDDDB-0C65-4B43-96FA-61CE7F69707D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{EAFBD445-7EFD-43C2-B107-EE3AC02EDFF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAFBD445-7EFD-43C2-B107-EE3AC02EDFF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAFBD445-7EFD-43C2-B107-EE3AC02EDFF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{026FDDDB-0C65-4B43-96FA-61CE7F69707D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{026FDDDB-0C65-4B43-96FA-61CE7F69707D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{026FDDDB-0C65-4B43-96FA-61CE7F69707D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{026FDDDB-0C65-4B43-96FA-61CE7F69707D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
