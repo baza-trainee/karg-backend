@@ -105,7 +105,8 @@ namespace karg.DAL.Migrations
             modelBuilder.Entity("karg.DAL.Models.Culture", b =>
                 {
                     b.Property<string>("Code")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(2)
+                        .HasColumnType("varchar(2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -182,7 +183,7 @@ namespace karg.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CultureCode")
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(2)");
 
                     b.Property<string>("Value")
                         .IsRequired()

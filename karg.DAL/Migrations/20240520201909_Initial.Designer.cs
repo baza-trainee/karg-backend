@@ -11,7 +11,7 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    [Migration("20240502211259_Initial")]
+    [Migration("20240520201909_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,25 +30,24 @@ namespace karg.DAL.Migrations
                     b.Property<DateOnly>("Created_At")
                         .HasColumnType("date");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                    b.Property<int>("DescriptionId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ImageId")
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<int>("TitleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DescriptionId");
+
                     b.HasIndex("ImageId")
                         .IsUnique();
+
+                    b.HasIndex("TitleId");
 
                     b.ToTable("Advice", (string)null);
                 });
@@ -63,30 +62,25 @@ namespace karg.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(800)
-                        .HasColumnType("varchar(800)");
+                    b.Property<int>("DescriptionId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Donats")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                    b.Property<int>("NameId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Short_Description")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Story")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
+                    b.Property<int>("StoryId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DescriptionId");
+
+                    b.HasIndex("NameId");
+
+                    b.HasIndex("StoryId");
 
                     b.ToTable("Animal", (string)null);
                 });
@@ -110,23 +104,39 @@ namespace karg.DAL.Migrations
                     b.ToTable("Contact", (string)null);
                 });
 
+            modelBuilder.Entity("karg.DAL.Models.Culture", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(2)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("Culture", (string)null);
+                });
+
             modelBuilder.Entity("karg.DAL.Models.FAQ", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasMaxLength(1500)
-                        .HasColumnType("varchar(1500)");
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AnswerId");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("FAQ", (string)null);
                 });
@@ -167,6 +177,37 @@ namespace karg.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Token", (string)null);
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.Localization", b =>
+                {
+                    b.Property<int>("LocalizationSetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CultureCode")
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("varchar(5000)");
+
+                    b.HasKey("LocalizationSetId", "CultureCode");
+
+                    b.HasIndex("CultureCode");
+
+                    b.ToTable("Localization", (string)null);
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.LocalizationSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LocalizationSet", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Partner", b =>
@@ -250,10 +291,8 @@ namespace karg.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(5000)
-                        .HasColumnType("varchar(5000)");
+                    b.Property<int>("DescriptionId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
@@ -263,6 +302,8 @@ namespace karg.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DescriptionId");
+
                     b.HasIndex("ImageId")
                         .IsUnique();
 
@@ -271,13 +312,75 @@ namespace karg.DAL.Migrations
 
             modelBuilder.Entity("karg.DAL.Models.Advice", b =>
                 {
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("karg.DAL.Models.Image", "Image")
                         .WithOne("Advice")
                         .HasForeignKey("karg.DAL.Models.Advice", "ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Title")
+                        .WithMany()
+                        .HasForeignKey("TitleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Description");
+
                     b.Navigation("Image");
+
+                    b.Navigation("Title");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.Animal", b =>
+                {
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Name")
+                        .WithMany()
+                        .HasForeignKey("NameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Story")
+                        .WithMany()
+                        .HasForeignKey("StoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Description");
+
+                    b.Navigation("Name");
+
+                    b.Navigation("Story");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.FAQ", b =>
+                {
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Answer")
+                        .WithMany()
+                        .HasForeignKey("AnswerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Answer");
+
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Image", b =>
@@ -289,6 +392,25 @@ namespace karg.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Animal");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.Localization", b =>
+                {
+                    b.HasOne("karg.DAL.Models.Culture", "Culture")
+                        .WithMany()
+                        .HasForeignKey("CultureCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "LocalizationSet")
+                        .WithMany("Localizations")
+                        .HasForeignKey("LocalizationSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Culture");
+
+                    b.Navigation("LocalizationSet");
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Partner", b =>
@@ -323,11 +445,19 @@ namespace karg.DAL.Migrations
 
             modelBuilder.Entity("karg.DAL.Models.YearResult", b =>
                 {
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("karg.DAL.Models.Image", "Image")
                         .WithOne("YearResult")
                         .HasForeignKey("karg.DAL.Models.YearResult", "ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Description");
 
                     b.Navigation("Image");
                 });
@@ -351,6 +481,11 @@ namespace karg.DAL.Migrations
             modelBuilder.Entity("karg.DAL.Models.JwtToken", b =>
                 {
                     b.Navigation("Rescuer");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.LocalizationSet", b =>
+                {
+                    b.Navigation("Localizations");
                 });
 #pragma warning restore 612, 618
         }
