@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using karg.DAL.Context;
 
@@ -10,9 +11,10 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    partial class KargDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240519155741_addLocalization")]
+    partial class addLocalization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,6 +71,9 @@ namespace karg.DAL.Migrations
                     b.Property<int>("NameId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Short_DescriptionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StoryId")
                         .HasColumnType("int");
 
@@ -77,6 +82,8 @@ namespace karg.DAL.Migrations
                     b.HasIndex("DescriptionId");
 
                     b.HasIndex("NameId");
+
+                    b.HasIndex("Short_DescriptionId");
 
                     b.HasIndex("StoryId");
 
@@ -348,6 +355,12 @@ namespace karg.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("karg.DAL.Models.LocalizationSet", "Short_Description")
+                        .WithMany()
+                        .HasForeignKey("Short_DescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("karg.DAL.Models.LocalizationSet", "Story")
                         .WithMany()
                         .HasForeignKey("StoryId")
@@ -357,6 +370,8 @@ namespace karg.DAL.Migrations
                     b.Navigation("Description");
 
                     b.Navigation("Name");
+
+                    b.Navigation("Short_Description");
 
                     b.Navigation("Story");
                 });

@@ -1,5 +1,6 @@
 ﻿using karg.BLL.DTO.Animals;
 using karg.BLL.Interfaces.Animals;
+using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -12,30 +13,42 @@ namespace karg.API.Controllers
     public class AnimalController : Controller
     {
         private IAnimalService _animalService;
+        private ICultureService _cultureService;
 
-        public AnimalController(IAnimalService animalService)
+        public AnimalController(IAnimalService animalService, ICultureService cultureService)
         {
             _animalService = animalService;
+            _cultureService = cultureService;
         }
 
         /// <summary>
         /// Gets a list of animals filtered by the specified criteria.
         /// </summary>
         /// <param name="filter">Filter object to filter the list of animals.</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific Animals. Default is "ua".</param>
         /// <response code="200">Successful request. Returns a list of animals with the total number of pages.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No animals found based on the specified filters.</response>
         /// <response code="500">An internal server error occurred while trying to get the list of animals.</response>
         /// <returns>List of animals with total number of pages.</returns>
         [HttpGet("getall")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllAnimals([FromQuery]AnimalsFilterDTO filter)
+        public async Task<IActionResult> GetAllAnimals([FromQuery]AnimalsFilterDTO filter, string cultureCode = "ua")
         {
             try
             {
-                var paginatedAnimals = await _animalService.GetAnimals(filter);
+                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+                if (ModelState.IsValid && !isValidCultureCode)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
 
                 if (paginatedAnimals.Animals.Count == 0)
                 {
@@ -54,19 +67,29 @@ namespace karg.API.Controllers
         /// Gets the details of a specific animal by its unique identifier.
         /// </summary>
         /// <param name="id">The unique identifier of the animal.</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific details. Default is "ua".</param>
         /// <response code="200">Successful request. Returns the details of the specified animal.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No animal found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the animal details.</response>
         /// <returns>The details of the specified animal.</returns>
         [HttpGet("getbyid")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAnimalById(int id)
+        public async Task<IActionResult> GetAnimalById(int id, string cultureCode = "ua")
         {
             try
             {
-                var animal = await _animalService.GetAnimalById(id);
+                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+                if (ModelState.IsValid && !isValidCultureCode)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var animal = await _animalService.GetAnimalById(id, cultureCode);
 
                 if (animal == null)
                 {
@@ -89,9 +112,9 @@ namespace karg.API.Controllers
         /// <response code="201">Returns the newly created animal.</response>
         /// <response code="500">If an error occurs while trying to create the animal.</response>
         [HttpPost("add")]
-        [ProducesResponseType(typeof(CreateAnimalDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CreateAndUpdateAnimalDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateAnimal([FromBody] CreateAnimalDTO animalDto)
+        public async Task<IActionResult> CreateAnimal([FromBody] CreateAndUpdateAnimalDTO animalDto)
         {
             try
             {
@@ -118,7 +141,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateAnimal(int id, [FromBody] JsonPatchDocument<AnimalDTO> patchDoc)
+        public async Task<IActionResult> UpdateAnimal(int id, [FromBody] JsonPatchDocument<CreateAndUpdateAnimalDTO> patchDoc)
         {
             try
             {

@@ -22,7 +22,12 @@ namespace karg.DAL.Repositories
 
         public async Task<List<Animal>> GetAnimals(string categoryFilter = null, string nameSearch = null)
         {
-            var animals = _context.Animals.AsNoTracking();
+            var animals = _context.Animals
+                .AsNoTracking()
+                .Include(animal => animal.Name).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(animal => animal.Story).ThenInclude(localizationSet => localizationSet.Localizations)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(categoryFilter))
             {
@@ -32,7 +37,8 @@ namespace karg.DAL.Repositories
 
             if (!string.IsNullOrWhiteSpace(nameSearch))
             {
-                animals = animals.Where(animal => animal.Name.ToLower().Contains(nameSearch.ToLower()));
+                animals = animals.Where(animal =>
+                    animal.Name.Localizations.Any(localization => string.Equals(localization.Value,nameSearch, StringComparison.OrdinalIgnoreCase)));
             }
 
             return await animals.ToListAsync();
@@ -48,7 +54,12 @@ namespace karg.DAL.Repositories
 
         public async Task<Animal> GetAnimal(int animalId)
         {
-            return await _context.Animals.FirstOrDefaultAsync(animal => animal.Id == animalId);
+            return await _context.Animals
+                .AsNoTracking()
+                .Include(animal => animal.Name).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(animal => animal.Story).ThenInclude(localizationSet => localizationSet.Localizations)
+                .FirstOrDefaultAsync(animal => animal.Id == animalId);
         }
 
         public async Task UpdateAnimal(Animal updatedAnimal)
@@ -59,7 +70,7 @@ namespace karg.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(Animal animal)
+        public async Task DeleteAnimal(Animal animal)
         {
             _context.Animals.Remove(animal);
             await _context.SaveChangesAsync();
