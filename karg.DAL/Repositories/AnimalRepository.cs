@@ -37,8 +37,9 @@ namespace karg.DAL.Repositories
 
             if (!string.IsNullOrWhiteSpace(nameSearch))
             {
+                nameSearch = nameSearch.ToLower();
                 animals = animals.Where(animal =>
-                    animal.Name.Localizations.Any(localization => string.Equals(localization.Value,nameSearch, StringComparison.OrdinalIgnoreCase)));
+                    animal.Name.Localizations.Any(localization => localization.Value.ToLower() == nameSearch));
             }
 
             return await animals.ToListAsync();
