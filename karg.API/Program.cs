@@ -1,3 +1,4 @@
+using karg.BLL.Interfaces.Advices;
 using karg.BLL.Interfaces.Animals;
 using karg.BLL.Interfaces.Authentication;
 using karg.BLL.Interfaces.FAQs;
@@ -5,6 +6,7 @@ using karg.BLL.Interfaces.Partners;
 using karg.BLL.Interfaces.Rescuers;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Profiles;
+using karg.BLL.Services.Advices;
 using karg.BLL.Services.Animals;
 using karg.BLL.Services.Authentication;
 using karg.BLL.Services.FAQs;
@@ -59,6 +61,7 @@ namespace karg.API
             builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
             builder.Services.AddScoped<IPasswordValidationService, PasswordValidationService>();
             builder.Services.AddScoped<IRescuerService, RescuerService>();
+            builder.Services.AddScoped<IAdviceService, AdviceService>();
             builder.Services.AddScoped<IAnimalService, AnimalService>();
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IPartnerService, PartnerService>();
@@ -68,6 +71,7 @@ namespace karg.API
             builder.Services.AddScoped<ILocalizationSetService, LocalizationSetService>();
             builder.Services.AddScoped<ICultureService, CultureService>();
 
+            builder.Services.AddScoped<IAdviceRepository, AdviceRepository>();
             builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
             builder.Services.AddScoped<IRescuerRepository, RescuerRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
@@ -77,6 +81,7 @@ namespace karg.API
             builder.Services.AddScoped<ILocalizationRepository, LocalizationRepository>();
             builder.Services.AddScoped<ILocalizationSetRepository, LocalizationSetRepository>();
 
+            builder.Services.AddAutoMapper(typeof(AdviceProfile));
             builder.Services.AddAutoMapper(typeof(AnimalProfile));
             builder.Services.AddAutoMapper(typeof(RescuerProfile));
             builder.Services.AddAutoMapper(typeof(PartnerProfile));
