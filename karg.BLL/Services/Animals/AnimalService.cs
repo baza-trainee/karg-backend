@@ -30,7 +30,7 @@ namespace karg.BLL.Services.Animals
             _mapper = mapper;
         }
 
-        public async Task<PaginatedAnimalsDTO> GetAnimals(AnimalsFilterDTO filter, string cultureCode)
+        public async Task<PaginatedAllAnimalsDTO> GetAnimals(AnimalsFilterDTO filter, string cultureCode)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace karg.BLL.Services.Animals
                     animalsDto.Add(animalDto);
                 }
 
-                return new PaginatedAnimalsDTO
+                return new PaginatedAllAnimalsDTO
                 {
                     Animals = animalsDto,
                     TotalPages = totalPages

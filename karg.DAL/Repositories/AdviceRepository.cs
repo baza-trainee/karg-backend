@@ -1,0 +1,31 @@
+﻿using karg.DAL.Context;
+using karg.DAL.Interfaces;
+using karg.DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace karg.DAL.Repositories
+{
+    public class AdviceRepository : IAdviceRepository
+    {
+        private readonly KargDbContext _context;
+
+        public AdviceRepository(KargDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Advice>> GetAdvices()
+        {
+            return await _context.Advices
+                .AsNoTracking()
+                .Include(advice => advice.Title).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .ToListAsync();
+        }
+    }
+}
