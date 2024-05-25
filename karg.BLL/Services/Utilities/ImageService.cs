@@ -96,5 +96,20 @@ namespace karg.BLL.Services.Utilities
                 throw new ApplicationException("Error when updating animal images.", exception);
             }
         }
+
+        public async Task DeleteImage(int imageId)
+        {
+            try
+            {
+                var allImages = await _repository.GetImages();
+                var image = allImages.FirstOrDefault(image => image.Id == imageId);
+
+                await _repository.DeleteImage(image);
+            }
+            catch(Exception exception)
+            {
+                throw new ApplicationException("Error delete the image.", exception);
+            }
+        }
     }
 }
