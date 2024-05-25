@@ -17,7 +17,7 @@ namespace karg.DAL.Context
         public DbSet<FAQ> FAQs { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Rescuer> Rescuers { get; set; }
-        public DbSet<YearResult> YearResults { get; set; }
+        public DbSet<YearResult> YearsResults { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<JwtToken> Tokens { get; set; }
