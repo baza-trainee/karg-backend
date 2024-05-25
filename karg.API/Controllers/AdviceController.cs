@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Animals;
 
 namespace karg.API.Controllers
 {
@@ -44,6 +45,30 @@ namespace karg.API.Controllers
                 }
 
                 return Ok(paginatedAdvices);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new advice.
+        /// </summary>
+        /// <param name="adviceDto">The data for the new advice.</param>
+        /// <returns>The newly created advice.</returns>
+        /// <response code="201">Returns the newly created advice.</response>
+        /// <response code="500">If an error occurs while trying to create the advice.</response>
+        [HttpPost("add")]
+        [ProducesResponseType(typeof(CreateAndUpdateAdviceDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateAnimal([FromBody] CreateAndUpdateAdviceDTO adviceDto)
+        {
+            try
+            {
+                await _adviceService.CreateAdvice(adviceDto);
+
+                return Created("CreateAdvice", adviceDto);
             }
             catch (Exception exception)
             {

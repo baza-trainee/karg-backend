@@ -12,7 +12,7 @@ namespace karg.BLL.Interfaces.Utilities
     {
         Task<List<Image>> GetAnimalImages(int animalId);
         Task<Uri> GetImageById(int imageId);
-        Task AddImage(CreateImageDTO imageDto);
+        Task<int> AddImage(CreateImageDTO imageDto);
         Task UpdateAnimalImages(int animalId, List<Uri> updatedImageUris);
     }
 }

@@ -27,5 +27,14 @@ namespace karg.DAL.Repositories
                 .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .ToListAsync();
         }
+
+        public async Task<int> AddAdvice(Advice advice)
+        {
+            _context.Advices.Add(advice);
+            await _context.SaveChangesAsync();
+
+            return advice.Id;
+        }
+
     }
 }

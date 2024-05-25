@@ -1,14 +1,20 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Animals;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using karg.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Helpers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace karg.BLL.Services.Advices
 {
@@ -18,13 +24,15 @@ namespace karg.BLL.Services.Advices
         private readonly IPaginationService<Advice> _paginationService;
         private readonly IImageService _imageService;
         private readonly ILocalizationService _localizationService;
+        private readonly ILocalizationSetService _localizationSetService;
         private readonly IMapper _mapper;
-        public AdviceService(IAdviceRepository adviceRepository, IPaginationService<Advice> paginationService, IImageService imageService, ILocalizationService localizationService, IMapper mapper)
+        public AdviceService(IAdviceRepository adviceRepository, IPaginationService<Advice> paginationService, ILocalizationSetService localizationSetService, IImageService imageService, ILocalizationService localizationService, IMapper mapper)
         {
             _adviceRepository = adviceRepository;
             _paginationService = paginationService;
             _imageService = imageService;
             _localizationService = localizationService;
+            _localizationSetService = localizationSetService;
             _mapper = mapper;
         }
 
@@ -58,6 +66,30 @@ namespace karg.BLL.Services.Advices
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of advices.", exception);
+            }
+        }
+
+        public async Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto)
+        {
+            try
+            {
+                var advice = _mapper.Map<Advice>(adviceDto);
+                var newImage = new CreateImageDTO
+                {
+                    Uri = adviceDto.Image,
+                    AnimalId = null,
+                };
+                var imageId = await _imageService.AddImage(newImage);
+
+                advice.TitleId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Title_en, adviceDto.Title_ua);
+                advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
+                advice.ImageId = imageId;
+
+                await _adviceRepository.AddAdvice(advice);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error adding the advice.", exception);
             }
         }
     }
