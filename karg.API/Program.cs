@@ -5,6 +5,7 @@ using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Partners;
 using karg.BLL.Interfaces.Rescuers;
 using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Interfaces.YearsResults;
 using karg.BLL.Profiles;
 using karg.BLL.Services.Advices;
 using karg.BLL.Services.Animals;
@@ -13,6 +14,7 @@ using karg.BLL.Services.FAQs;
 using karg.BLL.Services.Partners;
 using karg.BLL.Services.Rescuers;
 using karg.BLL.Services.Utilities;
+using karg.BLL.Services.YearsResults;
 using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Repositories;
@@ -69,9 +71,11 @@ namespace karg.API
             builder.Services.AddScoped<IFAQService, FAQService>();
             builder.Services.AddScoped<ILocalizationService, LocalizationService>();
             builder.Services.AddScoped<ILocalizationSetService, LocalizationSetService>();
+            builder.Services.AddScoped<IYearResultService, YearResultService>();
             builder.Services.AddScoped<ICultureService, CultureService>();
 
             builder.Services.AddScoped<IAdviceRepository, AdviceRepository>();
+            builder.Services.AddScoped<IYearResultRepository, YearResultRepository>();
             builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
             builder.Services.AddScoped<IRescuerRepository, RescuerRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
@@ -86,6 +90,7 @@ namespace karg.API
             builder.Services.AddAutoMapper(typeof(RescuerProfile));
             builder.Services.AddAutoMapper(typeof(PartnerProfile));
             builder.Services.AddAutoMapper(typeof(ImageProfile));
+            builder.Services.AddAutoMapper(typeof(YearResultProfile));
 
             var app = builder.Build();
 

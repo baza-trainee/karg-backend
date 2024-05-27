@@ -42,11 +42,11 @@ namespace karg.BLL.Services.Advices
             {
                 var advices = await _adviceRepository.GetAdvices();
                 var paginatedAdvices = await _paginationService.PaginateWithTotalPages(advices, filter.Page, filter.PageSize);
-                var paginatedAdviceItems = paginatedAdvices.Items;
+                var paginatedAdvicesItems = paginatedAdvices.Items;
                 var totalPages = paginatedAdvices.TotalPages;
                 var advicesDto = new List<AdviceDTO>();
 
-                foreach (var advice in paginatedAdviceItems)
+                foreach (var advice in paginatedAdvicesItems)
                 {
                     var adviceDto = _mapper.Map<AdviceDTO>(advice);
                     var adviceImage = await _imageService.GetImageById(advice.ImageId);
@@ -90,6 +90,24 @@ namespace karg.BLL.Services.Advices
             catch (Exception exception)
             {
                 throw new ApplicationException("Error adding the advice.", exception);
+            }
+        }
+        
+        public async Task DeleteAdvice(int id)
+        {
+            try
+            {
+                var removedAdvice = await _adviceRepository.GetAdvice(id);
+                var removedAdviceTitleId = removedAdvice.TitleId;
+                var removedAdviceDescriptionId = removedAdvice.DescriptionId;
+
+                await _adviceRepository.DeleteAdvice(removedAdvice);
+                await _imageService.DeleteImage(removedAdvice.ImageId);
+                await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAdviceTitleId, removedAdviceDescriptionId });
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the advice.", exception);
             }
         }
     }

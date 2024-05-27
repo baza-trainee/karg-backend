@@ -11,5 +11,7 @@ namespace karg.DAL.Interfaces
     {
         Task<List<Advice>> GetAdvices();
         Task<int> AddAdvice(Advice advice);
+        Task<Advice> GetAdvice(int adviceId);
+        Task DeleteAdvice(Advice advice);
     }
 }
