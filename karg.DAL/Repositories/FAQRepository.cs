@@ -27,5 +27,13 @@ namespace karg.DAL.Repositories
                 .Include(faq => faq.Answer).ThenInclude(localizationSet => localizationSet.Localizations)
                 .ToListAsync();
         }
+
+        public async Task<int> AddFAQ(FAQ faq)
+        {
+            _context.FAQs.Add(faq);
+            await _context.SaveChangesAsync();
+
+            return faq.Id;
+        }
     }
 }

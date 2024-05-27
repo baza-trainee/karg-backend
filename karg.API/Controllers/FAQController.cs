@@ -1,4 +1,5 @@
-﻿using karg.BLL.Interfaces.FAQs;
+﻿using karg.BLL.DTO.FAQs;
+using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,30 @@ namespace karg.API.Controllers
                 }
 
                 return Ok(faqs);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new FAQ.
+        /// </summary>
+        /// <param name="faqDto">The data for the new FAQ.</param>
+        /// <returns>The newly created FAQ.</returns>
+        /// <response code="201">Returns the newly created FAQ.</response>
+        /// <response code="500">If an error occurs while trying to create the FAQ.</response>
+        [HttpPost("add")]
+        [ProducesResponseType(typeof(CreateAndUpdateFAQDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateFAQ([FromBody] CreateAndUpdateFAQDTO faqDto)
+        {
+            try
+            {
+                await _faqService.CreateFAQ(faqDto);
+
+                return Created("CreateFAQ", faqDto);
             }
             catch (Exception exception)
             {
