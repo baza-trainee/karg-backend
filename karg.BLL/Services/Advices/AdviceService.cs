@@ -2,8 +2,10 @@
 using karg.BLL.DTO.Advices;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using karg.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +20,15 @@ namespace karg.BLL.Services.Advices
         private readonly IPaginationService<Advice> _paginationService;
         private readonly IImageService _imageService;
         private readonly ILocalizationService _localizationService;
+        private readonly ILocalizationSetService _localizationSetService;
         private readonly IMapper _mapper;
-        public AdviceService(IAdviceRepository adviceRepository, IPaginationService<Advice> paginationService, IImageService imageService, ILocalizationService localizationService, IMapper mapper)
+        public AdviceService(IAdviceRepository adviceRepository, IPaginationService<Advice> paginationService, ILocalizationSetService localizationSetService, IImageService imageService, ILocalizationService localizationService, IMapper mapper)
         {
             _adviceRepository = adviceRepository;
             _paginationService = paginationService;
             _imageService = imageService;
             _localizationService = localizationService;
+            _localizationSetService = localizationSetService;
             _mapper = mapper;
         }
 
@@ -58,6 +62,24 @@ namespace karg.BLL.Services.Advices
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of advices.", exception);
+            }
+        }
+
+        public async Task DeleteAdvice(int id)
+        {
+            try
+            {
+                var removedAdvice = await _adviceRepository.GetAdvice(id);
+                var removedAdviceTitleId = removedAdvice.TitleId;
+                var removedAdviceDescriptionId = removedAdvice.DescriptionId;
+                
+                await _adviceRepository.DeleteAdvice(removedAdvice);
+                await _imageService.DeleteImage(removedAdvice.ImageId);
+                await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAdviceTitleId, removedAdviceDescriptionId });
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the advice.", exception);
             }
         }
     }
