@@ -10,5 +10,6 @@ namespace karg.BLL.Interfaces.FAQs
     public interface IFAQService
     {
         Task<List<AllFAQsDTO>> GetFAQs(string cultureCode);
+        Task DeleteFAQ(int faqId);
     }
 }

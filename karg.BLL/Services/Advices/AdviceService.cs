@@ -93,11 +93,11 @@ namespace karg.BLL.Services.Advices
             }
         }
         
-        public async Task DeleteAdvice(int id)
+        public async Task DeleteAdvice(int adviceId)
         {
             try
             {
-                var removedAdvice = await _adviceRepository.GetAdvice(id);
+                var removedAdvice = await _adviceRepository.GetAdvice(adviceId);
                 var removedAdviceTitleId = removedAdvice.TitleId;
                 var removedAdviceDescriptionId = removedAdvice.DescriptionId;
 

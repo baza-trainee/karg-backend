@@ -10,5 +10,7 @@ namespace karg.DAL.Interfaces
     public interface IFAQRepository
     {
         Task<List<FAQ>> GetFAQs();
+        Task DeleteFAQ(FAQ faq);
+        Task<FAQ> GetFAQ(int faqId);
     }
 }
