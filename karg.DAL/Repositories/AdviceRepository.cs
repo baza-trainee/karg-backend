@@ -27,5 +27,28 @@ namespace karg.DAL.Repositories
                 .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .ToListAsync();
         }
+
+        public async Task<int> AddAdvice(Advice advice)
+        {
+            _context.Advices.Add(advice);
+            await _context.SaveChangesAsync();
+
+            return advice.Id;
+        }
+
+        public async Task<Advice> GetAdvice(int adviceId)
+        {
+            return await _context.Advices
+                .AsNoTracking()
+                .Include(animal => animal.Title).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .FirstOrDefaultAsync(advice => advice.Id == adviceId);
+        }
+
+        public async Task DeleteAdvice(Advice advice)
+        {
+            _context.Advices.Remove(advice);
+            await _context.SaveChangesAsync();
+        }
     }
 }

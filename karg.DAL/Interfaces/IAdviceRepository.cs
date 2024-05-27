@@ -10,5 +10,8 @@ namespace karg.DAL.Interfaces
     public interface IAdviceRepository
     {
         Task<List<Advice>> GetAdvices();
+        Task<int> AddAdvice(Advice advice);
+        Task<Advice> GetAdvice(int adviceId);
+        Task DeleteAdvice(Advice advice);
     }
 }

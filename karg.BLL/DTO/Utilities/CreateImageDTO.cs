@@ -9,6 +9,6 @@ namespace karg.BLL.DTO.Utilities
     public class CreateImageDTO
     {
         public Uri? Uri { get; set; }
-        public int AnimalId { get; set; }
+        public int? AnimalId { get; set; }
     }
 }

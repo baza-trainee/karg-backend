@@ -23,13 +23,15 @@ namespace karg.BLL.Services.Utilities
             _mapper = mapper;
         }
 
-        public async Task AddImage(CreateImageDTO imageDto)
+        public async Task<int> AddImage(CreateImageDTO imageDto)
         {
             try
             {
                 var image = _mapper.Map<Image>(imageDto);
 
                 await _repository.AddImage(image);
+
+                return image.Id;
             }
             catch (Exception exception)
             {
@@ -94,6 +96,21 @@ namespace karg.BLL.Services.Utilities
             catch (Exception exception)
             {
                 throw new ApplicationException("Error when updating animal images.", exception);
+            }
+        }
+
+        public async Task DeleteImage(int imageId)
+        {
+            try
+            {
+                var allImages = await _repository.GetImages();
+                var image = allImages.FirstOrDefault(image => image.Id == imageId);
+
+                await _repository.DeleteImage(image);
+            }
+            catch(Exception exception)
+            {
+                throw new ApplicationException("Error delete the image.", exception);
             }
         }
     }
