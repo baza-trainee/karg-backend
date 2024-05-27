@@ -19,6 +19,16 @@ namespace karg.API.Controllers
             _cultureService = cultureService;
         }
 
+        /// <summary>
+        /// Gets a list of advices filtered by the specified criteria.
+        /// </summary>
+        /// <param name="filter">Filter object to filter the list of advices.</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific advices. Default is "ua".</param>
+        /// <response code="200">Successful request. Returns a list of advices with the total number of pages.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="404">No advices found based on the specified filters.</response>
+        /// <response code="500">An internal server error occurred while trying to get the list of advices.</response>
+        /// <returns>List of advices with total number of pages.</returns>
         [HttpGet("getall")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]

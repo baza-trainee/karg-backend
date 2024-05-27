@@ -38,11 +38,11 @@ namespace karg.BLL.Services.Advices
             {
                 var advices = await _adviceRepository.GetAdvices();
                 var paginatedAdvices = await _paginationService.PaginateWithTotalPages(advices, filter.Page, filter.PageSize);
-                var paginatedAdviceItems = paginatedAdvices.Items;
+                var paginatedAdvicesItems = paginatedAdvices.Items;
                 var totalPages = paginatedAdvices.TotalPages;
                 var advicesDto = new List<AdviceDTO>();
 
-                foreach (var advice in paginatedAdviceItems)
+                foreach (var advice in paginatedAdvicesItems)
                 {
                     var adviceDto = _mapper.Map<AdviceDTO>(advice);
                     var adviceImage = await _imageService.GetImageById(advice.ImageId);
