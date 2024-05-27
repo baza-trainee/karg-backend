@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Animals;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Services.Utilities;
@@ -11,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Helpers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace karg.BLL.Services.Advices
 {
@@ -65,6 +69,30 @@ namespace karg.BLL.Services.Advices
             }
         }
 
+        public async Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto)
+        {
+            try
+            {
+                var advice = _mapper.Map<Advice>(adviceDto);
+                var newImage = new CreateImageDTO
+                {
+                    Uri = adviceDto.Image,
+                    AnimalId = null,
+                };
+                var imageId = await _imageService.AddImage(newImage);
+
+                advice.TitleId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Title_en, adviceDto.Title_ua);
+                advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
+                advice.ImageId = imageId;
+
+                await _adviceRepository.AddAdvice(advice);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error adding the advice.", exception);
+            }
+        }
+        
         public async Task DeleteAdvice(int id)
         {
             try
@@ -72,7 +100,7 @@ namespace karg.BLL.Services.Advices
                 var removedAdvice = await _adviceRepository.GetAdvice(id);
                 var removedAdviceTitleId = removedAdvice.TitleId;
                 var removedAdviceDescriptionId = removedAdvice.DescriptionId;
-                
+
                 await _adviceRepository.DeleteAdvice(removedAdvice);
                 await _imageService.DeleteImage(removedAdvice.ImageId);
                 await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAdviceTitleId, removedAdviceDescriptionId });
