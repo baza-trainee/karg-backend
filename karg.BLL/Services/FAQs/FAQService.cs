@@ -2,7 +2,9 @@
 using karg.BLL.DTO.FAQs;
 using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
+using karg.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +17,14 @@ namespace karg.BLL.Services.FAQs
     {
         private readonly IFAQRepository _faqRepository;
         private readonly ILocalizationService _localizationService;
+        private readonly ILocalizationSetService _localizationSetService;
         private readonly IMapper _mapper;
 
-        public FAQService(IFAQRepository faqRepository, ILocalizationService localizationService, IMapper mapper)
+        public FAQService(IFAQRepository faqRepository, ILocalizationService localizationService, ILocalizationSetService localizationSetService, IMapper mapper)
         {
             _faqRepository = faqRepository;
             _localizationService = localizationService;
+            _localizationSetService = localizationSetService;
             _mapper = mapper;
         }
 
@@ -35,6 +39,7 @@ namespace karg.BLL.Services.FAQs
                 {
                     var faqDto = new AllFAQsDTO
                     {
+                        Id = faq.Id,
                         Answer = _localizationService.GetLocalizedValue(faq.Answer, cultureCode, faq.AnswerId),
                         Question = _localizationService.GetLocalizedValue(faq.Question, cultureCode, faq.QuestionId)
                     };
@@ -47,6 +52,23 @@ namespace karg.BLL.Services.FAQs
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of FAQs.", exception);
+            }
+        }
+
+        public async Task DeleteFAQ(int faqId)
+        {
+            try
+            {
+                var removedFAQ = await _faqRepository.GetFAQ(faqId);
+                var removedFAQQuestionId = removedFAQ.QuestionId;
+                var removedFAQAnswerId = removedFAQ.AnswerId;
+
+                await _faqRepository.DeleteFAQ(removedFAQ);
+                await _localizationSetService.DeleteLocalizationSets(new List<int> { removedFAQQuestionId, removedFAQAnswerId });
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the FAQ.", exception);
             }
         }
     }

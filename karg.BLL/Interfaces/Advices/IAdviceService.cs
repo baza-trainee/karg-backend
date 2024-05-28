@@ -12,6 +12,6 @@ namespace karg.BLL.Interfaces.Advices
     {
         Task<PaginatedAllAdvicesDTO> GetAdvices(AdvicesFilterDTO filter, string cultureCode);
         Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto);
-        Task DeleteAdvice(int id);
+        Task DeleteAdvice(int adviceId);
     }
 }
