@@ -28,6 +28,14 @@ namespace karg.DAL.Repositories
                 .ToListAsync();
         }
 
+        public async Task<int> AddFAQ(FAQ faq)
+        {
+            _context.FAQs.Add(faq);
+            await _context.SaveChangesAsync();
+
+            return faq.Id;
+        }
+        
         public async Task<FAQ> GetFAQ(int faqId)
         {
             return await _context.FAQs

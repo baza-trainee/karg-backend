@@ -89,6 +89,7 @@ namespace karg.API
             builder.Services.AddAutoMapper(typeof(AnimalProfile));
             builder.Services.AddAutoMapper(typeof(RescuerProfile));
             builder.Services.AddAutoMapper(typeof(PartnerProfile));
+            builder.Services.AddAutoMapper(typeof(FAQProfile));
             builder.Services.AddAutoMapper(typeof(ImageProfile));
             builder.Services.AddAutoMapper(typeof(YearResultProfile));
 
