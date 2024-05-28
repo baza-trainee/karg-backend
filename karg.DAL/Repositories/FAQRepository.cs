@@ -35,5 +35,20 @@ namespace karg.DAL.Repositories
 
             return faq.Id;
         }
+        
+        public async Task<FAQ> GetFAQ(int faqId)
+        {
+            return await _context.FAQs
+                .AsNoTracking()
+                .Include(faq => faq.Question).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(faq => faq.Answer).ThenInclude(localizationSet => localizationSet.Localizations)
+                .FirstOrDefaultAsync(faq => faq.Id == faqId);
+        }
+
+        public async Task DeleteFAQ(FAQ faq)
+        {
+            _context.FAQs.Remove(faq);
+            await _context.SaveChangesAsync();
+        }
     }
 }

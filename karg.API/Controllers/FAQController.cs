@@ -83,5 +83,29 @@ namespace karg.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
+
+        /// <summary>
+        /// Deletes a specific FAQ.
+        /// </summary>
+        /// <param name="id">The unique identifier of the FAQ to be deleted.</param>
+        /// <response code="204">Successful request. The FAQ has been deleted.</response>
+        /// <response code="500">An internal server error occurred while trying to delete the FAQ.</response>
+        /// <returns>No content.</returns>
+        [HttpDelete("delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteFAQ(int id)
+        {
+            try
+            {
+                await _faqService.DeleteFAQ(id);
+
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
     }
 }

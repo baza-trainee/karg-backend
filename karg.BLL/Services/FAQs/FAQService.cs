@@ -3,6 +3,7 @@ using karg.BLL.DTO.FAQs;
 using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 
@@ -34,6 +35,7 @@ namespace karg.BLL.Services.FAQs
                 {
                     var faqDto = new AllFAQsDTO
                     {
+                        Id = faq.Id,
                         Answer = _localizationService.GetLocalizedValue(faq.Answer, cultureCode, faq.AnswerId),
                         Question = _localizationService.GetLocalizedValue(faq.Question, cultureCode, faq.QuestionId)
                     };
@@ -63,6 +65,23 @@ namespace karg.BLL.Services.FAQs
             catch (Exception exception)
             {
                 throw new ApplicationException("Error adding the FAQ.", exception);
+            }
+        }
+        
+        public async Task DeleteFAQ(int faqId)
+        {
+            try
+            {
+                var removedFAQ = await _faqRepository.GetFAQ(faqId);
+                var removedFAQQuestionId = removedFAQ.QuestionId;
+                var removedFAQAnswerId = removedFAQ.AnswerId;
+
+                await _faqRepository.DeleteFAQ(removedFAQ);
+                await _localizationSetService.DeleteLocalizationSets(new List<int> { removedFAQQuestionId, removedFAQAnswerId });
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the FAQ.", exception);
             }
         }
     }
