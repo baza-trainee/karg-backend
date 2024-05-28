@@ -13,8 +13,8 @@ namespace karg.BLL.Interfaces.Animals
     {
         Task<PaginatedAllAnimalsDTO> GetAnimals(AnimalsFilterDTO filter, string cultureCode);
         Task CreateAnimal(CreateAndUpdateAnimalDTO animalDto);
-        Task<CreateAndUpdateAnimalDTO> UpdateAnimal(int id, JsonPatchDocument<CreateAndUpdateAnimalDTO> patchDoc);
-        Task<AnimalDTO> GetAnimalById(int id, string cultureCode);
-        Task DeleteAnimal(int id);
+        Task<CreateAndUpdateAnimalDTO> UpdateAnimal(int animalId, JsonPatchDocument<CreateAndUpdateAnimalDTO> patchDoc);
+        Task<AnimalDTO> GetAnimalById(int animalId, string cultureCode);
+        Task DeleteAnimal(int animalId);
     }
 }
