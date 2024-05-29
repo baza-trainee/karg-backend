@@ -1,5 +1,6 @@
 ﻿using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Animals;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace karg.BLL.Interfaces.Advices
     {
         Task<PaginatedAllAdvicesDTO> GetAdvices(AdvicesFilterDTO filter, string cultureCode);
         Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto);
+        Task<CreateAndUpdateAdviceDTO> UpdateAdvice(int adviceId, JsonPatchDocument<CreateAndUpdateAdviceDTO> patchDoc);
         Task DeleteAdvice(int adviceId);
     }
 }
