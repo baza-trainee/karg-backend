@@ -9,6 +9,7 @@ namespace karg.BLL.Profiles
     {
         public AdviceProfile()
         {
+            CreateMap<Advice, CreateAndUpdateAdviceDTO>();
             CreateMap<Advice, AdviceDTO>();
             CreateMap<CreateAndUpdateAdviceDTO, Advice>()
                 .ForMember(dest => dest.Created_At, opt => opt.MapFrom(src => DateOnly.ParseExact(src.Created_At, "yyyy-MM-dd")))

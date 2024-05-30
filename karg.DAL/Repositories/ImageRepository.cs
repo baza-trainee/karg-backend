@@ -24,6 +24,19 @@ namespace karg.DAL.Repositories
             return await _context.Images.AsNoTracking().ToListAsync();
         }
 
+        public async Task<Image> GetImage(int imageId)
+        {
+            return await _context.Images.AsNoTracking().FirstOrDefaultAsync(image => image.Id == imageId);
+        }
+
+        public async Task UpdateImage(Image updatedImage)
+        {
+            var existingImage = await _context.Images.FindAsync(updatedImage.Id);
+
+            _context.Entry(existingImage).CurrentValues.SetValues(updatedImage);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteImage(Image image)
         {
             _context.Images.Remove(image);

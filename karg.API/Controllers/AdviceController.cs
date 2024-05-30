@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.DTO.Advices;
-using karg.BLL.DTO.Animals;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.API.Controllers
 {
@@ -85,7 +85,39 @@ namespace karg.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
-        
+
+        /// <summary>
+        /// Updates the details of a specific advice.
+        /// </summary>
+        /// <param name="id">The unique identifier of the advice to be updated.</param>
+        /// <param name="patchDoc">The JSON Patch document containing the updates to apply.</param>
+        /// <response code="200">Successful request. Returns the updated details of the advice.</response>
+        /// <response code="400">Bad request. If the JSON Patch document is null.</response>
+        /// <response code="500">Internal server error. An error occurred while trying to update the advice details.</response>
+        /// <returns>The updated details of the advice.</returns>
+        [HttpPatch("update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateAdvice(int id, [FromBody] JsonPatchDocument<CreateAndUpdateAdviceDTO> patchDoc)
+        {
+            try
+            {
+                if (patchDoc == null)
+                {
+                    return BadRequest();
+                }
+
+                var resultAdvice = await _adviceService.UpdateAdvice(id, patchDoc);
+
+                return Ok(resultAdvice);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
         /// <summary>
         /// Deletes a specific advice.
         /// </summary>

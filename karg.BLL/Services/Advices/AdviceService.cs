@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
-using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.Interfaces.Utilities;
@@ -8,13 +7,7 @@ using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using karg.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Helpers;
-using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Services.Advices
 {
@@ -92,7 +85,39 @@ namespace karg.BLL.Services.Advices
                 throw new ApplicationException("Error adding the advice.", exception);
             }
         }
-        
+
+        public async Task<CreateAndUpdateAdviceDTO> UpdateAdvice(int adviceId, JsonPatchDocument<CreateAndUpdateAdviceDTO> patchDoc)
+        {
+            try
+            {
+                var existingAdvice = await _adviceRepository.GetAdvice(adviceId);
+                var patchedAdvice = _mapper.Map<CreateAndUpdateAdviceDTO>(existingAdvice);
+
+                patchedAdvice.Title_ua = _localizationService.GetLocalizedValue(existingAdvice.Title, "ua", existingAdvice.TitleId);
+                patchedAdvice.Title_en = _localizationService.GetLocalizedValue(existingAdvice.Title, "en", existingAdvice.TitleId);
+                patchedAdvice.Description_ua = _localizationService.GetLocalizedValue(existingAdvice.Description, "ua", existingAdvice.DescriptionId);
+                patchedAdvice.Description_en = _localizationService.GetLocalizedValue(existingAdvice.Description, "en", existingAdvice.DescriptionId);
+
+                var adviceImage = await _imageService.GetImageById(existingAdvice.ImageId);
+                patchedAdvice.Image = adviceImage;
+
+                patchDoc.ApplyTo(patchedAdvice);
+
+                await _imageService.UpdateImage(existingAdvice.ImageId, patchedAdvice.Image);
+
+                existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
+                existingAdvice.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.DescriptionId, patchedAdvice.Description_en, patchedAdvice.Description_ua);
+
+                await _adviceRepository.UpdateAdvice(existingAdvice);
+
+                return patchedAdvice;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error updating the advice.", exception);
+            }
+        }
+
         public async Task DeleteAdvice(int adviceId)
         {
             try

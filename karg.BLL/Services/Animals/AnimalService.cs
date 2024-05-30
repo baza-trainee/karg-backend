@@ -123,11 +123,11 @@ namespace karg.BLL.Services.Animals
                 var patchedAnimal = _mapper.Map<CreateAndUpdateAnimalDTO>(existingAnimal);
 
                 patchedAnimal.Name_ua = _localizationService.GetLocalizedValue(existingAnimal.Name, "ua", existingAnimal.NameId);
-                patchedAnimal.Name_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
+                patchedAnimal.Name_en = _localizationService.GetLocalizedValue(existingAnimal.Name, "en", existingAnimal.NameId);
                 patchedAnimal.Description_ua = _localizationService.GetLocalizedValue(existingAnimal.Description, "ua", existingAnimal.DescriptionId);
                 patchedAnimal.Description_en = _localizationService.GetLocalizedValue(existingAnimal.Description, "en", existingAnimal.DescriptionId);
-                patchedAnimal.Story_ua = _localizationService.GetLocalizedValue(existingAnimal.Description, "ua", existingAnimal.DescriptionId);
-                patchedAnimal.Story_en = _localizationService.GetLocalizedValue(existingAnimal.Description, "en", existingAnimal.DescriptionId);
+                patchedAnimal.Story_ua = _localizationService.GetLocalizedValue(existingAnimal.Story, "ua", existingAnimal.StoryId);
+                patchedAnimal.Story_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
 
                 var animalImages = await _imageService.GetAnimalImages(animalId);
                 patchedAnimal.Images = animalImages.Select(image => image.Uri).ToList();
