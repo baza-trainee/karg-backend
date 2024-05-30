@@ -45,6 +45,14 @@ namespace karg.DAL.Repositories
                 .FirstOrDefaultAsync(advice => advice.Id == adviceId);
         }
 
+        public async Task UpdateAdvice(Advice updatedAdvice)
+        {
+            var existingAdvice = await _context.Advices.FindAsync(updatedAdvice.Id);
+
+            _context.Entry(existingAdvice).CurrentValues.SetValues(updatedAdvice);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteAdvice(Advice advice)
         {
             _context.Advices.Remove(advice);

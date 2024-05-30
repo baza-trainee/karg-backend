@@ -43,8 +43,7 @@ namespace karg.BLL.Services.Utilities
         {
             try
             {
-                var allImages = await _repository.GetImages();
-                var image = allImages.FirstOrDefault(image => image.Id == imageId);
+                var image = await _repository.GetImage(imageId);
 
                 return image.Uri;
             }
@@ -71,16 +70,34 @@ namespace karg.BLL.Services.Utilities
             }
         }
 
-        public async Task UpdateAnimalImages(int animalId, List<Uri> updatedImageUris)
+        public async Task UpdateImage(int imageId, Uri updatedImageUri)
+        {
+            try
+            {
+                var existingImage = await _repository.GetImage(imageId);
+                if (existingImage.Uri != updatedImageUri)
+                {
+                    existingImage.Uri = updatedImageUri;
+
+                    await _repository.UpdateImage(existingImage);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error when updating image.", exception);
+            }
+        }
+
+        public async Task UpdateAnimalImages(int animalId, List<Uri> updatedImagesUris)
         {
             try
             {
                 var existingImages = await GetAnimalImages(animalId);
                 var existingImageUris = existingImages.Select(image => image.Uri).ToList();
                 var deletedImages = existingImages
-                    .Where(existingImage => !updatedImageUris.Any(updatedImageUri => updatedImageUri == existingImage.Uri))
+                    .Where(existingImage => !updatedImagesUris.Any(updatedImageUri => updatedImageUri == existingImage.Uri))
                     .ToList();
-                var newImages = updatedImageUris.Except(existingImageUris).ToList();
+                var newImages = updatedImagesUris.Except(existingImageUris).ToList();
 
                 foreach (var image in deletedImages)
                 {

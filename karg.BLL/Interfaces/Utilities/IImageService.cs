@@ -14,6 +14,7 @@ namespace karg.BLL.Interfaces.Utilities
         Task<Uri> GetImageById(int imageId);
         Task<int> AddImage(CreateImageDTO imageDto);
         Task DeleteImage(int imageId);
-        Task UpdateAnimalImages(int animalId, List<Uri> updatedImageUris);
+        Task UpdateAnimalImages(int animalId, List<Uri> updatedImagesUris);
+        Task UpdateImage(int imageId, Uri updatedImageUri);
     }
 }
