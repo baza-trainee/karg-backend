@@ -63,6 +63,47 @@ namespace karg.API.Controllers
         }
 
         /// <summary>
+        /// Gets the details of a specific advice by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the advice.</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific details. Default is "ua".</param>
+        /// <response code="200">Successful request. Returns the details of the specified advice.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="404">No advice found with the specified identifier.</response>
+        /// <response code="500">An internal server error occurred while trying to retrieve the advice details.</response>
+        /// <returns>The details of the specified advice.</returns>
+        [HttpGet("getbyid")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAdviceById(int id, string cultureCode = "ua")
+        {
+            try
+            {
+                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+                if (ModelState.IsValid && !isValidCultureCode)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var advice = await _adviceService.GetAdviceById(id, cultureCode);
+
+                if (advice == null)
+                {
+                    return NotFound("Advice not found.");
+                }
+
+                return Ok(advice);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
         /// Creates a new advice.
         /// </summary>
         /// <param name="adviceDto">The data for the new advice.</param>
