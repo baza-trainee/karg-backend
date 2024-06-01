@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.Interfaces.Utilities;
@@ -83,6 +84,26 @@ namespace karg.BLL.Services.Advices
             catch (Exception exception)
             {
                 throw new ApplicationException("Error adding the advice.", exception);
+            }
+        }
+
+        public async Task<AdviceDTO> GetAdviceById(int adviceId, string cultureCode)
+        {
+            try
+            {
+                var advice = await _adviceRepository.GetAdvice(adviceId);
+                var adviceDto = _mapper.Map<AdviceDTO>(advice);
+                var adviceImage = await _imageService.GetImageById(advice.ImageId);
+
+                adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
+                adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
+                adviceDto.Image = adviceImage;
+
+                return adviceDto;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error retrieving animal by id.", exception);
             }
         }
 

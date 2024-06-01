@@ -13,6 +13,7 @@ namespace karg.BLL.Interfaces.Advices
     {
         Task<PaginatedAllAdvicesDTO> GetAdvices(AdvicesFilterDTO filter, string cultureCode);
         Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto);
+        Task<AdviceDTO> GetAdviceById(int adviceId, string cultureCode);
         Task<CreateAndUpdateAdviceDTO> UpdateAdvice(int adviceId, JsonPatchDocument<CreateAndUpdateAdviceDTO> patchDoc);
         Task DeleteAdvice(int adviceId);
     }
