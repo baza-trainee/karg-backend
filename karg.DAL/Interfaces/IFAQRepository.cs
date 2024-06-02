@@ -11,6 +11,7 @@ namespace karg.DAL.Interfaces
     {
         Task<List<FAQ>> GetFAQs();
         Task<int> AddFAQ(FAQ faq);
+        Task UpdateFAQ(FAQ updatedFAQ);
         Task DeleteFAQ(FAQ faq);
         Task<FAQ> GetFAQ(int faqId);
     }

@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.FAQs;
-using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using karg.DAL.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Services.FAQs
 {
@@ -48,6 +49,33 @@ namespace karg.BLL.Services.FAQs
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of FAQs.", exception);
+            }
+        }
+
+        public async Task<CreateAndUpdateFAQDTO> UpdateFAQ(int faqId, JsonPatchDocument<CreateAndUpdateFAQDTO> patchDoc)
+        {
+            try
+            {
+                var existingFAQ = await _faqRepository.GetFAQ(faqId);
+                var patchedFAQ = _mapper.Map<CreateAndUpdateFAQDTO>(existingFAQ);
+
+                patchedFAQ.Question_ua = _localizationService.GetLocalizedValue(existingFAQ.Question, "ua", existingFAQ.QuestionId);
+                patchedFAQ.Question_en = _localizationService.GetLocalizedValue(existingFAQ.Question, "en", existingFAQ.QuestionId);
+                patchedFAQ.Answer_ua = _localizationService.GetLocalizedValue(existingFAQ.Answer, "ua", existingFAQ.AnswerId);
+                patchedFAQ.Answer_en = _localizationService.GetLocalizedValue(existingFAQ.Answer, "en", existingFAQ.AnswerId);
+
+                patchDoc.ApplyTo(patchedFAQ);
+
+                existingFAQ.QuestionId = await _localizationSetService.UpdateLocalizationSet(existingFAQ.QuestionId, patchedFAQ.Question_en, patchedFAQ.Question_ua);
+                existingFAQ.AnswerId = await _localizationSetService.UpdateLocalizationSet(existingFAQ.AnswerId, patchedFAQ.Answer_en, patchedFAQ.Answer_ua);
+
+                await _faqRepository.UpdateFAQ(existingFAQ);
+
+                return patchedFAQ;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error updating the FAQ.", exception);
             }
         }
 
