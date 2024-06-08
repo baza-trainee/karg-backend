@@ -2,6 +2,7 @@
 using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Utilities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace karg.API.Controllers
@@ -77,6 +78,38 @@ namespace karg.API.Controllers
                 await _faqService.CreateFAQ(faqDto);
 
                 return Created("CreateFAQ", faqDto);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates the details of a specific FAQ.
+        /// </summary>
+        /// <param name="id">The unique identifier of the FAQ to be updated.</param>
+        /// <param name="patchDoc">The JSON Patch document containing the updates to apply.</param>
+        /// <response code="200">Successful request. Returns the updated details of the FAQ.</response>
+        /// <response code="400">Bad request. If the JSON Patch document is null.</response>
+        /// <response code="500">Internal server error. An error occurred while trying to update the FAQ details.</response>
+        /// <returns>The updated details of the FAQ.</returns>
+        [HttpPatch("update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateFAQ(int id, [FromBody] JsonPatchDocument<CreateAndUpdateFAQDTO> patchDoc)
+        {
+            try
+            {
+                if (patchDoc == null)
+                {
+                    return BadRequest();
+                }
+
+                var resultFAQ = await _faqService.UpdateFAQ(id, patchDoc);
+
+                return Ok(resultFAQ);
             }
             catch (Exception exception)
             {

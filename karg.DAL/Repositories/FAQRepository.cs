@@ -45,6 +45,14 @@ namespace karg.DAL.Repositories
                 .FirstOrDefaultAsync(faq => faq.Id == faqId);
         }
 
+        public async Task UpdateFAQ(FAQ updatedFAQ)
+        {
+            var existingFAQ = await _context.FAQs.FindAsync(updatedFAQ.Id);
+
+            _context.Entry(existingFAQ).CurrentValues.SetValues(updatedFAQ);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteFAQ(FAQ faq)
         {
             _context.FAQs.Remove(faq);
