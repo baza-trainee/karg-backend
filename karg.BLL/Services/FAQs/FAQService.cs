@@ -2,10 +2,8 @@
 using karg.BLL.DTO.FAQs;
 using karg.BLL.Interfaces.FAQs;
 using karg.BLL.Interfaces.Utilities;
-using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
-using karg.DAL.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Services.FAQs
@@ -25,16 +23,16 @@ namespace karg.BLL.Services.FAQs
             _mapper = mapper;
         }
 
-        public async Task<List<AllFAQsDTO>> GetFAQs(string cultureCode)
+        public async Task<List<FAQDTO>> GetFAQs(string cultureCode)
         {
             try
             {
                 var faqs = await _faqRepository.GetFAQs();
-                var faqsDto = new List<AllFAQsDTO>();
+                var faqsDto = new List<FAQDTO>();
 
                 foreach (var faq in faqs)
                 {
-                    var faqDto = new AllFAQsDTO
+                    var faqDto = new FAQDTO
                     {
                         Id = faq.Id,
                         Answer = _localizationService.GetLocalizedValue(faq.Answer, cultureCode, faq.AnswerId),
@@ -49,6 +47,24 @@ namespace karg.BLL.Services.FAQs
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of FAQs.", exception);
+            }
+        }
+
+        public async Task<FAQDTO> GetFAQById(int faqId, string cultureCode)
+        {
+            try
+            {
+                var faq = await _faqRepository.GetFAQ(faqId);
+                var faqDto = _mapper.Map<FAQDTO>(faq);
+
+                faqDto.Question = _localizationService.GetLocalizedValue(faq.Question, cultureCode, faq.QuestionId);
+                faqDto.Answer = _localizationService.GetLocalizedValue(faq.Answer, cultureCode, faq.AnswerId);
+
+                return faqDto;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error retrieving FAQ by id.", exception);
             }
         }
 

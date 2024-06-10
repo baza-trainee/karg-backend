@@ -24,7 +24,7 @@ namespace karg.API.Controllers
         /// Gets a list of advices filtered by the specified criteria.
         /// </summary>
         /// <param name="filter">Filter object to filter the list of advices.</param>
-        /// <param name="cultureCode">Optional. The culture code for language-specific advices. Default is "ua".</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific advices.</param>
         /// <response code="200">Successful request. Returns a list of advices with the total number of pages.</response>
         /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No advices found based on the specified filters.</response>
@@ -66,7 +66,7 @@ namespace karg.API.Controllers
         /// Gets the details of a specific advice by its unique identifier.
         /// </summary>
         /// <param name="id">The unique identifier of the advice.</param>
-        /// <param name="cultureCode">Optional. The culture code for language-specific details. Default is "ua".</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific details.</param>
         /// <response code="200">Successful request. Returns the details of the specified advice.</response>
         /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No advice found with the specified identifier.</response>
