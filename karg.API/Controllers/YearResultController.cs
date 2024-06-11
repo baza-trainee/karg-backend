@@ -41,7 +41,7 @@ namespace karg.API.Controllers
             {
                 var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
 
-                if (ModelState.IsValid && !isValidCultureCode)
+                if (!ModelState.IsValid && !isValidCultureCode)
                 {
                     return BadRequest("Invalid request parameters provided.");
                 }

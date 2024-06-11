@@ -10,5 +10,6 @@ namespace karg.DAL.Interfaces
     public interface IPartnerRepository
     {
         Task<List<Partner>> GetPartners();
+        Task<Partner> GetPartner(int partnerId);
     }
 }
