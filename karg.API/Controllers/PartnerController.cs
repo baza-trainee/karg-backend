@@ -70,5 +70,35 @@ namespace karg.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
+
+        /// Gets the details of a specific partner by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the partner.</param>
+        /// <response code="200">Successful request. Returns the details of the specified partner.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="500">An internal server error occurred while trying to retrieve the partner details.</response>
+        /// <returns>The details of the specified partner.</returns>
+        [HttpGet("getbyid")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPartnerById(int id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var partner = await _partnerService.GetPartnerById(id);
+
+                return Ok(partner);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
     }
 }
