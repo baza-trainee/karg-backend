@@ -5,7 +5,6 @@ using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 
-
 namespace karg.BLL.Services.Partners
 {
     public class PartnerService : IPartnerService
@@ -45,6 +44,21 @@ namespace karg.BLL.Services.Partners
             }
         }
 
+        public async Task DeletePartner(int partnerId)
+        {
+            try
+            {
+                var removedPartner = await _partnerRepository.GetPartner(partnerId);
+
+                await _partnerRepository.DeletePartner(removedPartner);
+                await _imageService.DeleteImage(removedPartner.ImageId);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the partner.", exception);
+            }
+        }
+        
         public async Task<PartnerDTO> GetPartnerById(int partnerId)
         {
             try

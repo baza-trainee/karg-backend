@@ -23,5 +23,11 @@ namespace karg.DAL.Repositories
         {
             return await _context.Partners.AsNoTracking().FirstOrDefaultAsync(partner => partner.Id == partnerId);
         }
+
+        public async Task DeletePartner(Partner partner)
+        {
+            _context.Partners.Remove(partner);
+            await _context.SaveChangesAsync();
+        }
     }
 }
