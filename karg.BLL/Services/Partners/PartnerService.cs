@@ -3,12 +3,6 @@ using karg.BLL.DTO.Partners;
 using karg.BLL.Interfaces.Partners;
 using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
-using karg.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.BLL.Services.Partners
 {
@@ -46,6 +40,21 @@ namespace karg.BLL.Services.Partners
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of partners.", exception);
+            }
+        }
+
+        public async Task DeletePartner(int partnerId)
+        {
+            try
+            {
+                var removedPartner = await _partnerRepository.GetPartner(partnerId);
+
+                await _partnerRepository.DeletePartner(removedPartner);
+                await _imageService.DeleteImage(removedPartner.ImageId);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the partner.", exception);
             }
         }
     }

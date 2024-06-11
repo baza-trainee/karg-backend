@@ -10,5 +10,6 @@ namespace karg.BLL.Interfaces.Partners
     public interface IPartnerService
     {
         Task<List<AllPartnersDTO>> GetPartners();
+        Task DeletePartner(int partnerId);
     }
 }
