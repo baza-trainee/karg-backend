@@ -2,11 +2,6 @@
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.DAL.Repositories
 {
@@ -22,6 +17,11 @@ namespace karg.DAL.Repositories
         public async Task<List<Partner>> GetPartners()
         {
             return await _context.Partners.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Partner> GetPartner(int partnerId)
+        {
+            return await _context.Partners.AsNoTracking().FirstOrDefaultAsync(partner => partner.Id == partnerId);
         }
     }
 }
