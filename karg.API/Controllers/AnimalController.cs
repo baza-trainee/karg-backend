@@ -25,7 +25,7 @@ namespace karg.API.Controllers
         /// Gets a list of animals filtered by the specified criteria.
         /// </summary>
         /// <param name="filter">Filter object to filter the list of animals.</param>
-        /// <param name="cultureCode">Optional. The culture code for language-specific Animals. Default is "ua".</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific Animals.</param>
         /// <response code="200">Successful request. Returns a list of animals with the total number of pages.</response>
         /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No animals found based on the specified filters.</response>
@@ -67,7 +67,7 @@ namespace karg.API.Controllers
         /// Gets the details of a specific animal by its unique identifier.
         /// </summary>
         /// <param name="id">The unique identifier of the animal.</param>
-        /// <param name="cultureCode">Optional. The culture code for language-specific details. Default is "ua".</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific details.</param>
         /// <response code="200">Successful request. Returns the details of the specified animal.</response>
         /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No animal found with the specified identifier.</response>

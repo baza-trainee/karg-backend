@@ -23,7 +23,7 @@ namespace karg.API.Controllers
         /// Gets a list of years results filtered by the specified criteria.
         /// </summary>
         /// <param name="filter">Filter object to filter the list of years results.</param>
-        /// <param name="cultureCode">Optional. The culture code for language-specific years results. Default is "ua".</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific years results.</param>
         /// <response code="200">Successful request. Returns a list of years results with the total number of pages.</response>
         /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No years results found based on the specified filters.</response>

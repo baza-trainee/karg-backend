@@ -8,6 +8,7 @@ namespace karg.BLL.Profiles
     {
         public FAQProfile()
         {
+            CreateMap<FAQ, FAQDTO>();
             CreateMap<FAQ, CreateAndUpdateFAQDTO>();
             CreateMap<CreateAndUpdateFAQDTO, FAQ>()
                 .ForMember(dest => dest.Question, opt => opt.Ignore())

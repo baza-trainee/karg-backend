@@ -23,7 +23,7 @@ namespace karg.API.Controllers
         /// <summary>
         /// Gets a list of all Frequently Asked Questions (FAQs).
         /// </summary>
-        /// <param name="cultureCode">Optional. The culture code for language-specific FAQs. Default is "ua".</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific FAQs.</param>
         /// <response code="200">Successful request. Returns a list of all FAQs.</response>
         /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="404">No FAQs found for the specified culture code.</response>
@@ -54,6 +54,47 @@ namespace karg.API.Controllers
                 }
 
                 return Ok(faqs);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets the details of a specific FAQ by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the FAQ.</param>
+        /// <param name="cultureCode">Optional. The culture code for language-specific details.</param>
+        /// <response code="200">Successful request. Returns the details of the specified FAQ.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="404">No FAQ found with the specified identifier.</response>
+        /// <response code="500">An internal server error occurred while trying to retrieve the FAQ details.</response>
+        /// <returns>The details of the specified FAQ.</returns>
+        [HttpGet("getbyid")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFAQById(int id, string cultureCode = "ua")
+        {
+            try
+            {
+                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+                if (ModelState.IsValid && !isValidCultureCode)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var faq = await _faqService.GetFAQById(id, cultureCode);
+
+                if (faq == null)
+                {
+                    return NotFound("FAQ not found.");
+                }
+
+                return Ok(faq);
             }
             catch (Exception exception)
             {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace karg.BLL.DTO.FAQs
 {
-    public class AllFAQsDTO
+    public class FAQDTO
     {
         public int Id { get; set; }
         public string Question { get; set; }
