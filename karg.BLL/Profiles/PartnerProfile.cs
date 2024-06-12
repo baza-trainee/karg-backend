@@ -8,7 +8,7 @@ namespace karg.BLL.Profiles
     {
         public PartnerProfile()
         {
-            CreateMap<Partner, AllPartnersDTO>();
+            CreateMap<Partner, PartnerDTO>();
         }
     }
 }

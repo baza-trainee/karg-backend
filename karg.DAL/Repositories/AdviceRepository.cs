@@ -40,8 +40,8 @@ namespace karg.DAL.Repositories
         {
             return await _context.Advices
                 .AsNoTracking()
-                .Include(animal => animal.Title).ThenInclude(localizationSet => localizationSet.Localizations)
-                .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(advice => advice.Title).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .FirstOrDefaultAsync(advice => advice.Id == adviceId);
         }
 

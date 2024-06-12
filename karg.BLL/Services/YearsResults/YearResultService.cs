@@ -4,11 +4,6 @@ using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.YearsResults;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.BLL.Services.YearsResults
 {
@@ -57,6 +52,25 @@ namespace karg.BLL.Services.YearsResults
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving list of years results.", exception);
+            }
+        }
+
+        public async Task<YearResultDTO> GetYearResultById(int yearResultId, string cultureCode)
+        {
+            try
+            {
+                var yearResult = await _yearResultRepository.GetYearResult(yearResultId);
+                var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
+                var yearResultImage = await _imageService.GetImageById(yearResult.ImageId);
+
+                yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
+                yearResultDto.Image = yearResultImage;
+
+                return yearResultDto;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error retrieving year result by id.", exception);
             }
         }
     }

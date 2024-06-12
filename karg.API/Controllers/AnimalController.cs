@@ -43,7 +43,7 @@ namespace karg.API.Controllers
             {
                 var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
 
-                if (ModelState.IsValid && !isValidCultureCode)
+                if (!ModelState.IsValid && !isValidCultureCode)
                 {
                     return BadRequest("Invalid request parameters provided.");
                 }
@@ -70,13 +70,11 @@ namespace karg.API.Controllers
         /// <param name="cultureCode">Optional. The culture code for language-specific details.</param>
         /// <response code="200">Successful request. Returns the details of the specified animal.</response>
         /// <response code="400">Invalid request parameters provided.</response>
-        /// <response code="404">No animal found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the animal details.</response>
         /// <returns>The details of the specified animal.</returns>
         [HttpGet("getbyid")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAnimalById(int id, string cultureCode = "ua")
         {
@@ -84,17 +82,12 @@ namespace karg.API.Controllers
             {
                 var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
 
-                if (ModelState.IsValid && !isValidCultureCode)
+                if (!ModelState.IsValid && !isValidCultureCode)
                 {
                     return BadRequest("Invalid request parameters provided.");
                 }
 
                 var animal = await _animalService.GetAnimalById(id, cultureCode);
-
-                if (animal == null)
-                {
-                    return NotFound("Animal not found.");
-                }
 
                 return Ok(animal);
             }

@@ -2,11 +2,6 @@
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.DAL.Repositories
 {
@@ -25,6 +20,14 @@ namespace karg.DAL.Repositories
                 .AsNoTracking()
                 .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .ToListAsync();
+        }
+
+        public async Task<YearResult> GetYearResult(int yearResultId)
+        {
+            return await _context.YearsResults
+                .AsNoTracking()
+                .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .FirstOrDefaultAsync(yearResult => yearResult.Id == yearResultId);
         }
     }
 }

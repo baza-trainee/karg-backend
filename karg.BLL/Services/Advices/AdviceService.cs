@@ -9,6 +9,7 @@ using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using karg.DAL.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 
 namespace karg.BLL.Services.Advices
 {
@@ -103,7 +104,7 @@ namespace karg.BLL.Services.Advices
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving animal by id.", exception);
+                throw new ApplicationException("Error retrieving advice by id.", exception);
             }
         }
 
