@@ -10,5 +10,6 @@ namespace karg.BLL.Interfaces.YearsResults
     public interface IYearResultService
     {
         Task<PaginatedAllYearsResultsDTO> GetYearsResults(YearsResultsFilterDTO filter, string cultureCode);
+        Task<YearResultDTO> GetYearResultById(int yearResultId, string cultureCode);
     }
 }

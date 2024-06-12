@@ -10,5 +10,6 @@ namespace karg.DAL.Interfaces
     public interface IYearResultRepository
     {
         Task<List<YearResult>> GetYearsResults();
+        Task<YearResult> GetYearResult(int yearResultId);
     }
 }

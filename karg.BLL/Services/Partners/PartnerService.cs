@@ -43,21 +43,6 @@ namespace karg.BLL.Services.Partners
                 throw new ApplicationException("Error retrieving list of partners.", exception);
             }
         }
-
-        public async Task DeletePartner(int partnerId)
-        {
-            try
-            {
-                var removedPartner = await _partnerRepository.GetPartner(partnerId);
-
-                await _partnerRepository.DeletePartner(removedPartner);
-                await _imageService.DeleteImage(removedPartner.ImageId);
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException("Error delete the partner.", exception);
-            }
-        }
         
         public async Task<PartnerDTO> GetPartnerById(int partnerId)
         {
@@ -74,6 +59,21 @@ namespace karg.BLL.Services.Partners
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving partner by id.", exception);
+            }
+        }
+
+        public async Task DeletePartner(int partnerId)
+        {
+            try
+            {
+                var removedPartner = await _partnerRepository.GetPartner(partnerId);
+
+                await _partnerRepository.DeletePartner(removedPartner);
+                await _imageService.DeleteImage(removedPartner.ImageId);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the partner.", exception);
             }
         }
     }

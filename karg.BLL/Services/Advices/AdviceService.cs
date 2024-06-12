@@ -104,7 +104,7 @@ namespace karg.BLL.Services.Advices
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving animal by id.", exception);
+                throw new ApplicationException("Error retrieving advice by id.", exception);
             }
         }
 

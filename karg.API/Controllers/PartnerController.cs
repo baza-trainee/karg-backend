@@ -48,29 +48,6 @@ namespace karg.API.Controllers
         }
 
         /// <summary>
-        /// Deletes a specific partner.
-        /// </summary>
-        /// <param name="id">The unique identifier of the partner to be deleted.</param>
-        /// <response code="204">Successful request. The partner has been deleted.</response>
-        /// <response code="500">An internal server error occurred while trying to delete the partner.</response>
-        /// <returns>No content.</returns>
-        [HttpDelete("delete")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeletePartner(int id)
-        {
-            try
-            {
-                await _partnerService.DeletePartner(id);
-
-                return NoContent();
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
-        }
-
         /// Gets the details of a specific partner by its unique identifier.
         /// </summary>
         /// <param name="id">The unique identifier of the partner.</param>
@@ -94,6 +71,30 @@ namespace karg.API.Controllers
                 var partner = await _partnerService.GetPartnerById(id);
 
                 return Ok(partner);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a specific partner.
+        /// </summary>
+        /// <param name="id">The unique identifier of the partner to be deleted.</param>
+        /// <response code="204">Successful request. The partner has been deleted.</response>
+        /// <response code="500">An internal server error occurred while trying to delete the partner.</response>
+        /// <returns>No content.</returns>
+        [HttpDelete("delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeletePartner(int id)
+        {
+            try
+            {
+                await _partnerService.DeletePartner(id);
+
+                return NoContent();
             }
             catch (Exception exception)
             {
