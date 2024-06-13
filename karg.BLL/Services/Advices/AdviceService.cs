@@ -130,7 +130,7 @@ namespace karg.BLL.Services.Advices
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
                 existingAdvice.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.DescriptionId, patchedAdvice.Description_en, patchedAdvice.Description_ua);
-                DateTime parsedDateTime = DateTime.ParseExact(patchedAdvice.Created_At, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                DateTime parsedDateTime = DateTime.Parse(patchedAdvice.Created_At);
                 existingAdvice.Created_At = DateOnly.Parse(parsedDateTime.ToString("yyyy-MM-dd"));
 
                 await _adviceRepository.UpdateAdvice(existingAdvice);
