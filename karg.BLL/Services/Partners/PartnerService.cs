@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Partners;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Partners;
 using karg.BLL.Interfaces.Utilities;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 
@@ -59,6 +61,28 @@ namespace karg.BLL.Services.Partners
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving partner by id.", exception);
+            }
+        }
+
+        public async Task CreatePartner(CreateAndUpdatePartnerDTO partnerDto)
+        {
+            try
+            {
+                var partner = _mapper.Map<Partner>(partnerDto);
+                var newImage = new CreateImageDTO
+                {
+                    Uri = partnerDto.Image,
+                    AnimalId = null,
+                };
+                var imageId = await _imageService.AddImage(newImage);
+
+                partner.ImageId = imageId;
+
+                await _partnerRepository.AddPartner(partner);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error adding the partner.", exception);
             }
         }
 
