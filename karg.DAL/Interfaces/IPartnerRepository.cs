@@ -11,6 +11,7 @@ namespace karg.DAL.Interfaces
     {
         Task<List<Partner>> GetPartners();
         Task<Partner> GetPartner(int partnerId);
+        Task<int> AddPartner(Partner partner);
         Task DeletePartner(Partner partner);
     }
 }

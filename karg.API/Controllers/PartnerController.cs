@@ -1,5 +1,5 @@
-﻿using karg.BLL.Interfaces.Partners;
-using karg.BLL.Services;
+﻿using karg.BLL.DTO.Partners;
+using karg.BLL.Interfaces.Partners;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -71,6 +71,30 @@ namespace karg.API.Controllers
                 var partner = await _partnerService.GetPartnerById(id);
 
                 return Ok(partner);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new partner.
+        /// </summary>
+        /// <param name="partnerDto">The data for the new partner.</param>
+        /// <returns>The newly created partner.</returns>
+        /// <response code="201">Returns the newly created partner.</response>
+        /// <response code="500">If an error occurs while trying to create the partner.</response>
+        [HttpPost("add")]
+        [ProducesResponseType(typeof(CreateAndUpdatePartnerDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreatePartner([FromBody] CreateAndUpdatePartnerDTO partnerDto)
+        {
+            try
+            {
+                await _partnerService.CreatePartner(partnerDto);
+
+                return Created("CreatePartner", partnerDto);
             }
             catch (Exception exception)
             {

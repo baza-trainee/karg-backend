@@ -2,6 +2,7 @@
 using karg.BLL.DTO.YearsResults;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.YearsResults;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 
@@ -13,13 +14,15 @@ namespace karg.BLL.Services.YearsResults
         private readonly IPaginationService<YearResult> _paginationService;
         private readonly IImageService _imageService;
         private readonly ILocalizationService _localizationService;
+        private readonly ILocalizationSetService _localizationSetService;
         private readonly IMapper _mapper;
-        public YearResultService(IYearResultRepository yearResultRepository, IPaginationService<YearResult> paginationService, IImageService imageService, ILocalizationService localizationService, IMapper mapper)
+        public YearResultService(IYearResultRepository yearResultRepository, IPaginationService<YearResult> paginationService, IImageService imageService, ILocalizationService localizationService, ILocalizationSetService localizationSetService, IMapper mapper)
         {
             _yearResultRepository = yearResultRepository;
             _paginationService = paginationService;
             _imageService = imageService;
             _localizationService = localizationService;
+            _localizationSetService = localizationSetService;
             _mapper = mapper;
         }
 
@@ -71,6 +74,23 @@ namespace karg.BLL.Services.YearsResults
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving year result by id.", exception);
+            }
+        }
+
+        public async Task DeleteYearResult(int yearResultId)
+        {
+            try
+            {
+                var removedYearResult = await _yearResultRepository.GetYearResult(yearResultId);
+                var removedYearResultDescriptionId = removedYearResult.DescriptionId;
+
+                await _yearResultRepository.DeleteYearResult(removedYearResult);
+                await _imageService.DeleteImage(removedYearResult.ImageId);
+                await _localizationSetService.DeleteLocalizationSets(new List<int> { removedYearResultDescriptionId });
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the year result.", exception);
             }
         }
     }

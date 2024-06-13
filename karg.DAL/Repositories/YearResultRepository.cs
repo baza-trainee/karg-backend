@@ -29,5 +29,11 @@ namespace karg.DAL.Repositories
                 .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .FirstOrDefaultAsync(yearResult => yearResult.Id == yearResultId);
         }
+
+        public async Task DeleteYearResult(YearResult yearResult)
+        {
+            _context.YearsResults.Remove(yearResult);
+            await _context.SaveChangesAsync();
+        }
     }
 }

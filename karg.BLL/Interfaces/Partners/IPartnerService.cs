@@ -11,6 +11,7 @@ namespace karg.BLL.Interfaces.Partners
     {
         Task<List<PartnerDTO>> GetPartners();
         Task<PartnerDTO> GetPartnerById(int partnerId);
+        Task CreatePartner(CreateAndUpdatePartnerDTO partnerDto);
         Task DeletePartner(int partnerId);
     }
 }

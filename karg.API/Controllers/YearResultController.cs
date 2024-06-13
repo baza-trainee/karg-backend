@@ -94,5 +94,29 @@ namespace karg.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
+
+        /// <summary>
+        /// Deletes a specific year result.
+        /// </summary>
+        /// <param name="id">The unique identifier of the year result to be deleted.</param>
+        /// <response code="204">Successful request. The year result has been deleted.</response>
+        /// <response code="500">An internal server error occurred while trying to delete the year result.</response>
+        /// <returns>No content.</returns>
+        [HttpDelete("delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteYearResult(int id)
+        {
+            try
+            {
+                await _yearResultService.DeleteYearResult(id);
+
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
     }
 }
