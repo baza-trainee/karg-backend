@@ -10,6 +10,7 @@ using karg.DAL.Models;
 using karg.DAL.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace karg.BLL.Services.Advices
 {
@@ -129,7 +130,8 @@ namespace karg.BLL.Services.Advices
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
                 existingAdvice.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.DescriptionId, patchedAdvice.Description_en, patchedAdvice.Description_ua);
-                existingAdvice.Created_At = DateOnly.ParseExact(patchedAdvice.Created_At, "yyyy-MM-dd");
+                DateTime parsedDateTime = DateTime.ParseExact(patchedAdvice.Created_At, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                existingAdvice.Created_At = DateOnly.Parse(parsedDateTime.ToString("yyyy-MM-dd"));
 
                 await _adviceRepository.UpdateAdvice(existingAdvice);
 
