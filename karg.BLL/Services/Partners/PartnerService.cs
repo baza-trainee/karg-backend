@@ -6,6 +6,8 @@ using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using karg.DAL.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Services.Partners
 {
@@ -83,6 +85,33 @@ namespace karg.BLL.Services.Partners
             catch (Exception exception)
             {
                 throw new ApplicationException("Error adding the partner.", exception);
+            }
+        }
+
+        public async Task<CreateAndUpdatePartnerDTO> UpdatePartner(int partnerId, JsonPatchDocument<CreateAndUpdatePartnerDTO> patchDoc)
+        {
+            try
+            {
+                var existingPartner = await _partnerRepository.GetPartner(partnerId);
+                var patchedPartner = _mapper.Map<CreateAndUpdatePartnerDTO>(existingPartner);
+                var partnerImage = await _imageService.GetImageById(existingPartner.ImageId);
+
+                patchedPartner.Image = partnerImage;
+
+                patchDoc.ApplyTo(patchedPartner);
+
+                await _imageService.UpdateImage(existingPartner.ImageId, patchedPartner.Image);
+
+                existingPartner.Name = patchedPartner.Name;
+                existingPartner.Uri = patchedPartner.Uri;
+
+                await _partnerRepository.UpdatePartner(existingPartner);
+
+                return patchedPartner;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error updating the partner.", exception);
             }
         }
 

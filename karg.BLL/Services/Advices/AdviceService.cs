@@ -129,6 +129,7 @@ namespace karg.BLL.Services.Advices
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
                 existingAdvice.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.DescriptionId, patchedAdvice.Description_en, patchedAdvice.Description_ua);
+                existingAdvice.Created_At = DateOnly.ParseExact(patchedAdvice.Created_At, "yyyy-MM-dd");
 
                 await _adviceRepository.UpdateAdvice(existingAdvice);
 

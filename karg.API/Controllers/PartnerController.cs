@@ -1,6 +1,7 @@
 ﻿using karg.BLL.DTO.Partners;
 using karg.BLL.Interfaces.Partners;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace karg.API.Controllers
@@ -95,6 +96,38 @@ namespace karg.API.Controllers
                 await _partnerService.CreatePartner(partnerDto);
 
                 return Created("CreatePartner", partnerDto);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates the details of a specific partner.
+        /// </summary>
+        /// <param name="id">The unique identifier of the partner to be updated.</param>
+        /// <param name="patchDoc">The JSON Patch document containing the updates to apply.</param>
+        /// <response code="200">Successful request. Returns the updated details of the partner.</response>
+        /// <response code="400">Bad request. If the JSON Patch document is null.</response>
+        /// <response code="500">Internal server error. An error occurred while trying to update the partner details.</response>
+        /// <returns>The updated details of the partner.</returns>
+        [HttpPatch("update")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdatePartner(int id, [FromBody] JsonPatchDocument<CreateAndUpdatePartnerDTO> patchDoc)
+        {
+            try
+            {
+                if (patchDoc == null)
+                {
+                    return BadRequest();
+                }
+
+                var resultPartner = await _partnerService.UpdatePartner(id, patchDoc);
+
+                return Ok(resultPartner);
             }
             catch (Exception exception)
             {
