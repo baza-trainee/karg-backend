@@ -1,4 +1,5 @@
 ﻿using karg.BLL.DTO.Partners;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace karg.BLL.Interfaces.Partners
         Task<List<PartnerDTO>> GetPartners();
         Task<PartnerDTO> GetPartnerById(int partnerId);
         Task CreatePartner(CreateAndUpdatePartnerDTO partnerDto);
+        Task<CreateAndUpdatePartnerDTO> UpdatePartner(int partnerId, JsonPatchDocument<CreateAndUpdatePartnerDTO> patchDoc);
         Task DeletePartner(int partnerId);
     }
 }

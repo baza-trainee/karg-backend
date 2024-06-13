@@ -5,6 +5,7 @@ using karg.BLL.Interfaces.Animals;
 using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using karg.DAL.Models.Enums;
 using karg.DAL.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -139,6 +140,7 @@ namespace karg.BLL.Services.Animals
                 existingAnimal.NameId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.NameId, patchedAnimal.Name_en, patchedAnimal.Name_ua);
                 existingAnimal.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.DescriptionId, patchedAnimal.Description_en, patchedAnimal.Description_ua);
                 existingAnimal.StoryId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.StoryId, patchedAnimal.Story_en, patchedAnimal.Story_ua);
+                existingAnimal.Category = Enum.Parse<AnimalCategory>(patchedAnimal.Category);
 
                 await _animalRepository.UpdateAnimal(existingAnimal);
 
