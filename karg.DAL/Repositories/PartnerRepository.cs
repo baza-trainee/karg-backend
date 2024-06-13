@@ -32,6 +32,14 @@ namespace karg.DAL.Repositories
             return partner.Id;
         }
 
+        public async Task UpdatePartner(Partner updatedPartner)
+        {
+            var existingPartner = await _context.Partners.FindAsync(updatedPartner.Id);
+
+            _context.Entry(existingPartner).CurrentValues.SetValues(updatedPartner);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeletePartner(Partner partner)
         {
             _context.Partners.Remove(partner);
