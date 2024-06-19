@@ -10,6 +10,10 @@ namespace karg.BLL.Profiles
         {
             CreateMap<YearResult, YearResultDTO>()
                 .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Year.Year.ToString()));
+            CreateMap<CreateAndUpdateYearResultDTO, YearResult>()
+                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => new DateOnly(int.Parse(src.Year), 1, 1)))
+                .ForMember(dest => dest.Image, opt => opt.Ignore())
+                .ForMember(dest => dest.Description, opt => opt.Ignore());
         }
     }
 }

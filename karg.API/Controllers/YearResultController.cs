@@ -96,6 +96,30 @@ namespace karg.API.Controllers
         }
 
         /// <summary>
+        /// Creates a new year result.
+        /// </summary>
+        /// <param name="yearResultDto">The data for the new year result.</param>
+        /// <returns>The newly created year result.</returns>
+        /// <response code="201">Returns the newly created year result.</response>
+        /// <response code="500">If an error occurs while trying to create the year result.</response>
+        [HttpPost("add")]
+        [ProducesResponseType(typeof(CreateAndUpdateYearResultDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateYearResult([FromBody] CreateAndUpdateYearResultDTO yearResultDto)
+        {
+            try
+            {
+                await _yearResultService.CreateYearResult(yearResultDto);
+
+                return Created("CreateYearResult", yearResultDto);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
         /// Deletes a specific year result.
         /// </summary>
         /// <param name="id">The unique identifier of the year result to be deleted.</param>

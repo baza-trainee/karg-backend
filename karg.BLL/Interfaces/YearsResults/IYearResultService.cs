@@ -11,6 +11,7 @@ namespace karg.BLL.Interfaces.YearsResults
     {
         Task<PaginatedAllYearsResultsDTO> GetYearsResults(YearsResultsFilterDTO filter, string cultureCode);
         Task<YearResultDTO> GetYearResultById(int yearResultId, string cultureCode);
+        Task CreateYearResult(CreateAndUpdateYearResultDTO yearResultDto);
         Task DeleteYearResult(int yearResultId);
     }
 }

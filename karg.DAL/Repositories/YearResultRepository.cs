@@ -30,6 +30,14 @@ namespace karg.DAL.Repositories
                 .FirstOrDefaultAsync(yearResult => yearResult.Id == yearResultId);
         }
 
+        public async Task<int> AddYearResult(YearResult yearResult)
+        {
+            _context.YearsResults.Add(yearResult);
+            await _context.SaveChangesAsync();
+
+            return yearResult.Id;
+        }
+
         public async Task DeleteYearResult(YearResult yearResult)
         {
             _context.YearsResults.Remove(yearResult);
