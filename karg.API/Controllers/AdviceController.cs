@@ -4,6 +4,7 @@ using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.Advices;
 using karg.BLL.DTO.Advices;
 using Microsoft.AspNetCore.JsonPatch;
+using karg.DAL.Models;
 
 namespace karg.API.Controllers
 {
@@ -69,11 +70,13 @@ namespace karg.API.Controllers
         /// <param name="cultureCode">Optional. The culture code for language-specific details.</param>
         /// <response code="200">Successful request. Returns the details of the specified advice.</response>
         /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="404">No advice found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the advice details.</response>
         /// <returns>The details of the specified advice.</returns>
         [HttpGet("getbyid")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdviceById(int id, string cultureCode = "ua")
         {
@@ -87,6 +90,11 @@ namespace karg.API.Controllers
                 }
 
                 var advice = await _adviceService.GetAdviceById(id, cultureCode);
+
+                if (advice == null)
+                {
+                    return NotFound("Advice not found.");
+                }
 
                 return Ok(advice);
             }

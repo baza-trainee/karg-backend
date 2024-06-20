@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.DTO.YearsResults;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.YearsResults;
@@ -63,6 +64,12 @@ namespace karg.BLL.Services.YearsResults
             try
             {
                 var yearResult = await _yearResultRepository.GetYearResult(yearResultId);
+
+                if(yearResult == null)
+                {
+                    return null;
+                }
+
                 var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
                 var yearResultImage = await _imageService.GetImageById(yearResult.ImageId);
 
@@ -74,6 +81,29 @@ namespace karg.BLL.Services.YearsResults
             catch (Exception exception)
             {
                 throw new ApplicationException("Error retrieving year result by id.", exception);
+            }
+        }
+
+        public async Task CreateYearResult(CreateAndUpdateYearResultDTO yearResultDto)
+        {
+            try
+            {
+                var yearResult = _mapper.Map<YearResult>(yearResultDto);
+                var newImage = new CreateImageDTO
+                {
+                    Uri = yearResultDto.Image,
+                    AnimalId = null,
+                };
+                var imageId = await _imageService.AddImage(newImage);
+
+                yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
+                yearResult.ImageId = imageId;
+
+                await _yearResultRepository.AddYearResult(yearResult);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error adding the year result.", exception);
             }
         }
 

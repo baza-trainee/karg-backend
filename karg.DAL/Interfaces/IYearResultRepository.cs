@@ -11,6 +11,7 @@ namespace karg.DAL.Interfaces
     {
         Task<List<YearResult>> GetYearsResults();
         Task<YearResult> GetYearResult(int yearResultId);
+        Task<int> AddYearResult(YearResult yearResult);
         Task DeleteYearResult(YearResult yearResult);
     }
 }
