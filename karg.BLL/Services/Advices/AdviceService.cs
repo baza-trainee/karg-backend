@@ -93,6 +93,12 @@ namespace karg.BLL.Services.Advices
             try
             {
                 var advice = await _adviceRepository.GetAdvice(adviceId);
+
+                if(advice == null)
+                {
+                    return null;
+                }
+
                 var adviceDto = _mapper.Map<AdviceDTO>(advice);
                 var adviceImage = await _imageService.GetImageById(advice.ImageId);
 

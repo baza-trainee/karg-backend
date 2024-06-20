@@ -53,6 +53,12 @@ namespace karg.BLL.Services.Partners
             try
             {
                 var partner = await _partnerRepository.GetPartner(partnerId);
+                
+                if(partner == null)
+                {
+                    return null;
+                }
+
                 var partnerDto = _mapper.Map<PartnerDTO>(partner);
                 var partnerImage = await _imageService.GetImageById(partner.ImageId);
 

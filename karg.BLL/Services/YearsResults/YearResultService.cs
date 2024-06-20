@@ -63,6 +63,12 @@ namespace karg.BLL.Services.YearsResults
             try
             {
                 var yearResult = await _yearResultRepository.GetYearResult(yearResultId);
+
+                if(yearResult == null)
+                {
+                    return null;
+                }
+
                 var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
                 var yearResultImage = await _imageService.GetImageById(yearResult.ImageId);
 
