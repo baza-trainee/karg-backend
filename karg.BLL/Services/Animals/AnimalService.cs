@@ -71,6 +71,12 @@ namespace karg.BLL.Services.Animals
             try
             {
                 var animal = await _animalRepository.GetAnimal(animalId);
+
+                if(animal == null)
+                {
+                    return null;
+                }
+
                 var animalDto = _mapper.Map<AnimalDTO>(animal);
                 var animalImages = await _imageService.GetAnimalImages(animal.Id);
 

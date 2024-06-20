@@ -1,5 +1,6 @@
 ﻿using karg.BLL.DTO.Partners;
 using karg.BLL.Interfaces.Partners;
+using karg.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -54,11 +55,13 @@ namespace karg.API.Controllers
         /// <param name="id">The unique identifier of the partner.</param>
         /// <response code="200">Successful request. Returns the details of the specified partner.</response>
         /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="404">No partner found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the partner details.</response>
         /// <returns>The details of the specified partner.</returns>
         [HttpGet("getbyid")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPartnerById(int id)
         {
@@ -70,6 +73,11 @@ namespace karg.API.Controllers
                 }
 
                 var partner = await _partnerService.GetPartnerById(id);
+
+                if (partner == null)
+                {
+                    return NotFound("Partner not found.");
+                }
 
                 return Ok(partner);
             }

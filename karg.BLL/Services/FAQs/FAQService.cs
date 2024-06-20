@@ -55,6 +55,12 @@ namespace karg.BLL.Services.FAQs
             try
             {
                 var faq = await _faqRepository.GetFAQ(faqId);
+
+                if(faq == null)
+                {
+                    return null;
+                }
+
                 var faqDto = _mapper.Map<FAQDTO>(faq);
 
                 faqDto.Question = _localizationService.GetLocalizedValue(faq.Question, cultureCode, faq.QuestionId);
