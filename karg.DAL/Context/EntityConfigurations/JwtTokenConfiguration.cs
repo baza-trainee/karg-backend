@@ -19,7 +19,6 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.Property(token => token.Id).ValueGeneratedOnAdd();
             builder.Property(token => token.Token).IsRequired();
-            builder.Property(token => token.RescuerId).IsRequired();
         }
     }
 }

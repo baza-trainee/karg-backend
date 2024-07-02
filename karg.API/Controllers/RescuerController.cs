@@ -1,4 +1,5 @@
 using karg.BLL.DTO.Authentication;
+using karg.BLL.DTO.Rescuers;
 using karg.BLL.Interfaces.Rescuers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -63,6 +64,30 @@ namespace karg.API.Controllers
                 await _rescuerService.ResetPassword(credentials.Email, credentials.Password);
 
                 return Ok("Password reset successfully.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new rescuer.
+        /// </summary>
+        /// <param name="rescuerDto">The data for the new rescuer.</param>
+        /// <returns>The newly created rescuer.</returns>
+        /// <response code="201">Returns the newly created rescuer.</response>
+        /// <response code="500">If an error occurs while trying to create the rescuer.</response>
+        [HttpPost("add")]
+        [ProducesResponseType(typeof(CreateAndUpdateRescuerDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateRescuer([FromBody] CreateAndUpdateRescuerDTO rescuerDto)
+        {
+            try
+            {
+                await _rescuerService.CreateRescuer(rescuerDto);
+
+                return Created("CreateRescuer", rescuerDto);
             }
             catch (Exception exception)
             {

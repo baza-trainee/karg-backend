@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace karg.BLL.Interfaces.Authentication
 {
-    internal interface IJwtTokenService
+    public interface IJwtTokenService
     {
         string GenerateJwtToken(RescuerJwtTokenDTO rescuer);
+        Task<int> AddJwtToken(string token);
     }
 }

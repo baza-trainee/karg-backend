@@ -31,8 +31,7 @@ namespace karg.DAL.Migrations
                     b.Property<int>("DescriptionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ImageId")
-                        .IsRequired()
+                    b.Property<int>("ImageId")
                         .HasColumnType("int");
 
                     b.Property<int>("TitleId")
@@ -163,9 +162,6 @@ namespace karg.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("RescuerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Token")

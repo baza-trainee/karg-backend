@@ -66,6 +66,7 @@ namespace karg.API
             builder.Services.AddScoped<IAdviceService, AdviceService>();
             builder.Services.AddScoped<IAnimalService, AnimalService>();
             builder.Services.AddScoped<IImageService, ImageService>();
+            builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
             builder.Services.AddScoped<IPartnerService, PartnerService>();
             builder.Services.AddScoped(typeof(IPaginationService<>), typeof(PaginationService<>));
             builder.Services.AddScoped<IFAQService, FAQService>();
@@ -81,6 +82,7 @@ namespace karg.API
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
             builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
             builder.Services.AddScoped<IFAQRepository, FAQRepository>();
+            builder.Services.AddScoped<IJwtTokenRepository, JwtTokenRepository>();
             builder.Services.AddScoped<ICultureRepository, CultureRepository>();
             builder.Services.AddScoped<ILocalizationRepository, LocalizationRepository>();
             builder.Services.AddScoped<ILocalizationSetRepository, LocalizationSetRepository>();
@@ -92,6 +94,7 @@ namespace karg.API
             builder.Services.AddAutoMapper(typeof(FAQProfile));
             builder.Services.AddAutoMapper(typeof(ImageProfile));
             builder.Services.AddAutoMapper(typeof(YearResultProfile));
+            builder.Services.AddAutoMapper(typeof(JwtTokenProfile));
 
             var app = builder.Build();
 
