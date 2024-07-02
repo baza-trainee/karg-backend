@@ -1,5 +1,8 @@
-﻿using karg.BLL.DTO.Authentication;
+﻿using AutoMapper;
+using karg.BLL.DTO.Authentication;
 using karg.BLL.Interfaces.Authentication;
+using karg.DAL.Interfaces;
+using karg.DAL.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,13 +11,32 @@ using System.Text;
 
 namespace karg.BLL.Services.Authentication
 {
-    internal class JwtTokenService : IJwtTokenService
+    public class JwtTokenService : IJwtTokenService
     {
         private readonly IConfiguration _configuration;
+        private readonly IJwtTokenRepository _jwtTokenRepository;
 
-        public JwtTokenService(IConfiguration configuration)
+        public JwtTokenService(IConfiguration configuration, IJwtTokenRepository jwtTokenRepository)
         {
             _configuration = configuration;
+            _jwtTokenRepository = jwtTokenRepository;
+        }
+
+        public async Task<int> AddJwtToken(string token)
+        {
+            try
+            {
+                var jwtToken = new JwtToken
+                {
+                    Token = token
+                };
+                
+                return await _jwtTokenRepository.AddJwtToken(jwtToken);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error adding the JWT token.", exception);
+            }
         }
 
         public string GenerateJwtToken(RescuerJwtTokenDTO rescuer)

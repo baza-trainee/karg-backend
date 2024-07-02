@@ -11,7 +11,7 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    [Migration("20240520201909_Initial")]
+    [Migration("20240702113010_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,8 +33,7 @@ namespace karg.DAL.Migrations
                     b.Property<int>("DescriptionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ImageId")
-                        .IsRequired()
+                    b.Property<int>("ImageId")
                         .HasColumnType("int");
 
                     b.Property<int>("TitleId")
@@ -165,9 +164,6 @@ namespace karg.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("RescuerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Token")

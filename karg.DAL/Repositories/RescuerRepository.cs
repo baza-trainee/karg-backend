@@ -24,6 +24,14 @@ namespace karg.DAL.Repositories
             return await _context.Rescuers.FirstOrDefaultAsync(rescuer => rescuer.Email == email);
         }
 
+        public async Task<int> AddRescuer(Rescuer rescuer)
+        {
+            _context.Rescuers.Add(rescuer);
+            await _context.SaveChangesAsync();
+
+            return rescuer.Id;
+        }
+
         public async Task<Rescuer> UpdateRescuer(Rescuer updatedRescuer)
         {
             var existingRescuer = await _context.Rescuers.FindAsync(updatedRescuer.Id);

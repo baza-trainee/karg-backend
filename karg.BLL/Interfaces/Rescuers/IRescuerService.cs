@@ -11,5 +11,6 @@ namespace karg.BLL.Interfaces.Rescuers
     {
         Task ResetPassword(string email, string newPassword);
         Task<List<AllRescuersDTO>> GetRescuers();
+        Task CreateRescuer(CreateAndUpdateRescuerDTO rescuerDto);
     }
 }
