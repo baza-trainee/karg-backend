@@ -87,7 +87,7 @@ namespace karg.BLL.Services.Rescuers
                     AnimalId = null,
                 };
                 var imageId = await _imageService.AddImage(newImage);
-                var jwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { FullName = rescuer.FullName, Email = rescuer.Email });
+                var jwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { FullName = rescuer.FullName, Email = rescuer.Email, Role = rescuer.Role.ToString() });
                 var jwtTokenId = await _jwtTokenService.AddJwtToken(jwtToken);
 
                 rescuer.TokenId = jwtTokenId;   

@@ -17,10 +17,16 @@ using karg.BLL.Services.Utilities;
 using karg.BLL.Services.YearsResults;
 using karg.DAL.Context;
 using karg.DAL.Interfaces;
+using karg.DAL.Models;
+using karg.DAL.Models.Enums;
 using karg.DAL.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 
 namespace karg.API
 {
@@ -31,6 +37,35 @@ namespace karg.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddDbContext<KargDbContext>((serviceProvider, options) =>
+            {
+                options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"), new MySqlServerVersion(new Version(8, 0, 30)));
+            });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JWT:Issuer"],
+                    ValidIssuer = builder.Configuration["JWT:Issuer"],
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Director", policy => policy.RequireClaim("Role", new[] { RescuerRole.Director.ToString() }));
+                options.AddPolicy("Employee", policy => policy.RequireClaim("Role", new[] { RescuerRole.Employee.ToString() }));
+            });
 
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddControllers().AddNewtonsoftJson();
@@ -48,11 +83,31 @@ namespace karg.API
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
-            });
 
-            builder.Services.AddDbContext<KargDbContext>((serviceProvider, options) =>
-            {
-                options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"), new MySqlServerVersion(new Version(8, 0, 30)));
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
 
             builder.Services.AddCors(policy => policy.AddPolicy("corspolicy", build =>
@@ -67,6 +122,7 @@ namespace karg.API
             builder.Services.AddScoped<IAnimalService, AnimalService>();
             builder.Services.AddScoped<IImageService, ImageService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IPartnerService, PartnerService>();
             builder.Services.AddScoped(typeof(IPaginationService<>), typeof(PaginationService<>));
             builder.Services.AddScoped<IFAQService, FAQService>();
@@ -108,6 +164,8 @@ namespace karg.API
             app.UseCors("corspolicy");
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

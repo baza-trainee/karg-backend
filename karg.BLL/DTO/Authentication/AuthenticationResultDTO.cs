@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace karg.BLL.DTO.Authentication
 {
-    public class RescuerJwtTokenDTO
+    public class AuthenticationResultDTO
     {
-        public string? FullName { get; set; }
-        public string? Email { get; set; }
-        public string Role { get; set; }
+        public string? Token { get; set; }
+        public int Status { get; set; }
+        public string Message { get; set; }
     }
 }

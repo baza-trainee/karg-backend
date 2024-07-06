@@ -1,6 +1,7 @@
 ﻿using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace karg.DAL.Repositories
 {
@@ -11,6 +12,13 @@ namespace karg.DAL.Repositories
         public JwtTokenRepository(KargDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<JwtToken> GetJwtToken(int tokenId)
+        {
+            return await _context.Tokens
+                .AsNoTracking()
+                .FirstOrDefaultAsync(token => token.Id == tokenId);
         }
 
         public async Task<int> AddJwtToken(JwtToken jwtToken)

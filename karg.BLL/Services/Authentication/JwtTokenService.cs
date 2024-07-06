@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Authentication;
 using karg.BLL.Interfaces.Authentication;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using karg.DAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,6 +22,25 @@ namespace karg.BLL.Services.Authentication
         {
             _configuration = configuration;
             _jwtTokenRepository = jwtTokenRepository;
+        }
+
+        public async Task<string> GetJwtTokenById(int tokenId)
+        {
+            try
+            {
+                var jwtToken = await _jwtTokenRepository.GetJwtToken(tokenId);
+
+                if (jwtToken == null)
+                {
+                    return null;
+                }
+
+                return jwtToken.Token;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error retrieving JWT token by id.", exception);
+            }
         }
 
         public async Task<int> AddJwtToken(string token)
@@ -48,6 +69,7 @@ namespace karg.BLL.Services.Authentication
             var claims = new[]
             {
                 new Claim("Fullname", rescuer.FullName),
+                new Claim("Role", rescuer.Role),
                 new Claim("Email", rescuer.Email),
             };
 
@@ -55,6 +77,7 @@ namespace karg.BLL.Services.Authentication
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Issuer"],
                 claims,
+                expires: DateTime.UtcNow.AddDays(365000),
                 signingCredentials: credentials
             );
 
