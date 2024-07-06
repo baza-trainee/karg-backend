@@ -21,11 +21,14 @@ namespace karg.API.Controllers
         /// Gets all rescuers registered in the system.
         /// </summary>
         /// <response code="200">Successful request. Returns a list of rescuers.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="404">Rescuers not found. No rescuers are available in the system.</response>
         /// <response code="500">An internal server error occurred while trying to get the list of rescuers.</response>
         /// <returns>List of rescuers.</returns>
         [HttpGet("getall")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllRescuers()
@@ -77,9 +80,14 @@ namespace karg.API.Controllers
         /// <param name="rescuerDto">The data for the new rescuer.</param>
         /// <returns>The newly created rescuer.</returns>
         /// <response code="201">Returns the newly created rescuer.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the required role to perform this action.</response>
         /// <response code="500">If an error occurs while trying to create the rescuer.</response>
         [HttpPost("add")]
+        [Authorize(Policy = "Director")]
         [ProducesResponseType(typeof(CreateAndUpdateRescuerDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateRescuer([FromBody] CreateAndUpdateRescuerDTO rescuerDto)
         {

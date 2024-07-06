@@ -69,12 +69,15 @@ namespace karg.API.Controllers
         /// <param name="cultureCode">Optional. The culture code for language-specific details. Default is "ua".</param>
         /// <response code="200">Successful request. Returns the details of the specified year result.</response>
         /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="404">No year result found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the year result details.</response>
         /// <returns>The details of the specified year result.</returns>
         [HttpGet("getbyid")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetYearResultById(int id, string cultureCode = "ua")
@@ -109,9 +112,12 @@ namespace karg.API.Controllers
         /// <param name="yearResultDto">The data for the new year result.</param>
         /// <returns>The newly created year result.</returns>
         /// <response code="201">Returns the newly created year result.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="500">If an error occurs while trying to create the year result.</response>
         [HttpPost("add")]
+        [Authorize]
         [ProducesResponseType(typeof(CreateAndUpdateYearResultDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateYearResult([FromBody] CreateAndUpdateYearResultDTO yearResultDto)
         {
@@ -132,10 +138,13 @@ namespace karg.API.Controllers
         /// </summary>
         /// <param name="id">The unique identifier of the year result to be deleted.</param>
         /// <response code="204">Successful request. The year result has been deleted.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="500">An internal server error occurred while trying to delete the year result.</response>
         /// <returns>No content.</returns>
         [HttpDelete("delete")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteYearResult(int id)
         {

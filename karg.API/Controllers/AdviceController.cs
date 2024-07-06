@@ -70,12 +70,15 @@ namespace karg.API.Controllers
         /// <param name="cultureCode">Optional. The culture code for language-specific details.</param>
         /// <response code="200">Successful request. Returns the details of the specified advice.</response>
         /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="404">No advice found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the advice details.</response>
         /// <returns>The details of the specified advice.</returns>
         [HttpGet("getbyid")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdviceById(int id, string cultureCode = "ua")
@@ -110,9 +113,12 @@ namespace karg.API.Controllers
         /// <param name="adviceDto">The data for the new advice.</param>
         /// <returns>The newly created advice.</returns>
         /// <response code="201">Returns the newly created advice.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="500">If an error occurs while trying to create the advice.</response>
         [HttpPost("add")]
+        [Authorize]
         [ProducesResponseType(typeof(CreateAndUpdateAdviceDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateAdvice([FromBody] CreateAndUpdateAdviceDTO adviceDto)
         {
@@ -135,11 +141,14 @@ namespace karg.API.Controllers
         /// <param name="patchDoc">The JSON Patch document containing the updates to apply.</param>
         /// <response code="200">Successful request. Returns the updated details of the advice.</response>
         /// <response code="400">Bad request. If the JSON Patch document is null.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="500">Internal server error. An error occurred while trying to update the advice details.</response>
         /// <returns>The updated details of the advice.</returns>
         [HttpPatch("update")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateAdvice(int id, [FromBody] JsonPatchDocument<CreateAndUpdateAdviceDTO> patchDoc)
         {
@@ -165,10 +174,13 @@ namespace karg.API.Controllers
         /// </summary>
         /// <param name="id">The unique identifier of the advice to be deleted.</param>
         /// <response code="204">Successful request. The advice has been deleted.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="500">An internal server error occurred while trying to delete the advice.</response>
         /// <returns>No content.</returns>
         [HttpDelete("delete")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteAdvice(int id)
         {

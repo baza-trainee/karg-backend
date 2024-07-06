@@ -9,6 +9,7 @@ namespace karg.DAL.Interfaces
 {
     public interface IJwtTokenRepository
     {
+        Task<JwtToken> GetJwtToken(int tokenId);
         Task<int> AddJwtToken(JwtToken jwtToken);
     }
 }
