@@ -11,7 +11,9 @@ namespace karg.DAL.Interfaces
     {
         Task<Rescuer> GetRescuerByEmail(string email);
         Task<List<Rescuer>> GetRescuers();
+        Task<Rescuer> GetRescuer(int rescuerId);
         Task<int> AddRescuer(Rescuer rescuer);
         Task<Rescuer> UpdateRescuer(Rescuer updatedRescuer);
+        Task DeleteRescuer(Rescuer rescuer);
     }
 }

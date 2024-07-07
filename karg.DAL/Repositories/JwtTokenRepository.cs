@@ -28,5 +28,11 @@ namespace karg.DAL.Repositories
 
             return jwtToken.Id;
         }
+
+        public async Task DeleteJwtToken(JwtToken token)
+        {
+            _context.Tokens.Remove(token);
+            await _context.SaveChangesAsync();
+        }
     }
 }

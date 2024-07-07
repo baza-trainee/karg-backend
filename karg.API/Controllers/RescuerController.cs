@@ -102,5 +102,34 @@ namespace karg.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
+
+        /// <summary>
+        /// Deletes a specific rescuer.
+        /// </summary>
+        /// <param name="id">The unique identifier of the rescuer to be deleted.</param>
+        /// <response code="204">Successful request. The rescuer has been deleted.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the required role to perform this action.</response>
+        /// <response code="500">An internal server error occurred while trying to delete the rescuer.</response>
+        /// <returns>No content.</returns>
+        [HttpDelete("delete")]
+        [Authorize(Policy = "Director")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteRescuer(int id)
+        {
+            try
+            {
+                await _rescuerService.DeleteRescuer(id);
+
+                return NoContent();
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
     }
 }

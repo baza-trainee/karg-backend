@@ -83,5 +83,19 @@ namespace karg.BLL.Services.Authentication
 
             return tokenHandler.WriteToken(token);
         }
+
+        public async Task DeleteJwtToken(int tokenId)
+        {
+            try
+            {
+                var removedToken = await _jwtTokenRepository.GetJwtToken(tokenId);
+
+                await _jwtTokenRepository.DeleteJwtToken(removedToken);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the JWT token.", exception);
+            }
+        }
     }
 }
