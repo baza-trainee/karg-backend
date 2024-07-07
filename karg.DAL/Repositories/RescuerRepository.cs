@@ -57,5 +57,16 @@ namespace karg.DAL.Repositories
         {
             return await _context.Rescuers.AsNoTracking().ToListAsync();
         }
+
+        public async Task<Rescuer> GetRescuer(int rescuerId)
+        {
+            return await _context.Rescuers.AsNoTracking().FirstOrDefaultAsync(rescuer => rescuer.Id == rescuerId);
+        }
+
+        public async Task DeleteRescuer(Rescuer rescuer)
+        {
+            _context.Rescuers.Remove(rescuer);
+            await _context.SaveChangesAsync();
+        }
     }
 }

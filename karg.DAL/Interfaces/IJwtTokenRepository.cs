@@ -11,5 +11,6 @@ namespace karg.DAL.Interfaces
     {
         Task<JwtToken> GetJwtToken(int tokenId);
         Task<int> AddJwtToken(JwtToken jwtToken);
+        Task DeleteJwtToken(JwtToken token);
     }
 }

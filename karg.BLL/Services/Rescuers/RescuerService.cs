@@ -8,6 +8,7 @@ using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using karg.DAL.Repositories;
 
 namespace karg.BLL.Services.Rescuers
 {
@@ -99,6 +100,22 @@ namespace karg.BLL.Services.Rescuers
             catch (Exception exception)
             {
                 throw new ApplicationException("Error adding the rescuer.", exception);
+            }
+        }
+
+        public async Task DeleteRescuer(int rescuerId)
+        {
+            try
+            {
+                var removedRescuer = await _rescuerRepository.GetRescuer(rescuerId);
+
+                await _rescuerRepository.DeleteRescuer(removedRescuer);
+                await _imageService.DeleteImage(removedRescuer.ImageId);
+                await _jwtTokenService.DeleteJwtToken(removedRescuer.TokenId);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException("Error delete the rescuer.", exception);
             }
         }
     }
