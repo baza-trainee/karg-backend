@@ -73,7 +73,7 @@ namespace karg.BLL.Services.Rescuers
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving list of rescuers.", exception);
+                throw new ApplicationException($"Error retrieving list of rescuers: {exception.Message}");
             }
         }
 
@@ -99,7 +99,7 @@ namespace karg.BLL.Services.Rescuers
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the rescuer.", exception);
+                throw new ApplicationException($"Error adding the rescuer: {exception.Message}");
             }
         }
 
@@ -115,7 +115,7 @@ namespace karg.BLL.Services.Rescuers
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error delete the rescuer.", exception);
+                throw new ApplicationException($"Error delete the rescuer: {exception.Message}");
             }
         }
     }

@@ -10,6 +10,7 @@ using karg.DAL.Models;
 using karg.DAL.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace karg.BLL.Services.Advices
 {
@@ -60,7 +61,7 @@ namespace karg.BLL.Services.Advices
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving list of advices.", exception);
+                throw new ApplicationException($"Error retrieving list of advices: {exception.Message}");
             }
         }
 
@@ -84,7 +85,7 @@ namespace karg.BLL.Services.Advices
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the advice.", exception);
+                throw new ApplicationException($"Error adding the advice: {exception.Message}");
             }
         }
 
@@ -110,7 +111,7 @@ namespace karg.BLL.Services.Advices
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving advice by id.", exception);
+                throw new ApplicationException($"Error retrieving advice by id: {exception.Message}");
             }
         }
 
@@ -143,7 +144,7 @@ namespace karg.BLL.Services.Advices
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error updating the advice.", exception);
+                throw new ApplicationException($"Error updating the advice: {exception.Message}");
             }
         }
 
@@ -161,7 +162,7 @@ namespace karg.BLL.Services.Advices
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error delete the advice.", exception);
+                throw new ApplicationException($"Error delete the advice: {exception.Message}");
             }
         }
     }

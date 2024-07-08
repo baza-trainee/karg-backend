@@ -3,6 +3,7 @@ using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.YearsResults;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace karg.API.Controllers
@@ -126,6 +127,41 @@ namespace karg.API.Controllers
                 await _yearResultService.CreateYearResult(yearResultDto);
 
                 return Created("CreateYearResult", yearResultDto);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates the details of a specific year result.
+        /// </summary>
+        /// <param name="id">The unique identifier of the year result to be updated.</param>
+        /// <param name="patchDoc">The JSON Patch document containing the updates to apply.</param>
+        /// <response code="200">Successful request. Returns the updated details of the year result.</response>
+        /// <response code="400">Bad request. If the JSON Patch document is null.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="500">Internal server error. An error occurred while trying to update the year result details.</response>
+        /// <returns>The updated details of the year result.</returns>
+        [HttpPatch("update")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateYearResult(int id, [FromBody] JsonPatchDocument<CreateAndUpdateYearResultDTO> patchDoc)
+        {
+            try
+            {
+                if (patchDoc == null)
+                {
+                    return BadRequest();
+                }
+
+                var resultYearResult = await _yearResultService.UpdateYearResult(id, patchDoc);
+
+                return Ok(resultYearResult);
             }
             catch (Exception exception)
             {

@@ -1,9 +1,5 @@
 ﻿using karg.BLL.DTO.YearsResults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Interfaces.YearsResults
 {
@@ -12,6 +8,7 @@ namespace karg.BLL.Interfaces.YearsResults
         Task<PaginatedAllYearsResultsDTO> GetYearsResults(YearsResultsFilterDTO filter, string cultureCode);
         Task<YearResultDTO> GetYearResultById(int yearResultId, string cultureCode);
         Task CreateYearResult(CreateAndUpdateYearResultDTO yearResultDto);
+        Task<CreateAndUpdateYearResultDTO> UpdateYearResult(int yearResultId, JsonPatchDocument<CreateAndUpdateYearResultDTO> patchDoc);
         Task DeleteYearResult(int yearResultId);
     }
 }

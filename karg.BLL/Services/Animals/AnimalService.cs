@@ -62,7 +62,7 @@ namespace karg.BLL.Services.Animals
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving list of animals.", exception);
+                throw new ApplicationException($"Error retrieving list of animals: {exception.Message}");
             }
         }
 
@@ -90,7 +90,7 @@ namespace karg.BLL.Services.Animals
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving animal by id.", exception);
+                throw new ApplicationException($"Error retrieving animal by id: {exception.Message}");
             }
         }
 
@@ -118,7 +118,7 @@ namespace karg.BLL.Services.Animals
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the animal.", exception);
+                throw new ApplicationException($"Error adding the animal: {exception.Message}");
             }
         }
 
@@ -154,7 +154,7 @@ namespace karg.BLL.Services.Animals
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error updating the animal.", exception);
+                throw new ApplicationException($"Error updating the animal: {exception.Message}");
             }
         }
 
@@ -172,7 +172,7 @@ namespace karg.BLL.Services.Animals
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error delete the animal.", exception);
+                throw new ApplicationException($"Error delete the animal: {exception.Message}");
             }
         }
     }

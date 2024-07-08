@@ -38,6 +38,14 @@ namespace karg.DAL.Repositories
             return yearResult.Id;
         }
 
+        public async Task UpdateYearResult(YearResult updatedYearResult)
+        {
+            var existingYearResult = await _context.YearsResults.FindAsync(updatedYearResult.Id);
+
+            _context.Entry(existingYearResult).CurrentValues.SetValues(updatedYearResult);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteYearResult(YearResult yearResult)
         {
             _context.YearsResults.Remove(yearResult);
