@@ -46,7 +46,7 @@ namespace karg.BLL.Services.FAQs
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving list of FAQs.", exception);
+                throw new ApplicationException($"Error retrieving list of FAQs: {exception.Message}");
             }
         }
 
@@ -70,7 +70,7 @@ namespace karg.BLL.Services.FAQs
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving FAQ by id.", exception);
+                throw new ApplicationException($"Error retrieving FAQ by id: {exception.Message}");
             }
         }
 
@@ -97,7 +97,7 @@ namespace karg.BLL.Services.FAQs
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error updating the FAQ.", exception);
+                throw new ApplicationException($"Error updating the FAQ: {exception.Message}");
             }
         }
 
@@ -114,7 +114,7 @@ namespace karg.BLL.Services.FAQs
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the FAQ.", exception);
+                throw new ApplicationException($"Error adding the FAQ: {exception.Message}");
             }
         }
         
@@ -131,7 +131,7 @@ namespace karg.BLL.Services.FAQs
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error delete the FAQ.", exception);
+                throw new ApplicationException($"Error delete the FAQ: {exception.Message}");
             }
         }
     }

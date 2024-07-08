@@ -39,7 +39,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding localization set.", exception);
+                throw new ApplicationException($"Error adding localization set: {exception.Message}");
             }
         }
 
@@ -52,7 +52,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error deleting localization set.", exception);
+                throw new ApplicationException($"Error deleting localization set: {exception.Message}");
             }
         }
 
@@ -74,7 +74,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error updating localization set.", exception);
+                throw new ApplicationException($"Error updating localization set: {exception.Message}");
             }
         }
     }

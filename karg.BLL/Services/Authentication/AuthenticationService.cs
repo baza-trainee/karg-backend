@@ -52,7 +52,7 @@ namespace karg.BLL.Services.Authentication
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error during authentication.", exception);
+                throw new ApplicationException($"Error during authentication: {exception.Message}");
             }
         }
     }

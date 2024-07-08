@@ -44,7 +44,7 @@ namespace karg.BLL.Services.Partners
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving list of partners.", exception);
+                throw new ApplicationException($"Error retrieving list of partners: {exception.Message}");
             }
         }
         
@@ -68,7 +68,7 @@ namespace karg.BLL.Services.Partners
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving partner by id.", exception);
+                throw new ApplicationException($"Error retrieving partner by id: {exception.Message}");
             }
         }
 
@@ -90,7 +90,7 @@ namespace karg.BLL.Services.Partners
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the partner.", exception);
+                throw new ApplicationException($"Error adding the partner: {exception.Message}");
             }
         }
 
@@ -117,7 +117,7 @@ namespace karg.BLL.Services.Partners
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error updating the partner.", exception);
+                throw new ApplicationException($"Error updating the partner: {exception.Message}");
             }
         }
 
@@ -132,7 +132,7 @@ namespace karg.BLL.Services.Partners
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error delete the partner.", exception);
+                throw new ApplicationException($"Error delete the partner: {exception.Message}");
             }
         }
     }

@@ -3,9 +3,9 @@ using karg.BLL.DTO.Utilities;
 using karg.BLL.DTO.YearsResults;
 using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Interfaces.YearsResults;
-using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Services.YearsResults
 {
@@ -55,7 +55,7 @@ namespace karg.BLL.Services.YearsResults
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving list of years results.", exception);
+                throw new ApplicationException($"Error retrieving list of years results: {exception.Message}");
             }
         }
 
@@ -80,7 +80,7 @@ namespace karg.BLL.Services.YearsResults
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving year result by id.", exception);
+                throw new ApplicationException($"Error retrieving year result by id: {exception.Message}");
             }
         }
 
@@ -103,7 +103,38 @@ namespace karg.BLL.Services.YearsResults
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the year result.", exception);
+                throw new ApplicationException($"Error adding the year result: {exception.Message}");
+            }
+        }
+
+        public async Task<CreateAndUpdateYearResultDTO> UpdateYearResult(int yearResultId, JsonPatchDocument<CreateAndUpdateYearResultDTO> patchDoc)
+        {
+            try
+            {
+                var existingYearResult = await _yearResultRepository.GetYearResult(yearResultId);
+                var patchedYearResult = _mapper.Map<CreateAndUpdateYearResultDTO>(existingYearResult);
+
+                patchedYearResult.Description_ua = _localizationService.GetLocalizedValue(existingYearResult.Description, "ua", existingYearResult.DescriptionId);
+                patchedYearResult.Description_en = _localizationService.GetLocalizedValue(existingYearResult.Description, "en", existingYearResult.DescriptionId);
+                patchedYearResult.Year = existingYearResult.Year.Year.ToString();
+
+                var yearResultImage = await _imageService.GetImageById(existingYearResult.ImageId);
+                patchedYearResult.Image = yearResultImage;
+
+                patchDoc.ApplyTo(patchedYearResult);
+
+                await _imageService.UpdateImage(existingYearResult.ImageId, patchedYearResult.Image);
+
+                existingYearResult.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.DescriptionId, patchedYearResult.Description_en, patchedYearResult.Description_ua);
+                existingYearResult.Year = new DateOnly(int.Parse(patchedYearResult.Year), 1, 1);
+
+                await _yearResultRepository.UpdateYearResult(existingYearResult);
+
+                return patchedYearResult;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error updating the year result: {exception.Message}");
             }
         }
 
@@ -120,7 +151,7 @@ namespace karg.BLL.Services.YearsResults
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error delete the year result.", exception);
+                throw new ApplicationException($"Error delete the year result: {exception.Message}");
             }
         }
     }

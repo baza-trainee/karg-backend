@@ -39,7 +39,7 @@ namespace karg.BLL.Services.Authentication
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving JWT token by id.", exception);
+                throw new ApplicationException($"Error retrieving JWT token by id: {exception.Message}");
             }
         }
 
@@ -56,7 +56,7 @@ namespace karg.BLL.Services.Authentication
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the JWT token.", exception);
+                throw new ApplicationException($"Error adding the JWT token: {exception.Message}");
             }
         }
 
@@ -94,7 +94,7 @@ namespace karg.BLL.Services.Authentication
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error delete the JWT token.", exception);
+                throw new ApplicationException($"Error delete the JWT token: {exception.Message}");
             }
         }
     }

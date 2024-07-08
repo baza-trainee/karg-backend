@@ -19,7 +19,7 @@ namespace karg.BLL.Services.Authentication
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error occurred while hashing the password.", exception);
+                throw new ApplicationException($"Error occurred while hashing the password: {exception.Message}");
             }
         }
 
@@ -31,7 +31,7 @@ namespace karg.BLL.Services.Authentication
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error occurred while verifying the password hash.", exception);
+                throw new ApplicationException($"Error occurred while verifying the password hash: {exception.Message}");
             }
         }
     }

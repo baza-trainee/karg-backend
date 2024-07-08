@@ -8,6 +8,7 @@ namespace karg.BLL.Profiles
     {
         public YearResultProfile()
         {
+            CreateMap<YearResult, CreateAndUpdateYearResultDTO>();
             CreateMap<YearResult, YearResultDTO>()
                 .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.Year.Year.ToString()));
             CreateMap<CreateAndUpdateYearResultDTO, YearResult>()

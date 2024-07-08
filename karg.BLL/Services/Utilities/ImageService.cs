@@ -35,7 +35,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error adding the image.", exception);
+                throw new ApplicationException($"Error adding the image: {exception.Message}");
             }
         }
 
@@ -49,7 +49,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving image.", exception);
+                throw new ApplicationException($"Error retrieving image: {exception.Message}");
             }
         }
 
@@ -66,7 +66,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error retrieving images of animals.", exception);
+                throw new ApplicationException($"Error retrieving images of animals: {exception.Message}");
             }
         }
 
@@ -84,7 +84,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error when updating image.", exception);
+                throw new ApplicationException($"Error when updating image: {exception.Message}");
             }
         }
 
@@ -112,7 +112,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch (Exception exception)
             {
-                throw new ApplicationException("Error when updating animal images.", exception);
+                throw new ApplicationException($"Error when updating animal images: {exception.Message}");
             }
         }
 
@@ -127,7 +127,7 @@ namespace karg.BLL.Services.Utilities
             }
             catch(Exception exception)
             {
-                throw new ApplicationException("Error delete the image.", exception);
+                throw new ApplicationException($"Error delete the image: {exception.Message}");
             }
         }
     }
