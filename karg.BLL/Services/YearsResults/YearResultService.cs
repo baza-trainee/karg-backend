@@ -17,6 +17,7 @@ namespace karg.BLL.Services.YearsResults
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizationSetService _localizationSetService;
         private readonly IMapper _mapper;
+        
         public YearResultService(IYearResultRepository yearResultRepository, IPaginationService<YearResult> paginationService, IImageService imageService, ILocalizationService localizationService, ILocalizationSetService localizationSetService, IMapper mapper)
         {
             _yearResultRepository = yearResultRepository;
