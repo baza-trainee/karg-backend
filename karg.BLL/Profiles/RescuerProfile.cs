@@ -8,7 +8,8 @@ namespace karg.BLL.Profiles
     {
         public RescuerProfile() 
         {
-            CreateMap<Rescuer, AllRescuersDTO>();
+            CreateMap<Rescuer, CreateAndUpdateRescuerDTO>();
+            CreateMap<Rescuer, RescuerDTO>();
             CreateMap<CreateAndUpdateRescuerDTO, Rescuer>()
                 .ForMember(dest => dest.Image, opt => opt.Ignore());
         }

@@ -1,17 +1,14 @@
 using karg.BLL.DTO.Rescuers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Interfaces.Rescuers
 {
     public interface IRescuerService
     {
-        Task ResetPassword(string email, string newPassword);
-        Task<List<AllRescuersDTO>> GetRescuers();
+        Task<List<RescuerDTO>> GetRescuers();
+        Task<RescuerDTO> GetRescuerById(int rescuerId);
         Task CreateRescuer(CreateAndUpdateRescuerDTO rescuerDto);
+        Task<CreateAndUpdateRescuerDTO> UpdateRescuer(int rescuerId, JsonPatchDocument<CreateAndUpdateRescuerDTO> patchDoc);
         Task DeleteRescuer(int rescuerId);
     }
 }

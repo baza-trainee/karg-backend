@@ -13,7 +13,7 @@ namespace karg.DAL.Interfaces
         Task<List<Rescuer>> GetRescuers();
         Task<Rescuer> GetRescuer(int rescuerId);
         Task<int> AddRescuer(Rescuer rescuer);
-        Task<Rescuer> UpdateRescuer(Rescuer updatedRescuer);
+        Task UpdateRescuer(Rescuer updatedRescuer);
         Task DeleteRescuer(Rescuer rescuer);
     }
 }

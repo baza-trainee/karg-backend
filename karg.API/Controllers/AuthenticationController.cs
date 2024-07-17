@@ -33,18 +33,42 @@ namespace karg.API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest("Invalid request parameters provided.");
-                }
-
                 var result = await _authenticationService.Authenticate(loginDto);
 
                 if (result.Status == 0)
                 {
-                    return BadRequest(result.Message);
+                    return BadRequest(result);
                 }
                 
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Resets the password for the specified rescuer based on their email.
+        /// </summary>
+        /// <param name="credentials">Object containing the rescuer's email and new password.</param>
+        /// <response code="200">Successful password reset.</response>
+        /// <response code="500">Internal server error. Failed to process the request.</response>
+        /// <returns>Message indicating successful password reset.</returns>
+        [HttpPost("resetpassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO credentials)
+        {
+            try
+            {
+                var result = await _authenticationService.ResetPassword(credentials);
+
+                if (result.Status == 0)
+                {
+                    return BadRequest(result);
+                }
+
                 return Ok(result);
             }
             catch (Exception exception)
