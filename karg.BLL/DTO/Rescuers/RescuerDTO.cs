@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace karg.BLL.DTO.Rescuers
 {
-    public class AllRescuersDTO
+    public class RescuerDTO
     {
         public int Id { get; set; }
         public string FullName { get; set; }

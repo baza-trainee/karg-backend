@@ -8,7 +8,7 @@ using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
-using karg.DAL.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace karg.BLL.Services.Rescuers
 {
@@ -16,54 +16,28 @@ namespace karg.BLL.Services.Rescuers
     {
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IRescuerRepository _rescuerRepository;
-        private readonly IPasswordValidationService _passwordValidationService;
-        private readonly IPasswordHashService _passwordHashService;
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
 
-        public RescuerService(IJwtTokenService jwtTokenService, IRescuerRepository rescuerRepository, IPasswordValidationService passwordValidationService, IPasswordHashService passwordHashService, IMapper mapper, IImageService imageService)
+        public RescuerService(IJwtTokenService jwtTokenService, IRescuerRepository rescuerRepository, IMapper mapper, IImageService imageService)
         {
             _jwtTokenService = jwtTokenService;
             _rescuerRepository = rescuerRepository;
-            _passwordValidationService = passwordValidationService;
-            _passwordHashService = passwordHashService;
             _imageService = imageService;
             _mapper = mapper;
         }
 
-        public async Task ResetPassword(string email, string newPassword)
-        {
-            var rescuer = await _rescuerRepository.GetRescuerByEmail(email);
-            if (rescuer == null)
-            {
-                throw new InvalidOperationException("Rescuer not found.");
-            }
-
-            var isValidPassword = _passwordValidationService.IsValidPassword(newPassword, rescuer.Current_Password);
-            if (!isValidPassword)
-            {
-                throw new InvalidOperationException("Invalid new password.");
-            }
-
-            var newPasswordHash = _passwordHashService.HashPassword(newPassword);
-
-            rescuer.Previous_Password = rescuer.Current_Password;
-            rescuer.Current_Password = newPasswordHash;
-
-            await _rescuerRepository.UpdateRescuer(rescuer);
-        }
-
-        public async Task<List<AllRescuersDTO>> GetRescuers()
+        public async Task<List<RescuerDTO>> GetRescuers()
         {
             try
             {
                 var rescuers = await _rescuerRepository.GetRescuers();
-                var rescuersDto = new List<AllRescuersDTO>();
+                var rescuersDto = new List<RescuerDTO>();
 
                 foreach (var rescuer in rescuers)
                 {
                     var rescuerImage = await _imageService.GetImageById(rescuer.ImageId);
-                    var rescuerDto = _mapper.Map<AllRescuersDTO>(rescuer);
+                    var rescuerDto = _mapper.Map<RescuerDTO>(rescuer);
 
                     rescuerDto.Image = rescuerImage;
                     rescuersDto.Add(rescuerDto);
@@ -74,6 +48,30 @@ namespace karg.BLL.Services.Rescuers
             catch (Exception exception)
             {
                 throw new ApplicationException($"Error retrieving list of rescuers: {exception.Message}");
+            }
+        }
+
+        public async Task<RescuerDTO> GetRescuerById(int rescuerId)
+        {
+            try
+            {
+                var rescuer = await _rescuerRepository.GetRescuer(rescuerId);
+
+                if (rescuer == null)
+                {
+                    return null;
+                }
+
+                var rescuerDto = _mapper.Map<RescuerDTO>(rescuer);
+                var rescuerImage = await _imageService.GetImageById(rescuer.ImageId);
+
+                rescuerDto.Image = rescuerImage;
+
+                return rescuerDto;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error retrieving rescuer by id: {exception.Message}");
             }
         }
 
@@ -100,6 +98,33 @@ namespace karg.BLL.Services.Rescuers
             catch (Exception exception)
             {
                 throw new ApplicationException($"Error adding the rescuer: {exception.Message}");
+            }
+        }
+
+        public async Task<CreateAndUpdateRescuerDTO> UpdateRescuer(int rescuerId, JsonPatchDocument<CreateAndUpdateRescuerDTO> patchDoc)
+        {
+            try
+            {
+                var existingRescuer = await _rescuerRepository.GetRescuer(rescuerId);
+                var patchedRescuer= _mapper.Map<CreateAndUpdateRescuerDTO>(existingRescuer);
+
+                var rescuerImage = await _imageService.GetImageById(existingRescuer.ImageId);
+                patchedRescuer.Image = rescuerImage;
+
+                patchDoc.ApplyTo(patchedRescuer);
+
+                existingRescuer.FullName = patchedRescuer.FullName;
+                existingRescuer.PhoneNumber = patchedRescuer.PhoneNumber;
+                existingRescuer.Email = patchedRescuer.Email;
+
+                await _imageService.UpdateImage(existingRescuer.ImageId, patchedRescuer.Image);
+                await _rescuerRepository.UpdateRescuer(existingRescuer);
+
+                return patchedRescuer;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error updating the rescuer: {exception.Message}");
             }
         }
 

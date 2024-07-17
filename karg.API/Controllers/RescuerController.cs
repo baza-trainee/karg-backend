@@ -2,6 +2,7 @@ using karg.BLL.DTO.Authentication;
 using karg.BLL.DTO.Rescuers;
 using karg.BLL.Interfaces.Rescuers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace karg.API.Controllers
@@ -51,22 +52,39 @@ namespace karg.API.Controllers
         }
 
         /// <summary>
-        /// Resets the password for the specified rescuer based on their email.
+        /// Gets the details of a specific rescuer by its unique identifier.
         /// </summary>
-        /// <param name="credentials">Object containing the rescuer's email and new password.</param>
-        /// <response code="200">Successful password reset.</response>
-        /// <response code="500">Internal server error. Failed to process the request.</response>
-        /// <returns>Message indicating successful password reset.</returns>
-        [HttpPost("resetpassword")]
+        /// <param name="id">The unique identifier of the rescuer.</param>
+        /// <response code="200">Successful request. Returns the details of the specified rescuer.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="404">No rescuer found with the specified identifier.</response>
+        /// <response code="500">An internal server error occurred while trying to retrieve the rescuer details.</response>
+        /// <returns>The details of the specified rescuer.</returns>
+        [HttpGet("getbyid")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO credentials)
+        public async Task<IActionResult> GetAdviceById(int id)
         {
             try
             {
-                await _rescuerService.ResetPassword(credentials.Email, credentials.Password);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
 
-                return Ok("Password reset successfully.");
+                var rescuer = await _rescuerService.GetRescuerById(id);
+
+                if (rescuer == null)
+                {
+                    return NotFound("Rescuer not found.");
+                }
+
+                return Ok(rescuer);
             }
             catch (Exception exception)
             {
@@ -96,6 +114,41 @@ namespace karg.API.Controllers
                 await _rescuerService.CreateRescuer(rescuerDto);
 
                 return Created("CreateRescuer", rescuerDto);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updates the details of a specific rescuer.
+        /// </summary>
+        /// <param name="id">The unique identifier of the rescuer to be updated.</param>
+        /// <param name="patchDoc">The JSON Patch document containing the updates to apply.</param>
+        /// <response code="200">Successful request. Returns the updated details of the rescuer.</response>
+        /// <response code="400">Bad request. If the JSON Patch document is null.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="500">Internal server error. An error occurred while trying to update the rescuer details.</response>
+        /// <returns>The updated details of the rescuer.</returns>
+        [HttpPatch("update")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateRescuer(int id, [FromBody] JsonPatchDocument<CreateAndUpdateRescuerDTO> patchDoc)
+        {
+            try
+            {
+                if (patchDoc == null)
+                {
+                    return BadRequest();
+                }
+
+                var resultRescuer = await _rescuerService.UpdateRescuer(id, patchDoc);
+
+                return Ok(resultRescuer);
             }
             catch (Exception exception)
             {
