@@ -1,18 +1,9 @@
 ﻿using karg.DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.DAL.Interfaces
 {
-    public interface IAnimalRepository
+    public interface IAnimalRepository : IBaseRepository<Animal>
     {
-        Task<List<Animal>> GetAnimals(string categoryFilter = null, string nameSearch = null);
-        Task<int> AddAnimal(Animal animal);
-        Task<Animal> GetAnimal(int animalId);
-        Task UpdateAnimal(Animal updatedAnimal);
-        Task DeleteAnimal(Animal animal);
+        Task<List<Animal>> GetAll(string categoryFilter = null, string nameSearch = null);
     }
 }

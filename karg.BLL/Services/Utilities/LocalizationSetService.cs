@@ -35,7 +35,7 @@ namespace karg.BLL.Services.Utilities
                 }
                 };
 
-                return await _localizationSetRepository.AddLocalizationSet(localizationSet);
+                return await _localizationSetRepository.Add(localizationSet);
             }
             catch (Exception exception)
             {
@@ -60,15 +60,15 @@ namespace karg.BLL.Services.Utilities
         {
             try
             {
-                var localizations = await _localizationRepository.GetLocalization(localizationSetId);
+                var localizations = await _localizationRepository.GetLocalizationBySetId(localizationSetId);
                 var localization_en = localizations.First(localization => localization.CultureCode == "en");
                 var localization_ua = localizations.First(localization => localization.CultureCode == "ua");
 
                 localization_en.Value = value_en;
                 localization_ua.Value = value_ua;
 
-                await _localizationRepository.UpdateLocalization(localization_en);
-                await _localizationRepository.UpdateLocalization(localization_ua);
+                await _localizationRepository.Update(localization_en);
+                await _localizationRepository.Update(localization_ua);
 
                 return localizationSetId;
             }

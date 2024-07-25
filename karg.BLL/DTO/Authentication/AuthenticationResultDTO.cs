@@ -10,6 +10,7 @@ namespace karg.BLL.DTO.Authentication
     {
         public string? Token { get; set; }
         public int Status { get; set; }
+        public int RescuerId { get; set; }
         public string Message { get; set; }
     }
 }

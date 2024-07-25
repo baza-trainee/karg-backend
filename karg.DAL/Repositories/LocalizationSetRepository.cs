@@ -2,30 +2,12 @@
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.DAL.Repositories
 {
-    public class LocalizationSetRepository : ILocalizationSetRepository
+    public class LocalizationSetRepository : BaseRepository<LocalizationSet>, ILocalizationSetRepository
     {
-        private readonly KargDbContext _context;
-
-        public LocalizationSetRepository(KargDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<int> AddLocalizationSet(LocalizationSet localizationSet)
-        {
-            _context.LocalizationSets.Add(localizationSet);
-            await _context.SaveChangesAsync();
-
-            return localizationSet.Id;
-        }
+        public LocalizationSetRepository(KargDbContext context) : base(context) { }
 
         public async Task<List<LocalizationSet>> GetLocalizationSets(List<int> localizationSetIds)
         {

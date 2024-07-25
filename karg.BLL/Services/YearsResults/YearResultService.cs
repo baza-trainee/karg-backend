@@ -32,7 +32,7 @@ namespace karg.BLL.Services.YearsResults
         {
             try
             {
-                var yearsResults = await _yearResultRepository.GetYearsResults();
+                var yearsResults = await _yearResultRepository.GetAll();
                 var paginatedYearsResults = await _paginationService.PaginateWithTotalPages(yearsResults, filter.Page, filter.PageSize);
                 var paginatedYearsResultsItems = paginatedYearsResults.Items;
                 var totalPages = paginatedYearsResults.TotalPages;
@@ -64,7 +64,7 @@ namespace karg.BLL.Services.YearsResults
         {
             try
             {
-                var yearResult = await _yearResultRepository.GetYearResult(yearResultId);
+                var yearResult = await _yearResultRepository.GetById(yearResultId);
 
                 if(yearResult == null)
                 {
@@ -100,7 +100,7 @@ namespace karg.BLL.Services.YearsResults
                 yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
                 yearResult.ImageId = imageId;
 
-                await _yearResultRepository.AddYearResult(yearResult);
+                await _yearResultRepository.Add(yearResult);
             }
             catch (Exception exception)
             {
@@ -112,7 +112,7 @@ namespace karg.BLL.Services.YearsResults
         {
             try
             {
-                var existingYearResult = await _yearResultRepository.GetYearResult(yearResultId);
+                var existingYearResult = await _yearResultRepository.GetById(yearResultId);
                 var patchedYearResult = _mapper.Map<CreateAndUpdateYearResultDTO>(existingYearResult);
 
                 patchedYearResult.Description_ua = _localizationService.GetLocalizedValue(existingYearResult.Description, "ua", existingYearResult.DescriptionId);
@@ -129,7 +129,7 @@ namespace karg.BLL.Services.YearsResults
                 existingYearResult.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.DescriptionId, patchedYearResult.Description_en, patchedYearResult.Description_ua);
                 existingYearResult.Year = new DateOnly(int.Parse(patchedYearResult.Year), 1, 1);
 
-                await _yearResultRepository.UpdateYearResult(existingYearResult);
+                await _yearResultRepository.Update(existingYearResult);
 
                 return patchedYearResult;
             }
@@ -143,10 +143,10 @@ namespace karg.BLL.Services.YearsResults
         {
             try
             {
-                var removedYearResult = await _yearResultRepository.GetYearResult(yearResultId);
+                var removedYearResult = await _yearResultRepository.GetById(yearResultId);
                 var removedYearResultDescriptionId = removedYearResult.DescriptionId;
 
-                await _yearResultRepository.DeleteYearResult(removedYearResult);
+                await _yearResultRepository.Delete(removedYearResult);
                 await _imageService.DeleteImage(removedYearResult.ImageId);
                 await _localizationSetService.DeleteLocalizationSets(new List<int> { removedYearResultDescriptionId });
             }

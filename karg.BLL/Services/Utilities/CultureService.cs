@@ -19,7 +19,7 @@ namespace karg.BLL.Services.Utilities
 
         public async Task<bool> IsCultureCodeInDatabase(string cultureCode)
         {
-            var cultures = await _cultureRepository.GetCultures();
+            var cultures = await _cultureRepository.GetAll();
             var culturesCodes = cultures.Select(culture => culture.Code);
 
             return culturesCodes.Contains(cultureCode);
