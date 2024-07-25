@@ -2,29 +2,19 @@
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.DAL.Repositories
 {
-    public class LocalizationRepository : ILocalizationRepository
+    public class LocalizationRepository : BaseRepository<Localization>, ILocalizationRepository
     {
-        private readonly KargDbContext _context;
+        public LocalizationRepository(KargDbContext context) : base(context) { }
 
-        public LocalizationRepository(KargDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<Localization>> GetLocalization(int localizationSetId)
+        public async Task<List<Localization>> GetLocalizationBySetId(int localizationSetId)
         {
             return await _context.Localizations.AsNoTracking().Where(localization => localization.LocalizationSetId == localizationSetId).ToListAsync();
         }
 
-        public async Task UpdateLocalization(Localization updatedLocalisation)
+        public override async Task Update(Localization updatedLocalisation)
         {
 
             var existingLocalization = await _context.Localizations.AsNoTracking().FirstOrDefaultAsync(localization =>
@@ -34,12 +24,6 @@ namespace karg.DAL.Repositories
             existingLocalization.Value = updatedLocalisation.Value;
 
             _context.Localizations.Update(existingLocalization);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteLocalization(Localization localization)
-        {
-            _context.Localizations.Remove(localization);
             await _context.SaveChangesAsync();
         }
     }

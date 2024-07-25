@@ -31,7 +31,7 @@ namespace karg.BLL.Services.Rescuers
         {
             try
             {
-                var rescuers = await _rescuerRepository.GetRescuers();
+                var rescuers = await _rescuerRepository.GetAll();
                 var rescuersDto = new List<RescuerDTO>();
 
                 foreach (var rescuer in rescuers)
@@ -55,7 +55,7 @@ namespace karg.BLL.Services.Rescuers
         {
             try
             {
-                var rescuer = await _rescuerRepository.GetRescuer(rescuerId);
+                var rescuer = await _rescuerRepository.GetById(rescuerId);
 
                 if (rescuer == null)
                 {
@@ -93,7 +93,7 @@ namespace karg.BLL.Services.Rescuers
                 rescuer.ImageId = imageId;
                 rescuer.Current_Password = string.Empty;
 
-                await _rescuerRepository.AddRescuer(rescuer);
+                await _rescuerRepository.Add(rescuer);
             }
             catch (Exception exception)
             {
@@ -105,7 +105,7 @@ namespace karg.BLL.Services.Rescuers
         {
             try
             {
-                var existingRescuer = await _rescuerRepository.GetRescuer(rescuerId);
+                var existingRescuer = await _rescuerRepository.GetById(rescuerId);
                 var patchedRescuer= _mapper.Map<CreateAndUpdateRescuerDTO>(existingRescuer);
 
                 var rescuerImage = await _imageService.GetImageById(existingRescuer.ImageId);
@@ -118,7 +118,7 @@ namespace karg.BLL.Services.Rescuers
                 existingRescuer.Email = patchedRescuer.Email;
 
                 await _imageService.UpdateImage(existingRescuer.ImageId, patchedRescuer.Image);
-                await _rescuerRepository.UpdateRescuer(existingRescuer);
+                await _rescuerRepository.Update(existingRescuer);
 
                 return patchedRescuer;
             }
@@ -132,9 +132,9 @@ namespace karg.BLL.Services.Rescuers
         {
             try
             {
-                var removedRescuer = await _rescuerRepository.GetRescuer(rescuerId);
+                var removedRescuer = await _rescuerRepository.GetById(rescuerId);
 
-                await _rescuerRepository.DeleteRescuer(removedRescuer);
+                await _rescuerRepository.Delete(removedRescuer);
                 await _imageService.DeleteImage(removedRescuer.ImageId);
                 await _jwtTokenService.DeleteJwtToken(removedRescuer.TokenId);
             }

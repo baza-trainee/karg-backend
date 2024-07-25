@@ -5,16 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace karg.DAL.Repositories
 {
-    public class YearResultRepository : IYearResultRepository
+    public class YearResultRepository : BaseRepository<YearResult>, IYearResultRepository
     {
-        private readonly KargDbContext _context;
+        public YearResultRepository(KargDbContext context) : base(context) { }
 
-        public YearResultRepository(KargDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<YearResult>> GetYearsResults()
+        public override async Task<List<YearResult>> GetAll()
         {
             return await _context.YearsResults
                 .AsNoTracking()
@@ -22,34 +17,12 @@ namespace karg.DAL.Repositories
                 .ToListAsync();
         }
 
-        public async Task<YearResult> GetYearResult(int yearResultId)
+        public override async Task<YearResult> GetById(int yearResultId)
         {
             return await _context.YearsResults
                 .AsNoTracking()
                 .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .FirstOrDefaultAsync(yearResult => yearResult.Id == yearResultId);
-        }
-
-        public async Task<int> AddYearResult(YearResult yearResult)
-        {
-            _context.YearsResults.Add(yearResult);
-            await _context.SaveChangesAsync();
-
-            return yearResult.Id;
-        }
-
-        public async Task UpdateYearResult(YearResult updatedYearResult)
-        {
-            var existingYearResult = await _context.YearsResults.FindAsync(updatedYearResult.Id);
-
-            _context.Entry(existingYearResult).CurrentValues.SetValues(updatedYearResult);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteYearResult(YearResult yearResult)
-        {
-            _context.YearsResults.Remove(yearResult);
-            await _context.SaveChangesAsync();
         }
     }
 }

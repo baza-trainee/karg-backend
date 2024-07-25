@@ -29,7 +29,8 @@ namespace karg.BLL.Services.Authentication
                 var authenticationResult = new AuthenticationResultDTO
                 {
                     Status = 0,
-                    Token = null
+                    Token = null,
+                    RescuerId = 0
                 };
 
                 if (rescuer == null)
@@ -49,6 +50,7 @@ namespace karg.BLL.Services.Authentication
                 authenticationResult.Status = 1;
                 authenticationResult.Message = "Authentication is successful";
                 authenticationResult.Token = token;
+                authenticationResult.RescuerId = rescuer.Id;
 
                 return authenticationResult;
             }
@@ -85,7 +87,7 @@ namespace karg.BLL.Services.Authentication
                 rescuer.Previous_Password = rescuer.Current_Password;
                 rescuer.Current_Password = newPasswordHash;
 
-                await _rescuerRepository.UpdateRescuer(rescuer);
+                await _rescuerRepository.Update(rescuer);
 
                 resetPasswordResult.Status = 1;
                 resetPasswordResult.Message = "Password reset successfully.";

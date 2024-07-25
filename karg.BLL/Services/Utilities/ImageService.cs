@@ -29,7 +29,7 @@ namespace karg.BLL.Services.Utilities
             {
                 var image = _mapper.Map<Image>(imageDto);
 
-                await _repository.AddImage(image);
+                await _repository.Add(image);
 
                 return image.Id;
             }
@@ -43,7 +43,7 @@ namespace karg.BLL.Services.Utilities
         {
             try
             {
-                var image = await _repository.GetImage(imageId);
+                var image = await _repository.GetById(imageId);
 
                 return image.Uri;
             }
@@ -57,7 +57,7 @@ namespace karg.BLL.Services.Utilities
         {
             try
             {
-                var allImages = await _repository.GetImages();
+                var allImages = await _repository.GetAll();
                 var animalsImages = allImages
                     .Where(image => image.AnimalId == animalId)
                     .ToList();
@@ -74,12 +74,12 @@ namespace karg.BLL.Services.Utilities
         {
             try
             {
-                var existingImage = await _repository.GetImage(imageId);
+                var existingImage = await _repository.GetById(imageId);
                 if (existingImage.Uri != updatedImageUri)
                 {
                     existingImage.Uri = updatedImageUri;
 
-                    await _repository.UpdateImage(existingImage);
+                    await _repository.Update(existingImage);
                 }
             }
             catch (Exception exception)
@@ -93,20 +93,15 @@ namespace karg.BLL.Services.Utilities
             try
             {
                 var existingImages = await GetAnimalImages(animalId);
-                var existingImageUris = existingImages.Select(image => image.Uri).ToList();
-                var deletedImages = existingImages
-                    .Where(existingImage => !updatedImagesUris.Any(updatedImageUri => updatedImageUri == existingImage.Uri))
-                    .ToList();
-                var newImages = updatedImagesUris.Except(existingImageUris).ToList();
 
-                foreach (var image in deletedImages)
+                foreach (var image in existingImages)
                 {
-                    await _repository.DeleteImage(image);
+                    await _repository.Delete(image);
                 }
 
-                foreach (var image in newImages)
+                foreach (var updatedImageUri in updatedImagesUris)
                 {
-                    var newAnimalImage = new CreateImageDTO { AnimalId = animalId, Uri = image };
+                    var newAnimalImage = new CreateImageDTO { AnimalId = animalId, Uri = updatedImageUri };
                     await AddImage(newAnimalImage);
                 }
             }
@@ -120,10 +115,10 @@ namespace karg.BLL.Services.Utilities
         {
             try
             {
-                var allImages = await _repository.GetImages();
+                var allImages = await _repository.GetAll();
                 var image = allImages.FirstOrDefault(image => image.Id == imageId);
 
-                await _repository.DeleteImage(image);
+                await _repository.Delete(image);
             }
             catch(Exception exception)
             {

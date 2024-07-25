@@ -1,49 +1,11 @@
 ﻿using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace karg.DAL.Repositories
 {
-    public class PartnerRepository : IPartnerRepository
+    public class PartnerRepository : BaseRepository<Partner>, IPartnerRepository
     {
-        private readonly KargDbContext _context;
-
-        public PartnerRepository(KargDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<Partner>> GetPartners()
-        {
-            return await _context.Partners.AsNoTracking().ToListAsync();
-        }
-
-        public async Task<Partner> GetPartner(int partnerId)
-        {
-            return await _context.Partners.AsNoTracking().FirstOrDefaultAsync(partner => partner.Id == partnerId);
-        }
-
-        public async Task<int> AddPartner(Partner partner)
-        {
-            _context.Partners.Add(partner);
-            await _context.SaveChangesAsync();
-
-            return partner.Id;
-        }
-
-        public async Task UpdatePartner(Partner updatedPartner)
-        {
-            var existingPartner = await _context.Partners.FindAsync(updatedPartner.Id);
-
-            _context.Entry(existingPartner).CurrentValues.SetValues(updatedPartner);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeletePartner(Partner partner)
-        {
-            _context.Partners.Remove(partner);
-            await _context.SaveChangesAsync();
-        }
+        public PartnerRepository(KargDbContext context) : base(context) { }
     }
 }

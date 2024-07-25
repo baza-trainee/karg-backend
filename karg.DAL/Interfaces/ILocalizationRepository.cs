@@ -1,16 +1,9 @@
 ﻿using karg.DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.DAL.Interfaces
 {
-    public interface ILocalizationRepository
+    public interface ILocalizationRepository : IBaseRepository<Localization> 
     {
-        Task<List<Localization>> GetLocalization(int localizationSetId);
-        Task UpdateLocalization(Localization updatedLocalisation);
-        Task DeleteLocalization(Localization localization);
+        Task<List<Localization>> GetLocalizationBySetId(int localizationSetId);
     }
 }

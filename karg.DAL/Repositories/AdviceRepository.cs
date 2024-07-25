@@ -2,24 +2,14 @@
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.DAL.Repositories
 {
-    public class AdviceRepository : IAdviceRepository
+    public class AdviceRepository : BaseRepository<Advice>, IAdviceRepository
     {
-        private readonly KargDbContext _context;
+        public AdviceRepository(KargDbContext context) : base(context) { }
 
-        public AdviceRepository(KargDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<Advice>> GetAdvices()
+        public override async Task<List<Advice>> GetAll()
         {
             return await _context.Advices
                 .AsNoTracking()
@@ -28,35 +18,13 @@ namespace karg.DAL.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Advice> GetAdvice(int adviceId)
+        public override async Task<Advice> GetById(int adviceId)
         {
             return await _context.Advices
                 .AsNoTracking()
                 .Include(advice => advice.Title).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .FirstOrDefaultAsync(advice => advice.Id == adviceId);
-        }
-
-        public async Task<int> AddAdvice(Advice advice)
-        {
-            _context.Advices.Add(advice);
-            await _context.SaveChangesAsync();
-
-            return advice.Id;
-        }
-
-        public async Task UpdateAdvice(Advice updatedAdvice)
-        {
-            var existingAdvice = await _context.Advices.FindAsync(updatedAdvice.Id);
-
-            _context.Entry(existingAdvice).CurrentValues.SetValues(updatedAdvice);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAdvice(Advice advice)
-        {
-            _context.Advices.Remove(advice);
-            await _context.SaveChangesAsync();
         }
     }
 }

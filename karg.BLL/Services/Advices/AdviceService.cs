@@ -8,8 +8,10 @@ using karg.BLL.Services.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using karg.DAL.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Xml.Linq;
 
 namespace karg.BLL.Services.Advices
@@ -36,7 +38,7 @@ namespace karg.BLL.Services.Advices
         {
             try
             {
-                var advices = await _adviceRepository.GetAdvices();
+                var advices = await _adviceRepository.GetAll();
                 var paginatedAdvices = await _paginationService.PaginateWithTotalPages(advices, filter.Page, filter.PageSize);
                 var paginatedAdvicesItems = paginatedAdvices.Items;
                 var totalPages = paginatedAdvices.TotalPages;
@@ -81,7 +83,7 @@ namespace karg.BLL.Services.Advices
                 advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
                 advice.ImageId = imageId;
 
-                await _adviceRepository.AddAdvice(advice);
+                await _adviceRepository.Add(advice);
             }
             catch (Exception exception)
             {
@@ -93,7 +95,7 @@ namespace karg.BLL.Services.Advices
         {
             try
             {
-                var advice = await _adviceRepository.GetAdvice(adviceId);
+                var advice = await _adviceRepository.GetById(adviceId);
 
                 if(advice == null)
                 {
@@ -119,7 +121,7 @@ namespace karg.BLL.Services.Advices
         {
             try
             {
-                var existingAdvice = await _adviceRepository.GetAdvice(adviceId);
+                var existingAdvice = await _adviceRepository.GetById(adviceId);
                 var patchedAdvice = _mapper.Map<CreateAndUpdateAdviceDTO>(existingAdvice);
 
                 patchedAdvice.Title_ua = _localizationService.GetLocalizedValue(existingAdvice.Title, "ua", existingAdvice.TitleId);
@@ -136,9 +138,9 @@ namespace karg.BLL.Services.Advices
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
                 existingAdvice.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.DescriptionId, patchedAdvice.Description_en, patchedAdvice.Description_ua);
-                existingAdvice.Created_At = DateOnly.ParseExact(patchedAdvice.Created_At, "yyyy-MM-dd");
+                existingAdvice.Created_At = DateOnly.ParseExact(patchedAdvice.Created_At, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                await _adviceRepository.UpdateAdvice(existingAdvice);
+                await _adviceRepository.Update(existingAdvice);
 
                 return patchedAdvice;
             }
@@ -152,11 +154,11 @@ namespace karg.BLL.Services.Advices
         {
             try
             {
-                var removedAdvice = await _adviceRepository.GetAdvice(adviceId);
+                var removedAdvice = await _adviceRepository.GetById(adviceId);
                 var removedAdviceTitleId = removedAdvice.TitleId;
                 var removedAdviceDescriptionId = removedAdvice.DescriptionId;
 
-                await _adviceRepository.DeleteAdvice(removedAdvice);
+                await _adviceRepository.Delete(removedAdvice);
                 await _imageService.DeleteImage(removedAdvice.ImageId);
                 await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAdviceTitleId, removedAdviceDescriptionId });
             }

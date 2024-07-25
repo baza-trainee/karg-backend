@@ -28,7 +28,7 @@ namespace karg.BLL.Services.Partners
         {
             try
             {
-                var partners = await _partnerRepository.GetPartners();
+                var partners = await _partnerRepository.GetAll();
                 var partnersDto = new List<PartnerDTO>();
 
                 foreach (var partner in partners)
@@ -52,7 +52,7 @@ namespace karg.BLL.Services.Partners
         {
             try
             {
-                var partner = await _partnerRepository.GetPartner(partnerId);
+                var partner = await _partnerRepository.GetById(partnerId);
                 
                 if(partner == null)
                 {
@@ -86,7 +86,7 @@ namespace karg.BLL.Services.Partners
 
                 partner.ImageId = imageId;
 
-                await _partnerRepository.AddPartner(partner);
+                await _partnerRepository.Add(partner);
             }
             catch (Exception exception)
             {
@@ -98,7 +98,7 @@ namespace karg.BLL.Services.Partners
         {
             try
             {
-                var existingPartner = await _partnerRepository.GetPartner(partnerId);
+                var existingPartner = await _partnerRepository.GetById(partnerId);
                 var patchedPartner = _mapper.Map<CreateAndUpdatePartnerDTO>(existingPartner);
                 var partnerImage = await _imageService.GetImageById(existingPartner.ImageId);
 
@@ -111,7 +111,7 @@ namespace karg.BLL.Services.Partners
                 existingPartner.Name = patchedPartner.Name;
                 existingPartner.Uri = patchedPartner.Uri;
 
-                await _partnerRepository.UpdatePartner(existingPartner);
+                await _partnerRepository.Update(existingPartner);
 
                 return patchedPartner;
             }
@@ -125,9 +125,9 @@ namespace karg.BLL.Services.Partners
         {
             try
             {
-                var removedPartner = await _partnerRepository.GetPartner(partnerId);
+                var removedPartner = await _partnerRepository.GetById(partnerId);
 
-                await _partnerRepository.DeletePartner(removedPartner);
+                await _partnerRepository.Delete(removedPartner);
                 await _imageService.DeleteImage(removedPartner.ImageId);
             }
             catch (Exception exception)

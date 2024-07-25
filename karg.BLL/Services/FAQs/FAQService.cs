@@ -27,7 +27,7 @@ namespace karg.BLL.Services.FAQs
         {
             try
             {
-                var faqs = await _faqRepository.GetFAQs();
+                var faqs = await _faqRepository.GetAll();
                 var faqsDto = new List<FAQDTO>();
 
                 foreach (var faq in faqs)
@@ -54,7 +54,7 @@ namespace karg.BLL.Services.FAQs
         {
             try
             {
-                var faq = await _faqRepository.GetFAQ(faqId);
+                var faq = await _faqRepository.GetById(faqId);
 
                 if(faq == null)
                 {
@@ -78,7 +78,7 @@ namespace karg.BLL.Services.FAQs
         {
             try
             {
-                var existingFAQ = await _faqRepository.GetFAQ(faqId);
+                var existingFAQ = await _faqRepository.GetById(faqId);
                 var patchedFAQ = _mapper.Map<CreateAndUpdateFAQDTO>(existingFAQ);
 
                 patchedFAQ.Question_ua = _localizationService.GetLocalizedValue(existingFAQ.Question, "ua", existingFAQ.QuestionId);
@@ -91,7 +91,7 @@ namespace karg.BLL.Services.FAQs
                 existingFAQ.QuestionId = await _localizationSetService.UpdateLocalizationSet(existingFAQ.QuestionId, patchedFAQ.Question_en, patchedFAQ.Question_ua);
                 existingFAQ.AnswerId = await _localizationSetService.UpdateLocalizationSet(existingFAQ.AnswerId, patchedFAQ.Answer_en, patchedFAQ.Answer_ua);
 
-                await _faqRepository.UpdateFAQ(existingFAQ);
+                await _faqRepository.Update(existingFAQ);
 
                 return patchedFAQ;
             }
@@ -110,7 +110,7 @@ namespace karg.BLL.Services.FAQs
                 faq.QuestionId = await _localizationSetService.CreateAndSaveLocalizationSet(faqDto.Question_en, faqDto.Question_ua);
                 faq.AnswerId = await _localizationSetService.CreateAndSaveLocalizationSet(faqDto.Answer_en, faqDto.Answer_ua);
 
-                await _faqRepository.AddFAQ(faq);
+                await _faqRepository.Add(faq);
             }
             catch (Exception exception)
             {
@@ -122,11 +122,11 @@ namespace karg.BLL.Services.FAQs
         {
             try
             {
-                var removedFAQ = await _faqRepository.GetFAQ(faqId);
+                var removedFAQ = await _faqRepository.GetById(faqId);
                 var removedFAQQuestionId = removedFAQ.QuestionId;
                 var removedFAQAnswerId = removedFAQ.AnswerId;
 
-                await _faqRepository.DeleteFAQ(removedFAQ);
+                await _faqRepository.Delete(removedFAQ);
                 await _localizationSetService.DeleteLocalizationSets(new List<int> { removedFAQQuestionId, removedFAQAnswerId });
             }
             catch (Exception exception)

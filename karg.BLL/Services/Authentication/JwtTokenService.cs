@@ -28,7 +28,7 @@ namespace karg.BLL.Services.Authentication
         {
             try
             {
-                var jwtToken = await _jwtTokenRepository.GetJwtToken(tokenId);
+                var jwtToken = await _jwtTokenRepository.GetById(tokenId);
 
                 if (jwtToken == null)
                 {
@@ -52,7 +52,7 @@ namespace karg.BLL.Services.Authentication
                     Token = token
                 };
                 
-                return await _jwtTokenRepository.AddJwtToken(jwtToken);
+                return await _jwtTokenRepository.Add(jwtToken);
             }
             catch (Exception exception)
             {
@@ -88,9 +88,9 @@ namespace karg.BLL.Services.Authentication
         {
             try
             {
-                var removedToken = await _jwtTokenRepository.GetJwtToken(tokenId);
+                var removedToken = await _jwtTokenRepository.GetById(tokenId);
 
-                await _jwtTokenRepository.DeleteJwtToken(removedToken);
+                await _jwtTokenRepository.Delete(removedToken);
             }
             catch (Exception exception)
             {
