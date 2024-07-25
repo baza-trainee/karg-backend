@@ -53,10 +53,12 @@ namespace karg.API.Controllers
         /// </summary>
         /// <param name="credentials">Object containing the rescuer's email and new password.</param>
         /// <response code="200">Successful password reset.</response>
+        /// <response code="400">Bad Request. The request parameters are invalid.</response>
         /// <response code="500">Internal server error. Failed to process the request.</response>
         /// <returns>Message indicating successful password reset.</returns>
         [HttpPost("resetpassword")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO credentials)
         {
