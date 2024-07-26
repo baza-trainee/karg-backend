@@ -12,6 +12,6 @@ namespace karg.BLL.DTO.Rescuers
         public string FullName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber {  get; set; }
-        public Uri Image { get; set; }
+        public List<Uri>? Images { get; set; }
     }
 }

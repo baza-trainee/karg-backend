@@ -13,6 +13,6 @@ namespace karg.BLL.DTO.Advices
         public string Description_en { get; set; }
         public string Description_ua { get; set; }
         public string Created_At { get; set; }
-        public Uri Image { get; set; }
+        public List<Uri> Images { get; set; }
     }
 }

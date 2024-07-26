@@ -12,7 +12,7 @@ namespace karg.DAL.Context.EntityConfigurations
         {
             var animalCategoryConverter = new EnumToStringConverter<AnimalCategory>();
 
-            builder.ToTable("Animal");
+            builder.ToTable("Animals");
 
             builder.HasKey(animal => animal.Id);
 

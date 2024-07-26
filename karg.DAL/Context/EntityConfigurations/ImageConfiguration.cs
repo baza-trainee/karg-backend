@@ -8,13 +8,17 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Image> builder)
         {
-            builder.ToTable("Image");
+            builder.ToTable("Images");
 
             builder.HasKey(image => image.Id);
 
             builder.Property(image => image.Id).ValueGeneratedOnAdd();
             builder.Property(image => image.Uri).IsRequired();
+            builder.Property(image => image.AdviceId).IsRequired(false);
             builder.Property(image => image.AnimalId).IsRequired(false);
+            builder.Property(image => image.RescuerId).IsRequired(false);
+            builder.Property(image => image.PartnerId).IsRequired(false);
+            builder.Property(image => image.YearResultId).IsRequired(false);
         }
     }
 }

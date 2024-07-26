@@ -14,7 +14,7 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Culture> builder)
         {
-            builder.ToTable("Culture");
+            builder.ToTable("Cultures");
 
             builder.HasKey(culture => culture.Code);
             builder.Property(culture => culture.Code).IsRequired().HasMaxLength(2);

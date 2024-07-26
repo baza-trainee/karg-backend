@@ -3,12 +3,6 @@ using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
-using karg.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace karg.BLL.Services.Utilities
 {
@@ -23,14 +17,78 @@ namespace karg.BLL.Services.Utilities
             _mapper = mapper;
         }
 
-        public async Task<int> AddImage(CreateImageDTO imageDto)
+        public async Task<List<Image>> GetImagesByEntity(string entityType, int entityId)
+        {
+            try
+            {
+                var allImages = await _repository.GetAll();
+                var entityImages = allImages.Where(image => IsImageMatchingEntity(image, entityType, entityId)).ToList();
+                return entityImages;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error retrieving images: {exception.Message}");
+            }
+        }
+
+        public async Task AddImages(List<CreateImageDTO> imageDtos)
+        {
+            try
+            {
+                foreach (var imageDto in imageDtos)
+                {
+                    var image = _mapper.Map<Image>(imageDto);
+                    await ValidateImageEntity(image);
+                    await _repository.Add(image);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error adding images: {exception.Message}");
+            }
+        }
+
+        public async Task UpdateEntityImages(string entityType, int entityId, List<Uri> updatedImagesUris)
+        {
+            try
+            {
+                var existingImages = await GetImagesByEntity(entityType, entityId);
+
+                await _repository.DeleteRange(existingImages);
+
+                foreach (var updatedImageUri in updatedImagesUris)
+                {
+                    var newImageDto = new CreateImageDTO { Uri = updatedImageUri };
+                    SetImageEntity(newImageDto, entityType, entityId);
+                    await AddImage(newImageDto);
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error when updating entity images: {exception.Message}");
+            }
+        }
+
+        public async Task DeleteImages(string entityType, int entityId)
+        {
+            try
+            {
+                var removedImage = await GetImagesByEntity(entityType, entityId);
+                await _repository.DeleteRange(removedImage);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error deleting the images: {exception.Message}");
+            }
+        }
+
+        private async Task<int> AddImage(CreateImageDTO imageDto)
         {
             try
             {
                 var image = _mapper.Map<Image>(imageDto);
-
+                await ValidateImageEntity(image);
                 await _repository.Add(image);
-
                 return image.Id;
             }
             catch (Exception exception)
@@ -39,90 +97,54 @@ namespace karg.BLL.Services.Utilities
             }
         }
 
-        public async Task<Uri> GetImageById(int imageId)
+        private async Task ValidateImageEntity(Image image)
         {
-            try
-            {
-                var image = await _repository.GetById(imageId);
+            var entityIds = new List<int?> { image.AnimalId, image.AdviceId, image.RescuerId, image.PartnerId, image.YearResultId };
+            var associatedEntitiesCount = entityIds.Count(id => id != null);
 
-                return image.Uri;
-            }
-            catch (Exception exception)
+            if (associatedEntitiesCount == 0)
             {
-                throw new ApplicationException($"Error retrieving image: {exception.Message}");
+                throw new ApplicationException("Image must be associated with at least one entity.");
+            }
+
+            if (associatedEntitiesCount > 1)
+            {
+                throw new ApplicationException("Image cannot be associated with more than one entity.");
             }
         }
 
-        public async Task<List<Image>> GetAnimalImages(int animalId)
+        private bool IsImageMatchingEntity(Image image, string entityType, int entityId)
         {
-            try
+            return entityType switch
             {
-                var allImages = await _repository.GetAll();
-                var animalsImages = allImages
-                    .Where(image => image.AnimalId == animalId)
-                    .ToList();
-
-                return animalsImages;
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error retrieving images of animals: {exception.Message}");
-            }
+                nameof(Animal) => image.AnimalId == entityId,
+                nameof(Advice) => image.AdviceId == entityId,
+                nameof(Rescuer) => image.RescuerId == entityId,
+                nameof(Partner) => image.PartnerId == entityId,
+                nameof(YearResult) => image.YearResultId == entityId,
+                _ => false,
+            };
         }
 
-        public async Task UpdateImage(int imageId, Uri updatedImageUri)
+        private void SetImageEntity(CreateImageDTO imageDto, string entityType, int entityId)
         {
-            try
+            switch (entityType)
             {
-                var existingImage = await _repository.GetById(imageId);
-                if (existingImage.Uri != updatedImageUri)
-                {
-                    existingImage.Uri = updatedImageUri;
-
-                    await _repository.Update(existingImage);
-                }
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error when updating image: {exception.Message}");
-            }
-        }
-
-        public async Task UpdateAnimalImages(int animalId, List<Uri> updatedImagesUris)
-        {
-            try
-            {
-                var existingImages = await GetAnimalImages(animalId);
-
-                foreach (var image in existingImages)
-                {
-                    await _repository.Delete(image);
-                }
-
-                foreach (var updatedImageUri in updatedImagesUris)
-                {
-                    var newAnimalImage = new CreateImageDTO { AnimalId = animalId, Uri = updatedImageUri };
-                    await AddImage(newAnimalImage);
-                }
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error when updating animal images: {exception.Message}");
-            }
-        }
-
-        public async Task DeleteImage(int imageId)
-        {
-            try
-            {
-                var allImages = await _repository.GetAll();
-                var image = allImages.FirstOrDefault(image => image.Id == imageId);
-
-                await _repository.Delete(image);
-            }
-            catch(Exception exception)
-            {
-                throw new ApplicationException($"Error delete the image: {exception.Message}");
+                case nameof(Animal):
+                    imageDto.AnimalId = entityId;
+                    break;
+                case nameof(Advice):
+                    imageDto.AdviceId = entityId;
+                    break;
+                case nameof(Rescuer):
+                    imageDto.RescuerId = entityId;
+                    break;
+                case nameof(Partner):
+                    imageDto.PartnerId = entityId;
+                    break;
+                case nameof(YearResult):
+                    imageDto.YearResultId = entityId;
+                    break;
             }
         }
     }

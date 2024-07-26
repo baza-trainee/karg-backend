@@ -5,8 +5,7 @@
         public int Id { get; set; }
         public DateOnly Year { get; set; }
         public int DescriptionId { get; set; }
-        public int ImageId { get; set; }
-        public Image? Image { get; set; }
+        public List<Image>? Images { get; set; }
 
         public virtual LocalizationSet Description { get; set; }
     }

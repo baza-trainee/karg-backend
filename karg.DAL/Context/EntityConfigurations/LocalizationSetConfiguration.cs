@@ -13,7 +13,7 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<LocalizationSet> builder)
         {
-            builder.ToTable("LocalizationSet");
+            builder.ToTable("LocalizationsSets");
 
             builder.HasKey(localizationSet => localizationSet.Id);
             builder.Property(localizationSet => localizationSet.Id).ValueGeneratedOnAdd();

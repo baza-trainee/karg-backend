@@ -8,7 +8,7 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Advice> builder)
         {
-            builder.ToTable("Advice");
+            builder.ToTable("Advices");
 
             builder.HasKey(advice => advice.Id);
 

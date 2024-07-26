@@ -13,7 +13,7 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Partner> builder)
         {
-            builder.ToTable("Partner");
+            builder.ToTable("Partners");
 
             builder.HasKey(partner => partner.Id);
 

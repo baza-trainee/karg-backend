@@ -33,10 +33,10 @@ namespace karg.BLL.Services.Partners
 
                 foreach (var partner in partners)
                 {
-                    var partnerImage = await _imageService.GetImageById(partner.ImageId);
                     var partnerDto = _mapper.Map<PartnerDTO>(partner);
+                    var partnerImages = await _imageService.GetImagesByEntity("Partner", partner.Id);
 
-                    partnerDto.Image = partnerImage;
+                    partnerDto.Images = partnerImages.Select(image => image.Uri).ToList();
                     partnersDto.Add(partnerDto);
                 }
 
@@ -60,9 +60,9 @@ namespace karg.BLL.Services.Partners
                 }
 
                 var partnerDto = _mapper.Map<PartnerDTO>(partner);
-                var partnerImage = await _imageService.GetImageById(partner.ImageId);
+                var partnerImages = await _imageService.GetImagesByEntity("Partner", partner.Id);
 
-                partnerDto.Image = partnerImage;
+                partnerDto.Images = partnerImages.Select(image => image.Uri).ToList();
 
                 return partnerDto;
             }
@@ -77,16 +77,15 @@ namespace karg.BLL.Services.Partners
             try
             {
                 var partner = _mapper.Map<Partner>(partnerDto);
-                var newImage = new CreateImageDTO
+                var partnerId = await _partnerRepository.Add(partner);
+
+                var newImages = partnerDto.Images.Select(uri => new CreateImageDTO
                 {
-                    Uri = partnerDto.Image,
-                    AnimalId = null,
-                };
-                var imageId = await _imageService.AddImage(newImage);
+                    Uri = uri,
+                    PartnerId = partnerId
+                }).ToList();
 
-                partner.ImageId = imageId;
-
-                await _partnerRepository.Add(partner);
+                await _imageService.AddImages(newImages);
             }
             catch (Exception exception)
             {
@@ -100,13 +99,12 @@ namespace karg.BLL.Services.Partners
             {
                 var existingPartner = await _partnerRepository.GetById(partnerId);
                 var patchedPartner = _mapper.Map<CreateAndUpdatePartnerDTO>(existingPartner);
-                var partnerImage = await _imageService.GetImageById(existingPartner.ImageId);
+                var partnerImages = await _imageService.GetImagesByEntity("Partner", partnerId);
 
-                patchedPartner.Image = partnerImage;
-
+                patchedPartner.Images = partnerImages.Select(image => image.Uri).ToList();
                 patchDoc.ApplyTo(patchedPartner);
 
-                await _imageService.UpdateImage(existingPartner.ImageId, patchedPartner.Image);
+                await _imageService.UpdateEntityImages("Partner", partnerId, patchedPartner.Images);
 
                 existingPartner.Name = patchedPartner.Name;
                 existingPartner.Uri = patchedPartner.Uri;
@@ -127,8 +125,8 @@ namespace karg.BLL.Services.Partners
             {
                 var removedPartner = await _partnerRepository.GetById(partnerId);
 
+                await _imageService.DeleteImages("Partner", removedPartner.Id);
                 await _partnerRepository.Delete(removedPartner);
-                await _imageService.DeleteImage(removedPartner.ImageId);
             }
             catch (Exception exception)
             {
