@@ -11,7 +11,7 @@ namespace karg.BLL.Profiles
             CreateMap<Rescuer, CreateAndUpdateRescuerDTO>();
             CreateMap<Rescuer, RescuerDTO>();
             CreateMap<CreateAndUpdateRescuerDTO, Rescuer>()
-                .ForMember(dest => dest.Image, opt => opt.Ignore());
+                .ForMember(dest => dest.Images, opt => opt.Ignore());
         }
     }
 }

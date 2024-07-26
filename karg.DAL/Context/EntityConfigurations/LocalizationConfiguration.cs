@@ -13,7 +13,7 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Localization> builder)
         {
-            builder.ToTable("Localization");
+            builder.ToTable("Localizations");
 
             builder.HasKey(localization => new { localization.LocalizationSetId, localization.CultureCode });
             builder.Property(localization => localization.Value).HasMaxLength(5000).IsRequired();

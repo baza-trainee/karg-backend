@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Animals;
@@ -44,7 +45,7 @@ namespace karg.BLL.Services.Animals
                 foreach (var animal in paginatedAnimalItems)
                 {
                     var animalDto = _mapper.Map<AnimalDTO>(animal);
-                    var animalImages = await _imageService.GetAnimalImages(animal.Id);
+                    var animalImages = await _imageService.GetImagesByEntity("Animal", animal.Id);
 
                     animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                     animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
@@ -78,7 +79,7 @@ namespace karg.BLL.Services.Animals
                 }
 
                 var animalDto = _mapper.Map<AnimalDTO>(animal);
-                var animalImages = await _imageService.GetAnimalImages(animal.Id);
+                var animalImages = await _imageService.GetImagesByEntity("Animal", animal.Id);
 
                 animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                 animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
@@ -105,16 +106,13 @@ namespace karg.BLL.Services.Animals
 
                 var animalId = await _animalRepository.Add(animal);
 
-                foreach (var image in animalDto.Images)
+                var newImages = animalDto.Images.Select(uri => new CreateImageDTO
                 {
-                    var newImage = new CreateImageDTO
-                    {
-                        Uri = image,
-                        AnimalId = animalId,
-                    };
+                    Uri = uri,
+                    AnimalId = animalId
+                }).ToList();
 
-                    await _imageService.AddImage(newImage);
-                }
+                await _imageService.AddImages(newImages);
             }
             catch (Exception exception)
             {
@@ -136,12 +134,12 @@ namespace karg.BLL.Services.Animals
                 patchedAnimal.Story_ua = _localizationService.GetLocalizedValue(existingAnimal.Story, "ua", existingAnimal.StoryId);
                 patchedAnimal.Story_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
 
-                var animalImages = await _imageService.GetAnimalImages(animalId);
+                var animalImages = await _imageService.GetImagesByEntity("Animal", animalId);
                 patchedAnimal.Images = animalImages.Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedAnimal);
 
-                await _imageService.UpdateAnimalImages(animalId, patchedAnimal.Images);
+                await _imageService.UpdateEntityImages("Animal", animalId, patchedAnimal.Images);
 
                 existingAnimal.NameId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.NameId, patchedAnimal.Name_en, patchedAnimal.Name_ua);
                 existingAnimal.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.DescriptionId, patchedAnimal.Description_en, patchedAnimal.Description_ua);
@@ -167,6 +165,7 @@ namespace karg.BLL.Services.Animals
                 var removedAnimalDescriptionId = removedAnimal.DescriptionId;
                 var removedAnimalStoryId = removedAnimal.StoryId;
 
+                await _imageService.DeleteImages("Animal", removedAnimal.Id);
                 await _animalRepository.Delete(removedAnimal);
                 await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAnimalNameId, removedAnimalDescriptionId, removedAnimalStoryId });
             }

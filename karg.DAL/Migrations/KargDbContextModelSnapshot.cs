@@ -31,9 +31,6 @@ namespace karg.DAL.Migrations
                     b.Property<int>("DescriptionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TitleId")
                         .HasColumnType("int");
 
@@ -41,12 +38,9 @@ namespace karg.DAL.Migrations
 
                     b.HasIndex("DescriptionId");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
-
                     b.HasIndex("TitleId");
 
-                    b.ToTable("Advice", (string)null);
+                    b.ToTable("Advices", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Animal", b =>
@@ -79,7 +73,7 @@ namespace karg.DAL.Migrations
 
                     b.HasIndex("StoryId");
 
-                    b.ToTable("Animal", (string)null);
+                    b.ToTable("Animals", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Contact", b =>
@@ -98,7 +92,7 @@ namespace karg.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contact", (string)null);
+                    b.ToTable("Contacts", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Culture", b =>
@@ -114,7 +108,7 @@ namespace karg.DAL.Migrations
 
                     b.HasKey("Code");
 
-                    b.ToTable("Culture", (string)null);
+                    b.ToTable("Cultures", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.FAQ", b =>
@@ -135,7 +129,7 @@ namespace karg.DAL.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("FAQ", (string)null);
+                    b.ToTable("FAQs", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Image", b =>
@@ -144,18 +138,38 @@ namespace karg.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("AdviceId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("AnimalId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PartnerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RescuerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Uri")
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("YearResultId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AdviceId");
 
                     b.HasIndex("AnimalId");
 
-                    b.ToTable("Image", (string)null);
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("RescuerId");
+
+                    b.HasIndex("YearResultId");
+
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.JwtToken", b =>
@@ -170,7 +184,7 @@ namespace karg.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Token", (string)null);
+                    b.ToTable("Tokens", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Localization", b =>
@@ -190,7 +204,7 @@ namespace karg.DAL.Migrations
 
                     b.HasIndex("CultureCode");
 
-                    b.ToTable("Localization", (string)null);
+                    b.ToTable("Localizations", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.LocalizationSet", b =>
@@ -201,16 +215,13 @@ namespace karg.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LocalizationSet", (string)null);
+                    b.ToTable("LocalizationsSets", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Partner", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("ImageId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -224,10 +235,7 @@ namespace karg.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
-
-                    b.ToTable("Partner", (string)null);
+                    b.ToTable("Partners", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Rescuer", b =>
@@ -251,9 +259,6 @@ namespace karg.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
@@ -270,13 +275,10 @@ namespace karg.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
-
                     b.HasIndex("TokenId")
                         .IsUnique();
 
-                    b.ToTable("Rescuer", (string)null);
+                    b.ToTable("Rescuers", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.YearResult", b =>
@@ -288,9 +290,6 @@ namespace karg.DAL.Migrations
                     b.Property<int>("DescriptionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int");
-
                     b.Property<DateOnly>("Year")
                         .HasColumnType("date");
 
@@ -298,10 +297,7 @@ namespace karg.DAL.Migrations
 
                     b.HasIndex("DescriptionId");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
-
-                    b.ToTable("YearResult", (string)null);
+                    b.ToTable("YearsResults", (string)null);
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Advice", b =>
@@ -312,12 +308,6 @@ namespace karg.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("karg.DAL.Models.Image", "Image")
-                        .WithOne("Advice")
-                        .HasForeignKey("karg.DAL.Models.Advice", "ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("karg.DAL.Models.LocalizationSet", "Title")
                         .WithMany()
                         .HasForeignKey("TitleId")
@@ -325,8 +315,6 @@ namespace karg.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Description");
-
-                    b.Navigation("Image");
 
                     b.Navigation("Title");
                 });
@@ -379,13 +367,45 @@ namespace karg.DAL.Migrations
 
             modelBuilder.Entity("karg.DAL.Models.Image", b =>
                 {
+                    b.HasOne("karg.DAL.Models.Advice", "Advice")
+                        .WithMany("Images")
+                        .HasForeignKey("AdviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("karg.DAL.Models.Animal", "Animal")
                         .WithMany("Images")
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("karg.DAL.Models.Partner", "Partner")
+                        .WithMany("Images")
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("karg.DAL.Models.Rescuer", "Rescuer")
+                        .WithMany("Images")
+                        .HasForeignKey("RescuerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("karg.DAL.Models.YearResult", "YearResult")
+                        .WithMany("Images")
+                        .HasForeignKey("YearResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Advice");
+
                     b.Navigation("Animal");
+
+                    b.Navigation("Partner");
+
+                    b.Navigation("Rescuer");
+
+                    b.Navigation("YearResult");
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Localization", b =>
@@ -407,32 +427,13 @@ namespace karg.DAL.Migrations
                     b.Navigation("LocalizationSet");
                 });
 
-            modelBuilder.Entity("karg.DAL.Models.Partner", b =>
-                {
-                    b.HasOne("karg.DAL.Models.Image", "Image")
-                        .WithOne("Partner")
-                        .HasForeignKey("karg.DAL.Models.Partner", "ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Image");
-                });
-
             modelBuilder.Entity("karg.DAL.Models.Rescuer", b =>
                 {
-                    b.HasOne("karg.DAL.Models.Image", "Image")
-                        .WithOne("Rescuer")
-                        .HasForeignKey("karg.DAL.Models.Rescuer", "ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("karg.DAL.Models.JwtToken", "Token")
                         .WithOne("Rescuer")
                         .HasForeignKey("karg.DAL.Models.Rescuer", "TokenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Image");
 
                     b.Navigation("Token");
                 });
@@ -445,31 +446,17 @@ namespace karg.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("karg.DAL.Models.Image", "Image")
-                        .WithOne("YearResult")
-                        .HasForeignKey("karg.DAL.Models.YearResult", "ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Description");
+                });
 
-                    b.Navigation("Image");
+            modelBuilder.Entity("karg.DAL.Models.Advice", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Animal", b =>
                 {
                     b.Navigation("Images");
-                });
-
-            modelBuilder.Entity("karg.DAL.Models.Image", b =>
-                {
-                    b.Navigation("Advice");
-
-                    b.Navigation("Partner");
-
-                    b.Navigation("Rescuer");
-
-                    b.Navigation("YearResult");
                 });
 
             modelBuilder.Entity("karg.DAL.Models.JwtToken", b =>
@@ -480,6 +467,21 @@ namespace karg.DAL.Migrations
             modelBuilder.Entity("karg.DAL.Models.LocalizationSet", b =>
                 {
                     b.Navigation("Localizations");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.Partner", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.Rescuer", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("karg.DAL.Models.YearResult", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

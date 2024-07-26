@@ -17,7 +17,7 @@ namespace karg.DAL.Context.EntityConfigurations
         {
             var contactCategoryConverter = new EnumToStringConverter<ContactCategory>();
 
-            builder.ToTable("Contact");
+            builder.ToTable("Contacts");
 
             builder.HasKey(contact => contact.Id);
 

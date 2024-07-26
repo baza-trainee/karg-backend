@@ -13,7 +13,7 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<JwtToken> builder)
         {
-            builder.ToTable("Token");
+            builder.ToTable("Tokens");
 
             builder.HasKey(token => token.Id);
 

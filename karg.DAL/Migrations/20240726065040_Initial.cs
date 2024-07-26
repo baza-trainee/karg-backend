@@ -14,7 +14,7 @@ namespace karg.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Contact",
+                name: "Contacts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -26,12 +26,12 @@ namespace karg.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contact", x => x.Id);
+                    table.PrimaryKey("PK_Contacts", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Culture",
+                name: "Cultures",
                 columns: table => new
                 {
                     Code = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: false)
@@ -41,12 +41,12 @@ namespace karg.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Culture", x => x.Code);
+                    table.PrimaryKey("PK_Cultures", x => x.Code);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "LocalizationSet",
+                name: "LocalizationsSets",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -54,12 +54,29 @@ namespace karg.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LocalizationSet", x => x.Id);
+                    table.PrimaryKey("PK_LocalizationsSets", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Token",
+                name: "Partners",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Uri = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Partners", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Tokens",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -69,12 +86,40 @@ namespace karg.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Token", x => x.Id);
+                    table.PrimaryKey("PK_Tokens", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Animal",
+                name: "Advices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TitleId = table.Column<int>(type: "int", nullable: false),
+                    DescriptionId = table.Column<int>(type: "int", nullable: false),
+                    Created_At = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Advices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Advices_LocalizationsSets_DescriptionId",
+                        column: x => x.DescriptionId,
+                        principalTable: "LocalizationsSets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Advices_LocalizationsSets_TitleId",
+                        column: x => x.TitleId,
+                        principalTable: "LocalizationsSets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Animals",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -88,30 +133,30 @@ namespace karg.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Animal", x => x.Id);
+                    table.PrimaryKey("PK_Animals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Animal_LocalizationSet_DescriptionId",
+                        name: "FK_Animals_LocalizationsSets_DescriptionId",
                         column: x => x.DescriptionId,
-                        principalTable: "LocalizationSet",
+                        principalTable: "LocalizationsSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Animal_LocalizationSet_NameId",
+                        name: "FK_Animals_LocalizationsSets_NameId",
                         column: x => x.NameId,
-                        principalTable: "LocalizationSet",
+                        principalTable: "LocalizationsSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Animal_LocalizationSet_StoryId",
+                        name: "FK_Animals_LocalizationsSets_StoryId",
                         column: x => x.StoryId,
-                        principalTable: "LocalizationSet",
+                        principalTable: "LocalizationsSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "FAQ",
+                name: "FAQs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -121,24 +166,24 @@ namespace karg.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FAQ", x => x.Id);
+                    table.PrimaryKey("PK_FAQs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FAQ_LocalizationSet_AnswerId",
+                        name: "FK_FAQs_LocalizationsSets_AnswerId",
                         column: x => x.AnswerId,
-                        principalTable: "LocalizationSet",
+                        principalTable: "LocalizationsSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FAQ_LocalizationSet_QuestionId",
+                        name: "FK_FAQs_LocalizationsSets_QuestionId",
                         column: x => x.QuestionId,
-                        principalTable: "LocalizationSet",
+                        principalTable: "LocalizationsSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Localization",
+                name: "Localizations",
                 columns: table => new
                 {
                     LocalizationSetId = table.Column<int>(type: "int", nullable: false),
@@ -149,105 +194,45 @@ namespace karg.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Localization", x => new { x.LocalizationSetId, x.CultureCode });
+                    table.PrimaryKey("PK_Localizations", x => new { x.LocalizationSetId, x.CultureCode });
                     table.ForeignKey(
-                        name: "FK_Localization_Culture_CultureCode",
+                        name: "FK_Localizations_Cultures_CultureCode",
                         column: x => x.CultureCode,
-                        principalTable: "Culture",
+                        principalTable: "Cultures",
                         principalColumn: "Code",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Localization_LocalizationSet_LocalizationSetId",
+                        name: "FK_Localizations_LocalizationsSets_LocalizationSetId",
                         column: x => x.LocalizationSetId,
-                        principalTable: "LocalizationSet",
+                        principalTable: "LocalizationsSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Image",
+                name: "YearsResults",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Uri = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    AnimalId = table.Column<int>(type: "int", nullable: true)
+                    Year = table.Column<DateOnly>(type: "date", nullable: false),
+                    DescriptionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Image", x => x.Id);
+                    table.PrimaryKey("PK_YearsResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Image_Animal_AnimalId",
-                        column: x => x.AnimalId,
-                        principalTable: "Animal",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Advice",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TitleId = table.Column<int>(type: "int", nullable: false),
-                    DescriptionId = table.Column<int>(type: "int", nullable: false),
-                    Created_At = table.Column<DateOnly>(type: "date", nullable: false),
-                    ImageId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Advice", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Advice_Image_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "Image",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Advice_LocalizationSet_DescriptionId",
+                        name: "FK_YearsResults_LocalizationsSets_DescriptionId",
                         column: x => x.DescriptionId,
-                        principalTable: "LocalizationSet",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Advice_LocalizationSet_TitleId",
-                        column: x => x.TitleId,
-                        principalTable: "LocalizationSet",
+                        principalTable: "LocalizationsSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Partner",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Uri = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ImageId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Partner", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Partner_Image_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "Image",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Rescuer",
+                name: "Rescuers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -264,173 +249,184 @@ namespace karg.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Previous_Password = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ImageId = table.Column<int>(type: "int", nullable: false),
                     TokenId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rescuer", x => x.Id);
+                    table.PrimaryKey("PK_Rescuers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Rescuer_Image_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "Image",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Rescuer_Token_TokenId",
+                        name: "FK_Rescuers_Tokens_TokenId",
                         column: x => x.TokenId,
-                        principalTable: "Token",
+                        principalTable: "Tokens",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "YearResult",
+                name: "Images",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Year = table.Column<DateOnly>(type: "date", nullable: false),
-                    DescriptionId = table.Column<int>(type: "int", nullable: false),
-                    ImageId = table.Column<int>(type: "int", nullable: false)
+                    Uri = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AdviceId = table.Column<int>(type: "int", nullable: true),
+                    AnimalId = table.Column<int>(type: "int", nullable: true),
+                    RescuerId = table.Column<int>(type: "int", nullable: true),
+                    PartnerId = table.Column<int>(type: "int", nullable: true),
+                    YearResultId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_YearResult", x => x.Id);
+                    table.PrimaryKey("PK_Images", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_YearResult_Image_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "Image",
+                        name: "FK_Images_Advices_AdviceId",
+                        column: x => x.AdviceId,
+                        principalTable: "Advices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_YearResult_LocalizationSet_DescriptionId",
-                        column: x => x.DescriptionId,
-                        principalTable: "LocalizationSet",
+                        name: "FK_Images_Animals_AnimalId",
+                        column: x => x.AnimalId,
+                        principalTable: "Animals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Images_Partners_PartnerId",
+                        column: x => x.PartnerId,
+                        principalTable: "Partners",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Images_Rescuers_RescuerId",
+                        column: x => x.RescuerId,
+                        principalTable: "Rescuers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Images_YearsResults_YearResultId",
+                        column: x => x.YearResultId,
+                        principalTable: "YearsResults",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Advice_DescriptionId",
-                table: "Advice",
+                name: "IX_Advices_DescriptionId",
+                table: "Advices",
                 column: "DescriptionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Advice_ImageId",
-                table: "Advice",
-                column: "ImageId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Advice_TitleId",
-                table: "Advice",
+                name: "IX_Advices_TitleId",
+                table: "Advices",
                 column: "TitleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Animal_DescriptionId",
-                table: "Animal",
+                name: "IX_Animals_DescriptionId",
+                table: "Animals",
                 column: "DescriptionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Animal_NameId",
-                table: "Animal",
+                name: "IX_Animals_NameId",
+                table: "Animals",
                 column: "NameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Animal_StoryId",
-                table: "Animal",
+                name: "IX_Animals_StoryId",
+                table: "Animals",
                 column: "StoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FAQ_AnswerId",
-                table: "FAQ",
+                name: "IX_FAQs_AnswerId",
+                table: "FAQs",
                 column: "AnswerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FAQ_QuestionId",
-                table: "FAQ",
+                name: "IX_FAQs_QuestionId",
+                table: "FAQs",
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Image_AnimalId",
-                table: "Image",
+                name: "IX_Images_AdviceId",
+                table: "Images",
+                column: "AdviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_AnimalId",
+                table: "Images",
                 column: "AnimalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Localization_CultureCode",
-                table: "Localization",
+                name: "IX_Images_PartnerId",
+                table: "Images",
+                column: "PartnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_RescuerId",
+                table: "Images",
+                column: "RescuerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_YearResultId",
+                table: "Images",
+                column: "YearResultId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Localizations_CultureCode",
+                table: "Localizations",
                 column: "CultureCode");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Partner_ImageId",
-                table: "Partner",
-                column: "ImageId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rescuer_ImageId",
-                table: "Rescuer",
-                column: "ImageId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rescuer_TokenId",
-                table: "Rescuer",
+                name: "IX_Rescuers_TokenId",
+                table: "Rescuers",
                 column: "TokenId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_YearResult_DescriptionId",
-                table: "YearResult",
+                name: "IX_YearsResults_DescriptionId",
+                table: "YearsResults",
                 column: "DescriptionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_YearResult_ImageId",
-                table: "YearResult",
-                column: "ImageId",
-                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Advice");
+                name: "Contacts");
 
             migrationBuilder.DropTable(
-                name: "Contact");
+                name: "FAQs");
 
             migrationBuilder.DropTable(
-                name: "FAQ");
+                name: "Images");
 
             migrationBuilder.DropTable(
-                name: "Localization");
+                name: "Localizations");
 
             migrationBuilder.DropTable(
-                name: "Partner");
+                name: "Advices");
 
             migrationBuilder.DropTable(
-                name: "Rescuer");
+                name: "Animals");
 
             migrationBuilder.DropTable(
-                name: "YearResult");
+                name: "Partners");
 
             migrationBuilder.DropTable(
-                name: "Culture");
+                name: "Rescuers");
 
             migrationBuilder.DropTable(
-                name: "Token");
+                name: "YearsResults");
 
             migrationBuilder.DropTable(
-                name: "Image");
+                name: "Cultures");
 
             migrationBuilder.DropTable(
-                name: "Animal");
+                name: "Tokens");
 
             migrationBuilder.DropTable(
-                name: "LocalizationSet");
+                name: "LocalizationsSets");
         }
     }
 }

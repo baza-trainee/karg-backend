@@ -52,40 +52,40 @@ namespace karg.DAL.Context
                 .HasPrincipalKey(culture => culture.Code)
                 .IsRequired();
 
-            builder.Entity<Advice>()
-                .HasOne(advice => advice.Image)
-                .WithOne(image => image.Advice)
-                .HasForeignKey<Advice>(advice => advice.ImageId)
-                .IsRequired();
-
             builder.Entity<Rescuer>()
                 .HasOne(rescuer => rescuer.Token)
                 .WithOne(token => token.Rescuer)
                 .HasForeignKey<Rescuer>(rescuer => rescuer.TokenId)
                 .IsRequired();
 
-            builder.Entity<Rescuer>()
-                .HasOne(rescuer => rescuer.Image)
-                .WithOne(image => image.Rescuer)
-                .HasForeignKey<Rescuer>(rescuer => rescuer.ImageId)
-                .IsRequired();
-
-            builder.Entity<Partner>()
-                .HasOne(partner => partner.Image)
-                .WithOne(image => image.Partner)
-                .HasForeignKey<Partner>(partner => partner.ImageId)
-                .IsRequired();
-
-            builder.Entity<YearResult>()
-                .HasOne(yearResult => yearResult.Image)
-                .WithOne(image => image.YearResult)
-                .HasForeignKey<YearResult>(yearResult => yearResult.ImageId)
-                .IsRequired();
-
             builder.Entity<Image>()
                 .HasOne(image => image.Animal)
                 .WithMany(animal => animal.Images)
                 .HasForeignKey(image => image.AnimalId)
+                .IsRequired();
+
+            builder.Entity<Image>()
+                .HasOne(image => image.Advice)
+                .WithMany(advice => advice.Images)
+                .HasForeignKey(image => image.AdviceId)
+                .IsRequired();
+
+            builder.Entity<Image>()
+                .HasOne(image => image.Rescuer)
+                .WithMany(rescuer => rescuer.Images)
+                .HasForeignKey(image => image.RescuerId)
+                .IsRequired();
+
+            builder.Entity<Image>()
+                .HasOne(image => image.Partner)
+                .WithMany(partner => partner.Images)
+                .HasForeignKey(image => image.PartnerId)
+                .IsRequired();
+
+            builder.Entity<Image>()
+                .HasOne(image => image.YearResult)
+                .WithMany(yearResult => yearResult.Images)
+                .HasForeignKey(image => image.YearResultId)
                 .IsRequired();
 
             base.OnModelCreating(builder);

@@ -47,9 +47,9 @@ namespace karg.BLL.Services.Advices
                 foreach (var advice in paginatedAdvicesItems)
                 {
                     var adviceDto = _mapper.Map<AdviceDTO>(advice);
-                    var adviceImage = await _imageService.GetImageById(advice.ImageId);
+                    var adviceImages = await _imageService.GetImagesByEntity("Advice", advice.Id);
 
-                    adviceDto.Image = adviceImage;
+                    adviceDto.Images = adviceImages.Select(image => image.Uri).ToList();
                     adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
                     adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                     advicesDto.Add(adviceDto);
@@ -72,18 +72,18 @@ namespace karg.BLL.Services.Advices
             try
             {
                 var advice = _mapper.Map<Advice>(adviceDto);
-                var newImage = new CreateImageDTO
-                {
-                    Uri = adviceDto.Image,
-                    AnimalId = null,
-                };
-                var imageId = await _imageService.AddImage(newImage);
-
                 advice.TitleId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Title_en, adviceDto.Title_ua);
                 advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
-                advice.ImageId = imageId;
 
-                await _adviceRepository.Add(advice);
+                var adviceId = await _adviceRepository.Add(advice);
+
+                var newImages = adviceDto.Images.Select(uri => new CreateImageDTO
+                {
+                    Uri = uri,
+                    AdviceId = adviceId
+                }).ToList();
+
+                await _imageService.AddImages(newImages);
             }
             catch (Exception exception)
             {
@@ -103,11 +103,11 @@ namespace karg.BLL.Services.Advices
                 }
 
                 var adviceDto = _mapper.Map<AdviceDTO>(advice);
-                var adviceImage = await _imageService.GetImageById(advice.ImageId);
+                var adviceImages = await _imageService.GetImagesByEntity("Advice", adviceId);
 
                 adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                 adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
-                adviceDto.Image = adviceImage;
+                adviceDto.Images = adviceImages.Select(image => image.Uri).ToList();
 
                 return adviceDto;
             }
@@ -129,12 +129,12 @@ namespace karg.BLL.Services.Advices
                 patchedAdvice.Description_ua = _localizationService.GetLocalizedValue(existingAdvice.Description, "ua", existingAdvice.DescriptionId);
                 patchedAdvice.Description_en = _localizationService.GetLocalizedValue(existingAdvice.Description, "en", existingAdvice.DescriptionId);
 
-                var adviceImage = await _imageService.GetImageById(existingAdvice.ImageId);
-                patchedAdvice.Image = adviceImage;
+                var adviceImages = await _imageService.GetImagesByEntity("Advice", adviceId);
+                patchedAdvice.Images = adviceImages.Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedAdvice);
 
-                await _imageService.UpdateImage(existingAdvice.ImageId, patchedAdvice.Image);
+                await _imageService.UpdateEntityImages("Advice", adviceId, patchedAdvice.Images);
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
                 existingAdvice.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.DescriptionId, patchedAdvice.Description_en, patchedAdvice.Description_ua);
@@ -158,8 +158,8 @@ namespace karg.BLL.Services.Advices
                 var removedAdviceTitleId = removedAdvice.TitleId;
                 var removedAdviceDescriptionId = removedAdvice.DescriptionId;
 
+                await _imageService.DeleteImages("Advice", removedAdvice.Id);
                 await _adviceRepository.Delete(removedAdvice);
-                await _imageService.DeleteImage(removedAdvice.ImageId);
                 await _localizationSetService.DeleteLocalizationSets(new List<int> { removedAdviceTitleId, removedAdviceDescriptionId });
             }
             catch (Exception exception)
