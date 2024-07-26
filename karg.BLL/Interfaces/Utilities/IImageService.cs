@@ -10,11 +10,9 @@ namespace karg.BLL.Interfaces.Utilities
 {
     public interface IImageService
     {
-        Task<List<Image>> GetAnimalImages(int animalId);
-        Task<Uri> GetImageById(int imageId);
-        Task<int> AddImage(CreateImageDTO imageDto);
-        Task DeleteImage(int imageId);
-        Task UpdateAnimalImages(int animalId, List<Uri> updatedImagesUris);
-        Task UpdateImage(int imageId, Uri updatedImageUri);
+        Task<List<Image>> GetImagesByEntity(string entityType, int entityId);
+        Task AddImages(List<CreateImageDTO> imageDtos);
+        Task UpdateEntityImages(string entityType, int entityId, List<Uri> updatedImagesUris);
+        Task DeleteImages(string entityType, int entityId);
     }
 }

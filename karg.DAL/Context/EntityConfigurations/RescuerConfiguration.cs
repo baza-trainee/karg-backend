@@ -12,7 +12,7 @@ namespace karg.DAL.Context.EntityConfigurations
         {
             var rescuerRoleConverter = new EnumToStringConverter<RescuerRole>();
 
-            builder.ToTable("Rescuer");
+            builder.ToTable("Rescuers");
 
             builder.HasKey(rescuer => rescuer.Id);
 

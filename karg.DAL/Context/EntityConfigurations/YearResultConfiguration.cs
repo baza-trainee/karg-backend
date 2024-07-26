@@ -8,7 +8,7 @@ namespace karg.DAL.Context.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<YearResult> builder)
         {
-            builder.ToTable("YearResult");
+            builder.ToTable("YearsResults");
 
             builder.HasKey(yearResult => yearResult.Id);
 

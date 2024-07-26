@@ -11,7 +11,7 @@ namespace karg.BLL.Profiles
             CreateMap<Partner, PartnerDTO>();
             CreateMap<Partner, CreateAndUpdatePartnerDTO>();
             CreateMap<CreateAndUpdatePartnerDTO, Partner>()
-                .ForMember(dest => dest.Image, opt => opt.Ignore());
+                .ForMember(dest => dest.Images, opt => opt.Ignore());
         }
     }
 }

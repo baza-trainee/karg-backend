@@ -6,8 +6,7 @@
         public int TitleId { get; set; }
         public int DescriptionId { get; set; }
         public DateOnly Created_At { get; set; }
-        public int ImageId { get; set; }
-        public Image? Image { get; set; }
+        public List<Image>? Images { get; set; }
 
         public virtual LocalizationSet Title { get; set; }
         public virtual LocalizationSet Description { get; set; }
