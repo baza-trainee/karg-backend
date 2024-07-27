@@ -8,6 +8,7 @@ using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.JsonPatch;
+using System;
 
 namespace karg.BLL.Services.Rescuers
 {
@@ -116,6 +117,9 @@ namespace karg.BLL.Services.Rescuers
                 existingRescuer.PhoneNumber = patchedRescuer.PhoneNumber;
                 existingRescuer.Email = patchedRescuer.Email;
 
+                var newJwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { FullName = existingRescuer.FullName, Email = existingRescuer.Email, Role = existingRescuer.Role.ToString() });
+                
+                await _jwtTokenService.UpdateJwtToken(existingRescuer.TokenId, newJwtToken);      
                 await _imageService.UpdateEntityImages("Rescuer", existingRescuer.Id, patchedRescuer.Images);
                 await _rescuerRepository.Update(existingRescuer);
 
