@@ -12,6 +12,7 @@ namespace karg.BLL.Interfaces.Authentication
         Task<string> GetJwtTokenById(int tokenId);
         string GenerateJwtToken(RescuerJwtTokenDTO rescuer);
         Task<int> AddJwtToken(string token);
+        Task UpdateJwtToken(int tokenId, string updatedToken);
         Task DeleteJwtToken(int tokenId);
     }
 }

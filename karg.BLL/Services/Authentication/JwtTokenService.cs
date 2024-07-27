@@ -84,6 +84,21 @@ namespace karg.BLL.Services.Authentication
             return tokenHandler.WriteToken(token);
         }
 
+        public async Task UpdateJwtToken(int tokenId, string updatedToken)
+        {
+            try
+            {
+                var existingToken = await _jwtTokenRepository.GetById(tokenId);
+                existingToken.Token = updatedToken;
+
+                await _jwtTokenRepository.Update(existingToken);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error update the JWT token: {exception.Message}");
+            }
+        }
+
         public async Task DeleteJwtToken(int tokenId)
         {
             try

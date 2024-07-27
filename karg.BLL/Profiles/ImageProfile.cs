@@ -9,6 +9,7 @@ namespace karg.BLL.Profiles
         public ImageProfile() 
         {
             CreateMap<CreateImageDTO, Image>();
+            CreateMap<Image, CreateImageDTO>();
         }
     }
 }
