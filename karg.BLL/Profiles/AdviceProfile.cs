@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
-using karg.BLL.DTO.Animals;
 using karg.DAL.Models;
 using System.Globalization;
 

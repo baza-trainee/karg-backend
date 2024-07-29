@@ -1,7 +1,5 @@
 ﻿using karg.BLL.DTO.Animals;
-using karg.BLL.Interfaces.Animals;
-using karg.BLL.Interfaces.Utilities;
-using karg.DAL.Models;
+using karg.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
