@@ -11,6 +11,6 @@ namespace karg.DAL.Models
     {
         public int Id { get; set; }
         public ContactCategory Category { get; set; }
-        public Uri? Uri { get; set; }
+        public string Value { get; set; }
     }
 }
