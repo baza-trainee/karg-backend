@@ -1,6 +1,5 @@
 ﻿using karg.BLL.DTO.Partners;
-using karg.BLL.Interfaces.Partners;
-using karg.DAL.Models;
+using karg.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

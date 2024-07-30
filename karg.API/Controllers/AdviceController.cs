@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using karg.BLL.Interfaces.Utilities;
-using karg.BLL.Interfaces.Advices;
 using karg.BLL.DTO.Advices;
 using Microsoft.AspNetCore.JsonPatch;
-using karg.DAL.Models;
+using karg.BLL.Interfaces;
 
 namespace karg.API.Controllers
 {

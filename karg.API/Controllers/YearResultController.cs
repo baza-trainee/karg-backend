@@ -1,7 +1,5 @@
 ﻿using karg.BLL.DTO.YearsResults;
-using karg.BLL.Interfaces.Utilities;
-using karg.BLL.Interfaces.YearsResults;
-using karg.DAL.Models;
+using karg.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

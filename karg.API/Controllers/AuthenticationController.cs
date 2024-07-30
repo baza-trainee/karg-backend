@@ -1,5 +1,5 @@
 ﻿using karg.BLL.DTO.Authentication;
-using karg.BLL.Interfaces.Authentication;
+using karg.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
