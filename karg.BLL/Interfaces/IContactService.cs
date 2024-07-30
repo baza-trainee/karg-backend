@@ -5,5 +5,6 @@ namespace karg.BLL.Interfaces
     public interface IContactService
     {
         Task<List<ContactDTO>> GetContacts();
+        Task<ContactDTO> GetContactById(int contactId);
     }
 }
