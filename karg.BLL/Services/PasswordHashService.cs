@@ -25,7 +25,7 @@ namespace karg.BLL.Services
         public bool VerifyHashPassword(string password, string hashedPassword)
         {
             var passwordHash = HashPassword(password);
-            return string.Equals(passwordHash, hashedPassword, StringComparison.Ordinal);
+            return string.Equals(passwordHash, hashedPassword);
         }
     }
 }

@@ -72,11 +72,11 @@ namespace karg.BLL.Services
                     return new ResetPasswordResultDTO
                     {
                         Status = 0,
-                        Message = "Rescuer not found."
+                        Message = "Rescuer not found"
                     };
                 }
 
-                if (!_passwordValidationService.IsValidPassword(credentials.Password, rescuer.Current_Password))
+                if (!_passwordValidationService.IsValidPassword(credentials.Password, rescuer))
                 {
                     return new ResetPasswordResultDTO
                     {
@@ -95,7 +95,7 @@ namespace karg.BLL.Services
                 return new ResetPasswordResultDTO
                 {
                     Status = 1,
-                    Message = "Password reset successfully."
+                    Message = "Password reset successfully"
                 };
             }
             catch (Exception exception)

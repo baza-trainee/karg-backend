@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using karg.DAL.Models;
 
 namespace karg.BLL.Interfaces
 {
     public interface IPasswordValidationService
     {
-        bool IsValidPassword(string password, string previousPasswordHash);
+        bool IsValidPassword(string password, Rescuer rescuer);
     }
 }
