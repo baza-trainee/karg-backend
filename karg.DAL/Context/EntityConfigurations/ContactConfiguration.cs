@@ -1,11 +1,6 @@
 ﻿using karg.DAL.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using karg.DAL.Models.Enums;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -22,7 +17,7 @@ namespace karg.DAL.Context.EntityConfigurations
             builder.HasKey(contact => contact.Id);
 
             builder.Property(contact => contact.Id).ValueGeneratedOnAdd();
-            builder.Property(contact => contact.Uri).IsRequired();
+            builder.Property(contact => contact.Value).IsRequired();
             builder.Property(contact => contact.Category).HasConversion(contactCategoryConverter).IsRequired();
         }
     }

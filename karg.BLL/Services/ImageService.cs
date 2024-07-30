@@ -8,12 +8,12 @@ namespace karg.BLL.Services
 {
     public class ImageService : IImageService
     {
-        private readonly IImageRepository _repository;
+        private readonly IImageRepository _imageRepository;
         private IMapper _mapper;
 
-        public ImageService(IImageRepository repository, IMapper mapper)
+        public ImageService(IImageRepository imageRepository, IMapper mapper)
         {
-            _repository = repository;
+            _imageRepository = imageRepository;
             _mapper = mapper;
         }
 
@@ -21,7 +21,7 @@ namespace karg.BLL.Services
         {
             try
             {
-                var allImages = await _repository.GetAll();
+                var allImages = await _imageRepository.GetAll();
                 var entityImages = allImages.Where(image => IsImageMatchingEntity(image, entityType, entityId)).ToList();
                 return entityImages;
             }
@@ -39,7 +39,7 @@ namespace karg.BLL.Services
                 {
                     var image = _mapper.Map<Image>(imageDto);
                     await ValidateImageEntity(image);
-                    await _repository.Add(image);
+                    await _imageRepository.Add(image);
                 }
             }
             catch (Exception exception)
@@ -54,7 +54,7 @@ namespace karg.BLL.Services
             {
                 var existingImages = await GetImagesByEntity(entityType, entityId);
 
-                await _repository.DeleteRange(existingImages);
+                await _imageRepository.DeleteRange(existingImages);
 
                 foreach (var updatedImageUri in updatedImagesUris)
                 {
@@ -74,7 +74,7 @@ namespace karg.BLL.Services
             try
             {
                 var removedImage = await GetImagesByEntity(entityType, entityId);
-                await _repository.DeleteRange(removedImage);
+                await _imageRepository.DeleteRange(removedImage);
             }
             catch (Exception exception)
             {
@@ -88,7 +88,7 @@ namespace karg.BLL.Services
             {
                 var image = _mapper.Map<Image>(imageDto);
                 await ValidateImageEntity(image);
-                await _repository.Add(image);
+                await _imageRepository.Add(image);
                 return image.Id;
             }
             catch (Exception exception)
