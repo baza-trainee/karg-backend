@@ -21,12 +21,26 @@ namespace karg.BLL.Services
             try
             {
                 var contacts = await _contactRepository.GetAll();
-                var contactDTOs = _mapper.Map<List<ContactDTO>>(contacts);
-                return contactDTOs;
+                var contactsDto = _mapper.Map<List<ContactDTO>>(contacts);
+                return contactsDto;
             }
             catch (Exception exception)
             {
                 throw new ApplicationException($"Error retrieving contacts: {exception.Message}");
+            }
+        }
+
+        public async Task<ContactDTO> GetContactById(int contactId)
+        {
+            try
+            {
+                var contact = await _contactRepository.GetById(contactId);
+                var contactDTO = _mapper.Map<ContactDTO>(contact);
+                return contactDTO;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error retrieving contact by id: {exception.Message}");
             }
         }
     }

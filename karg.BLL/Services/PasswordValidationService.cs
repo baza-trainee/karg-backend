@@ -1,4 +1,5 @@
 ﻿using karg.BLL.Interfaces;
+using karg.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,12 @@ namespace karg.BLL.Services
             _passwordHashService = passwordHashService;
         }
 
-        public bool IsValidPassword(string password, string previousPasswordHash)
+        public bool IsValidPassword(string password, Rescuer rescuer)
         {
-            return !string.IsNullOrEmpty(password) && passwordRegex.IsMatch(password) && !_passwordHashService.VerifyHashPassword(password, previousPasswordHash);
+            return !string.IsNullOrEmpty(password) 
+                && passwordRegex.IsMatch(password) 
+                && !_passwordHashService.VerifyHashPassword(password, rescuer.Previous_Password)
+                && !_passwordHashService.VerifyHashPassword(password, rescuer.Current_Password);
         }
     }
 }
