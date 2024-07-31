@@ -64,7 +64,7 @@ namespace karg.BLL.Services
             }
             catch (Exception exception)
             {
-                throw new ApplicationException($"Error updating the FAQ: {exception.Message}");
+                throw new ApplicationException($"Error updating the contact: {exception.Message}");
             }
         }
     }
