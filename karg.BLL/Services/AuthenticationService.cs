@@ -1,6 +1,7 @@
 ﻿using karg.BLL.DTO.Authentication;
 using karg.BLL.Interfaces;
 using karg.DAL.Interfaces;
+using karg.DAL.Models.Enums;
 
 namespace karg.BLL.Services
 {
@@ -53,7 +54,8 @@ namespace karg.BLL.Services
                     Status = 1,
                     Message = "Authentication is successful",
                     Token = token,
-                    RescuerId = rescuer.Id
+                    RescuerId = rescuer.Id,
+                    IsDirector = rescuer.Role == RescuerRole.Director
                 };
             }
             catch (Exception exception)
