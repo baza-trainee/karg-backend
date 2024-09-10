@@ -61,15 +61,13 @@ namespace karg.API.Controllers
         /// <param name="id">The unique identifier of the contact.</param>
         /// <response code="200">Successful request. Returns the details of the specified contact.</response>
         /// <response code="400">Invalid request parameters provided.</response>
-        /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="404">No contact found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the contact details.</response>
         /// <returns>The details of the specified contact.</returns>
         [HttpGet("getbyid")]
-        [Authorize]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetContactById(int id)
