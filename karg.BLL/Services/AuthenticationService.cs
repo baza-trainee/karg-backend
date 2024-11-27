@@ -2,6 +2,7 @@
 using karg.BLL.Interfaces;
 using karg.DAL.Interfaces;
 using karg.DAL.Models.Enums;
+using System.Security.Claims;
 
 namespace karg.BLL.Services
 {
@@ -68,7 +69,17 @@ namespace karg.BLL.Services
         {
             try
             {
-                var rescuer = await _rescuerRepository.GetRescuerByEmail(credentials.Email);
+                if (string.IsNullOrEmpty(credentials.Token))
+                {
+                    return new ResetPasswordResultDTO
+                    {
+                        Status = 0,
+                        Message = "Token is required."
+                    };
+                }
+
+                var email = _jwtTokenService.DecodeJwtToken(credentials.Token).Claims.FirstOrDefault(claim => claim.Type == "Email").Value;
+                var rescuer = await _rescuerRepository.GetRescuerByEmail(email);
                 if (rescuer == null)
                 {
                     return new ResetPasswordResultDTO

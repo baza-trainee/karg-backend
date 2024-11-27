@@ -51,7 +51,7 @@ namespace karg.API.Controllers
         /// <summary>
         /// Resets the password for the specified rescuer based on their email.
         /// </summary>
-        /// <param name="credentials">Object containing the rescuer's email and new password.</param>
+        /// <param name="credentials">Object containing the token and new password.</param>
         /// <response code="200">Successful password reset.</response>
         /// <response code="400">Bad Request. The request parameters are invalid.</response>
         /// <response code="500">Internal server error. Failed to process the request.</response>
