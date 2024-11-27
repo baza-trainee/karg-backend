@@ -103,5 +103,37 @@ namespace karg.BLL.Services
                 throw new ApplicationException($"Error delete the JWT token: {exception.Message}");
             }
         }
+
+        public ClaimsPrincipal DecodeJwtToken(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentException("Token cannot be null or empty", nameof(token));
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidAudience = _configuration["Jwt:Issuer"],
+                IssuerSigningKey = securityKey
+            };
+
+            try
+            {
+                return tokenHandler.ValidateToken(token, validationParameters, out _);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Invalid JWT token: {exception.Message}");
+            }
+        }
+
     }
 }
