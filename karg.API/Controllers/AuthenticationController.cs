@@ -10,10 +10,12 @@ namespace karg.API.Controllers
     public class AuthenticationController : Controller
     {
         private IAuthenticationService _authenticationService;
+        private IEmailService _emailService;
 
-        public AuthenticationController(IAuthenticationService authenticationService)
+        public AuthenticationController(IAuthenticationService authenticationService, IEmailService emailService)
         {
             _authenticationService = authenticationService;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -33,14 +35,14 @@ namespace karg.API.Controllers
         {
             try
             {
-                var result = await _authenticationService.Authenticate(loginDto);
+                var authResult = await _authenticationService.Authenticate(loginDto);
 
-                if (result.Status == 0)
+                if (authResult.Status == 0)
                 {
-                    return BadRequest(result);
+                    return BadRequest(authResult);
                 }
                 
-                return Ok(result);
+                return Ok(authResult);
             }
             catch (Exception exception)
             {
@@ -64,14 +66,46 @@ namespace karg.API.Controllers
         {
             try
             {
-                var result = await _authenticationService.ResetPassword(credentials);
+                var resetResult = await _authenticationService.ResetPassword(credentials);
 
-                if (result.Status == 0)
+                if (resetResult.Status == 0)
                 {
-                    return BadRequest(result);
+                    return BadRequest(resetResult);
                 }
 
-                return Ok(result);
+                return Ok(resetResult);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Sends an email to the user with a reset password token.
+        /// </summary>
+        /// <param name="emailDto">Object containing the user's email address.</param>
+        /// <response code="200">Email sent successfully.</response>
+        /// <response code="400">Bad Request. Invalid email address.</response>
+        /// <response code="500">Internal Server Error. Failed to send the email.</response>
+        /// <returns>Status of the email sending operation.</returns>
+        [HttpPost("sendresetpasswordemail")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SendResetPasswordEmail([FromBody]SendResetPasswordEmailDTO emailDto)
+        {
+            try
+            {
+                var emailSendResult = await _emailService.SendPasswordResetEmail(emailDto.Email);
+
+                if (emailSendResult.Status == 0)
+                {
+                    return BadRequest(emailSendResult);
+                }
+
+                return Ok(emailSendResult);
             }
             catch (Exception exception)
             {
