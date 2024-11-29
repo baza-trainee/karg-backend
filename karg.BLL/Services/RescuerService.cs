@@ -71,6 +71,25 @@ namespace karg.BLL.Services
             }
         }
 
+        public async Task<RescuerDTO> GetRescuerByEmail(string email)
+        {
+            try
+            {
+                var rescuer = await _rescuerRepository.GetRescuerByEmail(email);
+                if (rescuer == null) return null;
+
+                var rescuerDto = _mapper.Map<RescuerDTO>(rescuer);
+                var rescuerImages = await _imageService.GetImagesByEntity("Rescuer", rescuer.Id);
+                rescuerDto.Images = rescuerImages.Select(image => image.Uri).ToList();
+
+                return rescuerDto;
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error retrieving rescuer by id: {exception.Message}");
+            }
+        }
+
         public async Task CreateRescuer(CreateAndUpdateRescuerDTO rescuerDto)
         {
             try
