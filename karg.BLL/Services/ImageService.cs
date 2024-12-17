@@ -48,7 +48,7 @@ namespace karg.BLL.Services
             }
         }
 
-        public async Task UpdateEntityImages(string entityType, int entityId, List<Uri> updatedImagesUris)
+        public async Task UpdateEntityImages(string entityType, int entityId, List<string> updatedImagesData)
         {
             try
             {
@@ -56,9 +56,9 @@ namespace karg.BLL.Services
 
                 await _imageRepository.DeleteRange(existingImages);
 
-                foreach (var updatedImageUri in updatedImagesUris)
+                foreach (var updatedImageData in updatedImagesData)
                 {
-                    var newImageDto = new CreateImageDTO { Uri = updatedImageUri };
+                    var newImageDto = new CreateImageDTO { Base64Data = updatedImageData };
                     SetImageEntity(newImageDto, entityType, entityId);
                     await AddImage(newImageDto);
                 }

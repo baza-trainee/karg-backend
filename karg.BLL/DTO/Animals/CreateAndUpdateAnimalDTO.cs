@@ -16,6 +16,6 @@ namespace karg.BLL.DTO.Animals
         public string Name_ua { get; set; }
         public string Description_ua { get; set; }
         public string Story_ua { get; set; }
-        public List<Uri> Images { get; set; }
+        public List<string> Images { get; set; }
     }
 }

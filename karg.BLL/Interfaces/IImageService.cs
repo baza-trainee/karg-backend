@@ -12,7 +12,7 @@ namespace karg.BLL.Interfaces
     {
         Task<List<Image>> GetImagesByEntity(string entityType, int entityId);
         Task AddImages(List<CreateImageDTO> imageDtos);
-        Task UpdateEntityImages(string entityType, int entityId, List<Uri> updatedImagesUris);
+        Task UpdateEntityImages(string entityType, int entityId, List<string> updatedImagesData);
         Task DeleteImages(string entityType, int entityId);
     }
 }
