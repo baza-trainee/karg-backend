@@ -46,7 +46,7 @@ namespace karg.BLL.Services
                     var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
                     var yearResultImages = await _imageService.GetImagesByEntity("YearResult", yearResult.Id);
 
-                    yearResultDto.Images = yearResultImages.Select(image => image.Uri).ToList();
+                    yearResultDto.Images = yearResultImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                     yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
                     yearsResultsDto.Add(yearResultDto);
                 }
@@ -73,7 +73,7 @@ namespace karg.BLL.Services
                 var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
                 var yearResultImages = await _imageService.GetImagesByEntity("YearResult", yearResultId);
                 yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
-                yearResultDto.Images = yearResultImages.Select(image => image.Uri).ToList();
+                yearResultDto.Images = yearResultImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 return yearResultDto;
             }
@@ -91,9 +91,9 @@ namespace karg.BLL.Services
                 yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
 
                 var yearResultId = await _yearResultRepository.Add(yearResult);
-                var newImages = yearResultDto.Images.Select(uri => new CreateImageDTO
+                var newImages = yearResultDto.Images.Select(data => new CreateImageDTO
                 {
-                    Uri = uri,
+                    Base64Data = data,
                     YearResultId = yearResultId
                 }).ToList();
 
@@ -117,7 +117,7 @@ namespace karg.BLL.Services
                 patchedYearResult.Year = existingYearResult.Year.Year.ToString();
 
                 var yearResultImages = await _imageService.GetImagesByEntity("YearResult", yearResultId);
-                patchedYearResult.Images = yearResultImages.Select(image => image.Uri).ToList();
+                patchedYearResult.Images = yearResultImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 patchDoc.ApplyTo(patchedYearResult);
 

@@ -47,7 +47,7 @@ namespace karg.BLL.Services
                     var adviceDto = _mapper.Map<AdviceDTO>(advice);
                     var adviceImages = await _imageService.GetImagesByEntity("Advice", advice.Id);
 
-                    adviceDto.Images = adviceImages.Select(image => image.Uri).ToList();
+                    adviceDto.Images = adviceImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                     adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
                     adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                     advicesDto.Add(adviceDto);
@@ -65,30 +65,6 @@ namespace karg.BLL.Services
             }
         }
 
-        public async Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto)
-        {
-            try
-            {
-                var advice = _mapper.Map<Advice>(adviceDto);
-                advice.TitleId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Title_en, adviceDto.Title_ua);
-                advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
-
-                var adviceId = await _adviceRepository.Add(advice);
-
-                var newImages = adviceDto.Images.Select(uri => new CreateImageDTO
-                {
-                    Uri = uri,
-                    AdviceId = adviceId
-                }).ToList();
-
-                await _imageService.AddImages(newImages);
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error adding the advice: {exception.Message}");
-            }
-        }
-
         public async Task<AdviceDTO> GetAdviceById(int adviceId, string cultureCode)
         {
             try
@@ -100,13 +76,37 @@ namespace karg.BLL.Services
                 var adviceImages = await _imageService.GetImagesByEntity("Advice", adviceId);
                 adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                 adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
-                adviceDto.Images = adviceImages.Select(image => image.Uri).ToList();
+                adviceDto.Images = adviceImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 return adviceDto;
             }
             catch (Exception exception)
             {
                 throw new ApplicationException($"Error retrieving advice by id: {exception.Message}");
+            }
+        }
+
+        public async Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto)
+        {
+            try
+            {
+                var advice = _mapper.Map<Advice>(adviceDto);
+                advice.TitleId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Title_en, adviceDto.Title_ua);
+                advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
+
+                var adviceId = await _adviceRepository.Add(advice);
+
+                var newImages = adviceDto.Images.Select(data => new CreateImageDTO
+                {
+                    Base64Data = data,
+                    AdviceId = adviceId
+                }).ToList();
+
+                await _imageService.AddImages(newImages);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error adding the advice: {exception.Message}");
             }
         }
 
@@ -123,7 +123,7 @@ namespace karg.BLL.Services
                 patchedAdvice.Description_en = _localizationService.GetLocalizedValue(existingAdvice.Description, "en", existingAdvice.DescriptionId);
 
                 var adviceImages = await _imageService.GetImagesByEntity("Advice", adviceId);
-                patchedAdvice.Images = adviceImages.Select(image => image.Uri).ToList();
+                patchedAdvice.Images = adviceImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 patchDoc.ApplyTo(patchedAdvice);
 

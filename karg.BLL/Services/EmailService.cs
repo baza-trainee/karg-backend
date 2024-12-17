@@ -4,6 +4,7 @@ using System.Net;
 using Microsoft.Extensions.Configuration;
 using karg.DAL.Interfaces;
 using karg.BLL.DTO.Authentication;
+using System.Text.RegularExpressions;
 
 namespace karg.BLL.Services
 {
@@ -104,26 +105,31 @@ namespace karg.BLL.Services
 
         private async Task<(bool Success, string Message, string ResetLink)> GetPasswordResetLinkAsync(string recipientEmail)
         {
-            if (string.IsNullOrWhiteSpace(recipientEmail))
-            {
-                return (false, "Invalid email address", null);
-            }
-
             var rescuer = await _rescuerRepository.GetRescuerByEmail(recipientEmail);
-            if (rescuer == null)
+            if (!IsValidEmail(recipientEmail) || rescuer == null)
             {
-                return (false, "Rescuer not found", null);
+                return (false, "Invalid email address.", null);
             }
 
             var token = await _jwtTokenService.GetJwtTokenById(rescuer.TokenId);
             if (string.IsNullOrEmpty(token))
             {
-                return (false, "Invalid or expired token", null);
+                return (false, "Invalid or expired token.", null);
             }
 
             var resetLink = $"https://karg-git-dev-romanhanas-projects.vercel.app/auth/reset?token={token}";
             return (true, string.Empty, resetLink);
         }
 
+        public bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            return emailRegex.IsMatch(email);
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace karg.BLL.Services
                     animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                     animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
                     animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
-                    animalDto.Images = animalImages.Select(image => image.Uri).ToList();
+                    animalDto.Images = animalImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                     animalDto.Image = animalDto.Images.FirstOrDefault();
                     animalsDto.Add(animalDto);
                 }
@@ -79,7 +79,7 @@ namespace karg.BLL.Services
                 animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                 animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
                 animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
-                animalDto.Images = animalImages.Select(image => image.Uri).ToList();
+                animalDto.Images = animalImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                 animalDto.Image = animalDto.Images.FirstOrDefault();
 
                 return animalDto;
@@ -101,9 +101,9 @@ namespace karg.BLL.Services
 
                 var animalId = await _animalRepository.Add(animal);
 
-                var newImages = animalDto.Images.Select(uri => new CreateImageDTO
+                var newImages = animalDto.Images.Select(data => new CreateImageDTO
                 {
-                    Uri = uri,
+                    Base64Data = data,
                     AnimalId = animalId
                 }).ToList();
 
@@ -130,7 +130,7 @@ namespace karg.BLL.Services
                 patchedAnimal.Story_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
 
                 var animalImages = await _imageService.GetImagesByEntity("Animal", animalId);
-                patchedAnimal.Images = animalImages.Select(image => image.Uri).ToList();
+                patchedAnimal.Images = animalImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 patchDoc.ApplyTo(patchedAnimal);
 

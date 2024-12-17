@@ -12,39 +12,45 @@ namespace karg.BLL.Services
         private readonly IPasswordHashService _passwordHashService;
         private readonly IRescuerRepository _rescuerRepository;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IEmailService _emailService;
 
         public AuthenticationService(
             IPasswordHashService passwordHashService, 
             IRescuerRepository rescuerRepository, 
             IJwtTokenService jwtTokenService, 
-            IPasswordValidationService passwordValidationService)
+            IPasswordValidationService passwordValidationService,
+            IEmailService emailService)
         {
             _passwordHashService = passwordHashService;
             _rescuerRepository = rescuerRepository;
             _jwtTokenService = jwtTokenService;
             _passwordValidationService = passwordValidationService;
+            _emailService = emailService;
         }
 
         public async Task<AuthenticationResultDTO> Authenticate(LoginDTO loginDTO)
         {
             try
             {
-                var rescuer = await _rescuerRepository.GetRescuerByEmail(loginDTO.Email);
-                if (rescuer == null)
+                if (loginDTO == null ||
+                        !_emailService.IsValidEmail(loginDTO.Email) ||
+                        string.IsNullOrWhiteSpace(loginDTO.Password))
                 {
                     return new AuthenticationResultDTO
                     {
                         Status = 0,
-                        Message = "Invalid email"
+                        Message = "Invalid email or password format."
                     };
                 }
 
-                if (!_passwordHashService.VerifyHashPassword(loginDTO.Password, rescuer.Current_Password))
+                var rescuer = await _rescuerRepository.GetRescuerByEmail(loginDTO.Email);
+                if (rescuer == null ||
+                    !_passwordHashService.VerifyHashPassword(loginDTO.Password, rescuer.Current_Password))
                 {
                     return new AuthenticationResultDTO
                     {
                         Status = 0,
-                        Message = "Invalid password"
+                        Message = "Invalid email or password."
                     };
                 }
 
@@ -69,12 +75,14 @@ namespace karg.BLL.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(credentials.Token))
+                if (credentials == null ||
+                    string.IsNullOrWhiteSpace(credentials.Token) ||
+                    string.IsNullOrWhiteSpace(credentials.Password))
                 {
                     return new ResetPasswordResultDTO
                     {
                         Status = 0,
-                        Message = "Token is required."
+                        Message = "Token and new password are required."
                     };
                 }
 
@@ -85,7 +93,7 @@ namespace karg.BLL.Services
                     return new ResetPasswordResultDTO
                     {
                         Status = 0,
-                        Message = "Rescuer not found"
+                        Message = "Rescuer not found."
                     };
                 }
 
