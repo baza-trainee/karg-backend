@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces;
 using karg.DAL.Interfaces;
@@ -45,9 +46,9 @@ namespace karg.BLL.Services
                 foreach (var advice in paginatedAdvices.Items)
                 {
                     var adviceDto = _mapper.Map<AdviceDTO>(advice);
-                    var adviceImages = await _imageService.GetImagesByEntity("Advice", advice.Id);
 
-                    adviceDto.Images = adviceImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    adviceDto.Images = (await _imageService.GetImagesByEntity("Advice", advice.Id))
+                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                     adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
                     adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                     advicesDto.Add(adviceDto);
@@ -73,10 +74,11 @@ namespace karg.BLL.Services
                 if (advice == null) return null;
 
                 var adviceDto = _mapper.Map<AdviceDTO>(advice);
-                var adviceImages = await _imageService.GetImagesByEntity("Advice", adviceId);
+
+                adviceDto.Images = (await _imageService.GetImagesByEntity("Advice", advice.Id))
+                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                 adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                 adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
-                adviceDto.Images = adviceImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 return adviceDto;
             }
@@ -121,9 +123,8 @@ namespace karg.BLL.Services
                 patchedAdvice.Title_en = _localizationService.GetLocalizedValue(existingAdvice.Title, "en", existingAdvice.TitleId);
                 patchedAdvice.Description_ua = _localizationService.GetLocalizedValue(existingAdvice.Description, "ua", existingAdvice.DescriptionId);
                 patchedAdvice.Description_en = _localizationService.GetLocalizedValue(existingAdvice.Description, "en", existingAdvice.DescriptionId);
-
-                var adviceImages = await _imageService.GetImagesByEntity("Advice", adviceId);
-                patchedAdvice.Images = adviceImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedAdvice.Images = (await _imageService.GetImagesByEntity("Advice", adviceId))
+                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 patchDoc.ApplyTo(patchedAdvice);
 

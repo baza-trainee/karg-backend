@@ -45,13 +45,13 @@ namespace karg.BLL.Services
                 foreach (var animal in paginatedAnimals.Items)
                 {
                     var animalDto = _mapper.Map<AnimalDTO>(animal);
-                    var animalImages = await _imageService.GetImagesByEntity("Animal", animal.Id);
 
+                    animalDto.Images = (await _imageService.GetImagesByEntity("Animal", animal.Id))
+                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    animalDto.Image = animalDto.Images.FirstOrDefault();
                     animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                     animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
                     animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
-                    animalDto.Images = animalImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
-                    animalDto.Image = animalDto.Images.FirstOrDefault();
                     animalsDto.Add(animalDto);
                 }
 
@@ -75,12 +75,13 @@ namespace karg.BLL.Services
                 if (animal == null) return null;
 
                 var animalDto = _mapper.Map<AnimalDTO>(animal);
-                var animalImages = await _imageService.GetImagesByEntity("Animal", animal.Id);
+
+                animalDto.Images = (await _imageService.GetImagesByEntity("Animal", animal.Id))
+                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                animalDto.Image = animalDto.Images.FirstOrDefault();
                 animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                 animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
                 animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
-                animalDto.Images = animalImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
-                animalDto.Image = animalDto.Images.FirstOrDefault();
 
                 return animalDto;
             }
@@ -128,9 +129,7 @@ namespace karg.BLL.Services
                 patchedAnimal.Description_en = _localizationService.GetLocalizedValue(existingAnimal.Description, "en", existingAnimal.DescriptionId);
                 patchedAnimal.Story_ua = _localizationService.GetLocalizedValue(existingAnimal.Story, "ua", existingAnimal.StoryId);
                 patchedAnimal.Story_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
-
-                var animalImages = await _imageService.GetImagesByEntity("Animal", animalId);
-                patchedAnimal.Images = animalImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedAnimal.Images = (await _imageService.GetImagesByEntity("Animal", animalId)).Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 patchDoc.ApplyTo(patchedAnimal);
 

@@ -23,8 +23,7 @@ namespace karg.BLL.Services
             try
             {
                 var contacts = await _contactRepository.GetAll();
-                var contactsDto = _mapper.Map<List<ContactDTO>>(contacts);
-                return contactsDto;
+                return _mapper.Map<List<ContactDTO>>(contacts);
             }
             catch (Exception exception)
             {
@@ -37,8 +36,7 @@ namespace karg.BLL.Services
             try
             {
                 var contact = await _contactRepository.GetById(contactId);
-                var contactDTO = _mapper.Map<ContactDTO>(contact);
-                return contactDTO;
+                return _mapper.Map<ContactDTO>(contact);
             }
             catch (Exception exception)
             {

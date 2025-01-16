@@ -31,9 +31,9 @@ namespace karg.BLL.Services
                 foreach (var partner in partners)
                 {
                     var partnerDto = _mapper.Map<PartnerDTO>(partner);
-                    var partnerImages = await _imageService.GetImagesByEntity("Partner", partner.Id);
 
-                    partnerDto.Images = partnerImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    partnerDto.Images = (await _imageService.GetImagesByEntity("Partner", partner.Id))
+                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                     partnersDto.Add(partnerDto);
                 }
 
@@ -53,9 +53,9 @@ namespace karg.BLL.Services
                 if (partner == null) return null;
 
                 var partnerDto = _mapper.Map<PartnerDTO>(partner);
-                var partnerImages = await _imageService.GetImagesByEntity("Partner", partner.Id);
 
-                partnerDto.Images = partnerImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                partnerDto.Images = (await _imageService.GetImagesByEntity("Partner", partner.Id))
+                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 return partnerDto;
             }
@@ -91,9 +91,9 @@ namespace karg.BLL.Services
             {
                 var existingPartner = await _partnerRepository.GetById(partnerId);
                 var patchedPartner = _mapper.Map<CreateAndUpdatePartnerDTO>(existingPartner);
-                var partnerImages = await _imageService.GetImagesByEntity("Partner", partnerId);
 
-                patchedPartner.Images = partnerImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedPartner.Images = (await _imageService.GetImagesByEntity("Partner", partnerId))
+                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                 patchDoc.ApplyTo(patchedPartner);
 
                 await _imageService.UpdateEntityImages("Partner", partnerId, patchedPartner.Images);

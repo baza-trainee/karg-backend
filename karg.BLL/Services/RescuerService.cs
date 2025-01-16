@@ -38,10 +38,10 @@ namespace karg.BLL.Services
 
                 foreach (var rescuer in rescuers)
                 {
-                    var rescuerImages = await _imageService.GetImagesByEntity("Rescuer", rescuer.Id);
                     var rescuerDto = _mapper.Map<RescuerDTO>(rescuer);
 
-                    rescuerDto.Images = rescuerImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    rescuerDto.Images = (await _imageService.GetImagesByEntity("Rescuer", rescuer.Id))
+                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
                     rescuersDto.Add(rescuerDto);
                 }
 
@@ -61,8 +61,8 @@ namespace karg.BLL.Services
                 if (rescuer == null) return null;
 
                 var rescuerDto = _mapper.Map<RescuerDTO>(rescuer);
-                var rescuerImages = await _imageService.GetImagesByEntity("Rescuer", rescuer.Id);
-                rescuerDto.Images = rescuerImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                rescuerDto.Images = (await _imageService.GetImagesByEntity("Rescuer", rescuer.Id))
+                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 return rescuerDto;
             }
@@ -124,8 +124,8 @@ namespace karg.BLL.Services
                 var existingRescuer = await _rescuerRepository.GetById(rescuerId);
                 var patchedRescuer = _mapper.Map<CreateAndUpdateRescuerDTO>(existingRescuer);
 
-                var rescuerImages = await _imageService.GetImagesByEntity("Rescuer", rescuerId);
-                patchedRescuer.Images = rescuerImages.Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedRescuer.Images = (await _imageService.GetImagesByEntity("Rescuer", rescuerId))
+                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
 
                 patchDoc.ApplyTo(patchedRescuer);
 

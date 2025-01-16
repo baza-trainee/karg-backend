@@ -116,6 +116,8 @@ namespace karg.API
             builder.Services.AddScoped<ICultureService, CultureService>();
             builder.Services.AddScoped<IContactService, ContactService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IEmailSender, EmailSender>();
+            builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 
             builder.Services.AddScoped<IAdviceRepository, AdviceRepository>();
             builder.Services.AddScoped<IYearResultRepository, YearResultRepository>();
