@@ -1,5 +1,5 @@
 ﻿using karg.BLL.DTO.Contacts;
-using karg.BLL.Interfaces;
+using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

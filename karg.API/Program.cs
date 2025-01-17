@@ -1,6 +1,14 @@
-using karg.BLL.Interfaces;
+using karg.BLL.Interfaces.Authentication;
+using karg.BLL.Interfaces.Email;
+using karg.BLL.Interfaces.Entities;
+using karg.BLL.Interfaces.Localization;
+using karg.BLL.Interfaces.Utilities;
 using karg.BLL.Profiles;
-using karg.BLL.Services;
+using karg.BLL.Services.Authentication;
+using karg.BLL.Services.Email;
+using karg.BLL.Services.Entities;
+using karg.BLL.Services.Localization;
+using karg.BLL.Services.Utilities;
 using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Models.Enums;
