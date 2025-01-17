@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using karg.BLL.DTO.Advices;
 using Microsoft.AspNetCore.JsonPatch;
-using karg.BLL.Interfaces;
+using karg.BLL.Interfaces.Entities;
+using karg.BLL.Interfaces.Localization;
 
 namespace karg.API.Controllers
 {

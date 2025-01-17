@@ -1,5 +1,6 @@
 ﻿using karg.BLL.DTO.Animals;
-using karg.BLL.Interfaces;
+using karg.BLL.Interfaces.Entities;
+using karg.BLL.Interfaces.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
