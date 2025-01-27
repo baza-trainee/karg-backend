@@ -2,7 +2,7 @@
 {
     public class CreateImageDTO
     {
-        public string? Base64Data { get; set; }
+        public Uri? Uri { get; set; }
         public int? AnimalId { get; set; }
         public int? AdviceId { get; set; }
         public int? RescuerId { get; set; }

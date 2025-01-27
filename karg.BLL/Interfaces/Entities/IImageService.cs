@@ -7,7 +7,7 @@ namespace karg.BLL.Interfaces.Entities
     {
         Task<List<Image>> GetImagesByEntity(string entityType, int entityId);
         Task AddImages(List<CreateImageDTO> imageDtos);
-        Task UpdateEntityImages(string entityType, int entityId, List<string> updatedImagesData);
+        Task UpdateEntityImages(string entityType, int entityId, List<Uri> updatedImageUris);
         Task DeleteImages(string entityType, int entityId);
     }
 }

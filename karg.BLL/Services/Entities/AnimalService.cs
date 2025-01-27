@@ -48,8 +48,7 @@ namespace karg.BLL.Services.Entities
                 {
                     var animalDto = _mapper.Map<AnimalDTO>(animal);
 
-                    animalDto.Images = (await _imageService.GetImagesByEntity("Animal", animal.Id))
-                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    animalDto.Images = (await _imageService.GetImagesByEntity("Animal", animal.Id)).Select(image => image.Uri).ToList();
                     animalDto.Image = animalDto.Images.FirstOrDefault();
                     animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                     animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
@@ -78,8 +77,7 @@ namespace karg.BLL.Services.Entities
 
                 var animalDto = _mapper.Map<AnimalDTO>(animal);
 
-                animalDto.Images = (await _imageService.GetImagesByEntity("Animal", animal.Id))
-                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                animalDto.Images = (await _imageService.GetImagesByEntity("Animal", animal.Id)).Select(image => image.Uri).ToList();
                 animalDto.Image = animalDto.Images.FirstOrDefault();
                 animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                 animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
@@ -104,9 +102,9 @@ namespace karg.BLL.Services.Entities
 
                 var animalId = await _animalRepository.Add(animal);
 
-                var newImages = animalDto.Images.Select(data => new CreateImageDTO
+                var newImages = animalDto.Images.Select(uri => new CreateImageDTO
                 {
-                    Base64Data = data,
+                    Uri = uri,
                     AnimalId = animalId
                 }).ToList();
 
@@ -131,7 +129,7 @@ namespace karg.BLL.Services.Entities
                 patchedAnimal.Description_en = _localizationService.GetLocalizedValue(existingAnimal.Description, "en", existingAnimal.DescriptionId);
                 patchedAnimal.Story_ua = _localizationService.GetLocalizedValue(existingAnimal.Story, "ua", existingAnimal.StoryId);
                 patchedAnimal.Story_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
-                patchedAnimal.Images = (await _imageService.GetImagesByEntity("Animal", animalId)).Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedAnimal.Images = (await _imageService.GetImagesByEntity("Animal", animalId)).Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedAnimal);
 
