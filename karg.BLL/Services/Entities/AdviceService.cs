@@ -48,8 +48,7 @@ namespace karg.BLL.Services.Entities
                 {
                     var adviceDto = _mapper.Map<AdviceDTO>(advice);
 
-                    adviceDto.Images = (await _imageService.GetImagesByEntity("Advice", advice.Id))
-                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    adviceDto.Images = (await _imageService.GetImagesByEntity("Advice", advice.Id)).Select(image => image.Uri).ToList();
                     adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
                     adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                     advicesDto.Add(adviceDto);
@@ -76,8 +75,7 @@ namespace karg.BLL.Services.Entities
 
                 var adviceDto = _mapper.Map<AdviceDTO>(advice);
 
-                adviceDto.Images = (await _imageService.GetImagesByEntity("Advice", advice.Id))
-                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                adviceDto.Images = (await _imageService.GetImagesByEntity("Advice", advice.Id)).Select(image => image.Uri).ToList();
                 adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                 adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
 
@@ -99,9 +97,9 @@ namespace karg.BLL.Services.Entities
 
                 var adviceId = await _adviceRepository.Add(advice);
 
-                var newImages = adviceDto.Images.Select(data => new CreateImageDTO
+                var newImages = adviceDto.Images.Select(uri => new CreateImageDTO
                 {
-                    Base64Data = data,
+                    Uri = uri,
                     AdviceId = adviceId
                 }).ToList();
 
@@ -124,8 +122,7 @@ namespace karg.BLL.Services.Entities
                 patchedAdvice.Title_en = _localizationService.GetLocalizedValue(existingAdvice.Title, "en", existingAdvice.TitleId);
                 patchedAdvice.Description_ua = _localizationService.GetLocalizedValue(existingAdvice.Description, "ua", existingAdvice.DescriptionId);
                 patchedAdvice.Description_en = _localizationService.GetLocalizedValue(existingAdvice.Description, "en", existingAdvice.DescriptionId);
-                patchedAdvice.Images = (await _imageService.GetImagesByEntity("Advice", adviceId))
-                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedAdvice.Images = (await _imageService.GetImagesByEntity("Advice", adviceId)).Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedAdvice);
 

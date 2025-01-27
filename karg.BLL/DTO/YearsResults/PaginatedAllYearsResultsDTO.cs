@@ -1,11 +1,4 @@
-﻿using karg.BLL.DTO.Advices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace karg.BLL.DTO.YearsResults
+﻿namespace karg.BLL.DTO.YearsResults
 {
     public class PaginatedAllYearsResultsDTO
     {

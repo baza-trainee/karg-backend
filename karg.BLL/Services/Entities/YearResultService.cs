@@ -47,8 +47,7 @@ namespace karg.BLL.Services.Entities
                 {
                     var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
 
-                    yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResult.Id))
-                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResult.Id)).Select(image => image.Uri).ToList();
                     yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
                     yearsResultsDto.Add(yearResultDto);
                 }
@@ -74,8 +73,7 @@ namespace karg.BLL.Services.Entities
 
                 var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
                 yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
-                yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResultId))
-                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResultId)).Select(image => image.Uri).ToList();
 
                 return yearResultDto;
             }
@@ -93,9 +91,9 @@ namespace karg.BLL.Services.Entities
                 yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
 
                 var yearResultId = await _yearResultRepository.Add(yearResult);
-                var newImages = yearResultDto.Images.Select(data => new CreateImageDTO
+                var newImages = yearResultDto.Images.Select(uri => new CreateImageDTO
                 {
-                    Base64Data = data,
+                    Uri = uri,
                     YearResultId = yearResultId
                 }).ToList();
 
@@ -117,8 +115,7 @@ namespace karg.BLL.Services.Entities
                 patchedYearResult.Description_ua = _localizationService.GetLocalizedValue(existingYearResult.Description, "ua", existingYearResult.DescriptionId);
                 patchedYearResult.Description_en = _localizationService.GetLocalizedValue(existingYearResult.Description, "en", existingYearResult.DescriptionId);
                 patchedYearResult.Year = existingYearResult.Year.Year.ToString();
-                patchedYearResult.Images = (await _imageService.GetImagesByEntity("YearResult", yearResultId))
-                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedYearResult.Images = (await _imageService.GetImagesByEntity("YearResult", yearResultId)).Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedYearResult);
 

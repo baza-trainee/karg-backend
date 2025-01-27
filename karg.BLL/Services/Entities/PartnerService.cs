@@ -32,8 +32,7 @@ namespace karg.BLL.Services.Entities
                 {
                     var partnerDto = _mapper.Map<PartnerDTO>(partner);
 
-                    partnerDto.Images = (await _imageService.GetImagesByEntity("Partner", partner.Id))
-                        .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                    partnerDto.Images = (await _imageService.GetImagesByEntity("Partner", partner.Id)).Select(image => image.Uri).ToList();
                     partnersDto.Add(partnerDto);
                 }
 
@@ -53,9 +52,7 @@ namespace karg.BLL.Services.Entities
                 if (partner == null) return null;
 
                 var partnerDto = _mapper.Map<PartnerDTO>(partner);
-
-                partnerDto.Images = (await _imageService.GetImagesByEntity("Partner", partner.Id))
-                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                partnerDto.Images = (await _imageService.GetImagesByEntity("Partner", partner.Id)).Select(image => image.Uri).ToList();
 
                 return partnerDto;
             }
@@ -71,9 +68,9 @@ namespace karg.BLL.Services.Entities
             {
                 var partner = _mapper.Map<Partner>(partnerDto);
                 var partnerId = await _partnerRepository.Add(partner);
-                var newImages = partnerDto.Images.Select(data => new CreateImageDTO
+                var newImages = partnerDto.Images.Select(uri => new CreateImageDTO
                 {
-                    Base64Data = data,
+                    Uri = uri,
                     PartnerId = partnerId
                 }).ToList();
 
@@ -92,8 +89,7 @@ namespace karg.BLL.Services.Entities
                 var existingPartner = await _partnerRepository.GetById(partnerId);
                 var patchedPartner = _mapper.Map<CreateAndUpdatePartnerDTO>(existingPartner);
 
-                patchedPartner.Images = (await _imageService.GetImagesByEntity("Partner", partnerId))
-                    .Select(image => Convert.ToBase64String(image.BinaryData)).ToList();
+                patchedPartner.Images = (await _imageService.GetImagesByEntity("Partner", partnerId)).Select(image => image.Uri).ToList();
                 patchDoc.ApplyTo(patchedPartner);
 
                 await _imageService.UpdateEntityImages("Partner", partnerId, patchedPartner.Images);

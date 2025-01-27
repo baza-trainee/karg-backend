@@ -3,7 +3,7 @@
     public class Image
     {
         public int Id { get; set; }
-        public byte[]? BinaryData { get; set; }
+        public Uri? Uri { get; set; }
         public int? AdviceId { get; set; }
         public int? AnimalId { get; set; }
         public int? RescuerId { get; set; }
