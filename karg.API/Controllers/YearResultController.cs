@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/yearresult")]
+    [Route("api/yearresult")]
     public class YearResultController : Controller
     {
         private IYearResultService _yearResultService;

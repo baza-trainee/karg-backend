@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/faq")]
+    [Route("api/faq")]
     public class FAQController : Controller
     {
         private IFAQService _faqService;

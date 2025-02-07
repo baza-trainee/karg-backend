@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/partner")]
+    [Route("api/partner")]
     public class PartnerController : Controller
     {
         private IPartnerService _partnerService {  get; set; }
