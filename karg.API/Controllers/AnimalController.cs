@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/animal")]
+    [Route("api/animal")]
     public class AnimalController : Controller
     {
         private IAnimalService _animalService;

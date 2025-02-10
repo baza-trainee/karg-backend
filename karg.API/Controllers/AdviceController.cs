@@ -8,7 +8,7 @@ using karg.BLL.Interfaces.Localization;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/advice")]
+    [Route("api/advice")]
     public class AdviceController : Controller
     {
         private IAdviceService _adviceService;

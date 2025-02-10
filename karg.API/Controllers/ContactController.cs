@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/contact")]
+    [Route("api/contact")]
     public class ContactController : Controller
     {
         private IContactService _contactService;

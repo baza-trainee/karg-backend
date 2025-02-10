@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/authentication")]
+    [Route("api/authentication")]
     public class AuthenticationController : Controller
     {
         private IAuthenticationService _authenticationService;

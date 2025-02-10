@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace karg.API.Controllers
 {
     [ApiController]
-    [Route("karg/rescuer")]
+    [Route("api/rescuer")]
     public class RescuerController : Controller
     {
         private IRescuerService _rescuerService;
