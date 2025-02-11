@@ -6,10 +6,7 @@ namespace karg.DAL.Context
 {
     public class KargDbContext : DbContext
     {
-        public KargDbContext(DbContextOptions<KargDbContext> options) : base(options) 
-        { 
-            Database.EnsureCreated();
-        }
+        public KargDbContext(DbContextOptions<KargDbContext> options) : base(options) { }
         
         public DbSet<Advice> Advices { get; set; }
         public DbSet<Animal> Animals { get; set; }
