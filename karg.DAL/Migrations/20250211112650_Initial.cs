@@ -4,10 +4,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace karg.DAL.Migrations
 {
+    /// <inheritdoc />
     public partial class Initial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
@@ -21,7 +25,7 @@ namespace karg.DAL.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Category = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Uri = table.Column<string>(type: "longtext", nullable: false)
+                    Value = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -313,6 +317,15 @@ namespace karg.DAL.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.InsertData(
+                table: "Cultures",
+                columns: new[] { "Code", "Name" },
+                values: new object[,]
+                {
+                    { "en", "English" },
+                    { "ua", "Ukrainian" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Advices_DescriptionId",
                 table: "Advices",
@@ -390,6 +403,7 @@ namespace karg.DAL.Migrations
                 column: "DescriptionId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

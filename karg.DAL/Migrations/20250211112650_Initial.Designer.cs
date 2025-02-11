@@ -11,14 +11,15 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    [Migration("20250127194002_Fix-Saving-Images")]
-    partial class FixSavingImages
+    [Migration("20250211112650_Initial")]
+    partial class Initial
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.28")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("karg.DAL.Models.Advice", b =>
@@ -111,6 +112,18 @@ namespace karg.DAL.Migrations
                     b.HasKey("Code");
 
                     b.ToTable("Cultures", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "en",
+                            Name = "English"
+                        },
+                        new
+                        {
+                            Code = "ua",
+                            Name = "Ukrainian"
+                        });
                 });
 
             modelBuilder.Entity("karg.DAL.Models.FAQ", b =>
