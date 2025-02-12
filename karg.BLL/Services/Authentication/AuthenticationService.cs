@@ -39,7 +39,7 @@ namespace karg.BLL.Services.Authentication
                     return new AuthenticationResultDTO
                     {
                         Status = 0,
-                        Message = "Invalid email or password format."
+                        Message = "Невірний формат електронної пошти або пароля."
                     };
                 }
 
@@ -50,7 +50,7 @@ namespace karg.BLL.Services.Authentication
                     return new AuthenticationResultDTO
                     {
                         Status = 0,
-                        Message = "Invalid email or password."
+                        Message = "Невірна електронна пошта або пароль."
                     };
                 }
 
@@ -59,7 +59,7 @@ namespace karg.BLL.Services.Authentication
                 return new AuthenticationResultDTO
                 {
                     Status = 1,
-                    Message = "Authentication is successful",
+                    Message = "Автентифікація пройшла успішно.",
                     Token = token,
                     RescuerId = rescuer.Id,
                     IsDirector = rescuer.Role == RescuerRole.Director
@@ -82,7 +82,7 @@ namespace karg.BLL.Services.Authentication
                     return new ResetPasswordResultDTO
                     {
                         Status = 0,
-                        Message = "Token and new password are required."
+                        Message = "Необхідно вказати токен і новий пароль."
                     };
                 }
 
@@ -93,7 +93,7 @@ namespace karg.BLL.Services.Authentication
                     return new ResetPasswordResultDTO
                     {
                         Status = 0,
-                        Message = "Rescuer not found."
+                        Message = "Працівника не знайдено."
                     };
                 }
 
@@ -102,7 +102,7 @@ namespace karg.BLL.Services.Authentication
                     return new ResetPasswordResultDTO
                     {
                         Status = 0,
-                        Message = "Invalid new password."
+                        Message = "Ви ввели невідповідний пароль."
                     };
                 }
 
@@ -116,7 +116,7 @@ namespace karg.BLL.Services.Authentication
                 return new ResetPasswordResultDTO
                 {
                     Status = 1,
-                    Message = "Password reset successfully"
+                    Message = "Пароль успішно змінено."
                 };
             }
             catch (Exception exception)

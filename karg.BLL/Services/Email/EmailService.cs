@@ -32,13 +32,13 @@ namespace karg.BLL.Services.Email
                 var rescuer = await _rescuerRepository.GetRescuerByEmail(recipientEmail);
                 if (!IsValidEmail(recipientEmail) || rescuer == null)
                 {
-                    return new SendResetPasswordEmailResultDTO { Status = 0, Message = "Invalid email address." };
+                    return new SendResetPasswordEmailResultDTO { Status = 0, Message = "Невірна електронна адреса." };
                 }
 
                 var token = await _jwtTokenService.GetJwtTokenById(rescuer.TokenId);
                 if (string.IsNullOrEmpty(token))
                 {
-                    return new SendResetPasswordEmailResultDTO { Status = 0, Message = "Invalid or expired token." };
+                    return new SendResetPasswordEmailResultDTO { Status = 0, Message = "Недійсний або прострочений токен." };
                 }
 
                 var resetLink = $"https://karg-git-dev-romanhanas-projects.vercel.app/auth/reset?token={token}";
@@ -46,7 +46,7 @@ namespace karg.BLL.Services.Email
 
                 await _emailSender.SendEmail(recipientEmail, "Відновлення паролю", emailBody);
 
-                return new SendResetPasswordEmailResultDTO { Status = 1, Message = "Email sent successfully." };
+                return new SendResetPasswordEmailResultDTO { Status = 1, Message = "Лист успішно надіслано." };
             }
             catch (Exception exception)
             {
