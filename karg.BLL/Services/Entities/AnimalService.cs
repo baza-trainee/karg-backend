@@ -102,13 +102,16 @@ namespace karg.BLL.Services.Entities
 
                 var animalId = await _animalRepository.Add(animal);
 
-                var newImages = animalDto.Images.Select(uri => new CreateImageDTO
+                if (animalDto.Images != null && animalDto.Images.Any())
                 {
-                    Uri = uri,
-                    AnimalId = animalId
-                }).ToList();
+                    var newImages = animalDto.Images.Select(uri => new CreateImageDTO
+                    {
+                        Uri = uri,
+                        AnimalId = animalId
+                    }).ToList();
 
-                await _imageService.AddImages(newImages);
+                    await _imageService.AddImages(newImages);
+                }
             }
             catch (Exception exception)
             {

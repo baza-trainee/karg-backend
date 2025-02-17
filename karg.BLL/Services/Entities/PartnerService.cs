@@ -68,13 +68,17 @@ namespace karg.BLL.Services.Entities
             {
                 var partner = _mapper.Map<Partner>(partnerDto);
                 var partnerId = await _partnerRepository.Add(partner);
-                var newImages = partnerDto.Images.Select(uri => new CreateImageDTO
-                {
-                    Uri = uri,
-                    PartnerId = partnerId
-                }).ToList();
 
-                await _imageService.AddImages(newImages);
+                if (partnerDto.Images != null && partnerDto.Images.Any())
+                {
+                    var newImages = partnerDto.Images.Select(uri => new CreateImageDTO
+                    {
+                        Uri = uri,
+                        PartnerId = partnerId
+                    }).ToList();
+
+                    await _imageService.AddImages(newImages);
+                }
             }
             catch (Exception exception)
             {
