@@ -100,13 +100,17 @@ namespace karg.BLL.Services.Entities
                 rescuer.Current_Password = string.Empty;
 
                 var rescuerId = await _rescuerRepository.Add(rescuer);
-                var newImages = rescuerDto.Images.Select(uri => new CreateImageDTO
-                {
-                    Uri = uri,
-                    RescuerId = rescuerId
-                }).ToList();
 
-                await _imageService.AddImages(newImages);
+                if (rescuerDto.Images != null && rescuerDto.Images.Any())
+                {
+                    var newImages = rescuerDto.Images.Select(uri => new CreateImageDTO
+                    {
+                        Uri = uri,
+                        RescuerId = rescuerId
+                    }).ToList();
+
+                    await _imageService.AddImages(newImages);
+                }
             }
             catch (Exception exception)
             {

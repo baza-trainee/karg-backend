@@ -91,13 +91,17 @@ namespace karg.BLL.Services.Entities
                 yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
 
                 var yearResultId = await _yearResultRepository.Add(yearResult);
-                var newImages = yearResultDto.Images.Select(uri => new CreateImageDTO
-                {
-                    Uri = uri,
-                    YearResultId = yearResultId
-                }).ToList();
 
-                await _imageService.AddImages(newImages);
+                if (yearResultDto.Images != null && yearResultDto.Images.Any())
+                {
+                    var newImages = yearResultDto.Images.Select(uri => new CreateImageDTO
+                    {
+                        Uri = uri,
+                        YearResultId = yearResultId
+                    }).ToList();
+
+                    await _imageService.AddImages(newImages);
+                }
             }
             catch (Exception exception)
             {

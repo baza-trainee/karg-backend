@@ -97,13 +97,16 @@ namespace karg.BLL.Services.Entities
 
                 var adviceId = await _adviceRepository.Add(advice);
 
-                var newImages = adviceDto.Images.Select(uri => new CreateImageDTO
+                if (adviceDto.Images != null && adviceDto.Images.Any())
                 {
-                    Uri = uri,
-                    AdviceId = adviceId
-                }).ToList();
+                    var newImages = adviceDto.Images.Select(uri => new CreateImageDTO
+                    {
+                        Uri = uri,
+                        AdviceId = adviceId
+                    }).ToList();
 
-                await _imageService.AddImages(newImages);
+                    await _imageService.AddImages(newImages);
+                }
             }
             catch (Exception exception)
             {

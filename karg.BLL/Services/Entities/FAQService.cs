@@ -66,6 +66,22 @@ namespace karg.BLL.Services.Entities
             }
         }
 
+        public async Task CreateFAQ(CreateAndUpdateFAQDTO faqDto)
+        {
+            try
+            {
+                var faq = _mapper.Map<FAQ>(faqDto);
+                faq.QuestionId = await _localizationSetService.CreateAndSaveLocalizationSet(faqDto.Question_en, faqDto.Question_ua);
+                faq.AnswerId = await _localizationSetService.CreateAndSaveLocalizationSet(faqDto.Answer_en, faqDto.Answer_ua);
+
+                await _faqRepository.Add(faq);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error adding the FAQ: {exception.Message}");
+            }
+        }
+
         public async Task<CreateAndUpdateFAQDTO> UpdateFAQ(int faqId, JsonPatchDocument<CreateAndUpdateFAQDTO> patchDoc)
         {
             try
@@ -90,22 +106,6 @@ namespace karg.BLL.Services.Entities
             catch (Exception exception)
             {
                 throw new ApplicationException($"Error updating the FAQ: {exception.Message}");
-            }
-        }
-
-        public async Task CreateFAQ(CreateAndUpdateFAQDTO faqDto)
-        {
-            try
-            {
-                var faq = _mapper.Map<FAQ>(faqDto);
-                faq.QuestionId = await _localizationSetService.CreateAndSaveLocalizationSet(faqDto.Question_en, faqDto.Question_ua);
-                faq.AnswerId = await _localizationSetService.CreateAndSaveLocalizationSet(faqDto.Answer_en, faqDto.Answer_ua);
-
-                await _faqRepository.Add(faq);
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error adding the FAQ: {exception.Message}");
             }
         }
 
