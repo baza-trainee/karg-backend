@@ -158,7 +158,9 @@ namespace karg.API
                 var context = scope.ServiceProvider.GetRequiredService<KargDbContext>();
                 context.Database.Migrate();
 
-                string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                string fileStoragePath = configuration["FileStoragePath"];
+                string rootPath = Path.Combine(fileStoragePath, "uploads");
                 string[] categories = { "animals", "advices", "rescuers", "partners", "yearsresults" };
 
                 foreach (var category in categories)
