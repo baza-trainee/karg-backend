@@ -157,6 +157,18 @@ namespace karg.API
             {
                 var context = scope.ServiceProvider.GetRequiredService<KargDbContext>();
                 context.Database.Migrate();
+
+                string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                string[] categories = { "animals", "advices", "rescuers", "partners", "yearsresults" };
+
+                foreach (var category in categories)
+                {
+                    string categoryPath = Path.Combine(rootPath, category);
+                    if (!Directory.Exists(categoryPath))
+                    {
+                        Directory.CreateDirectory(categoryPath);
+                    }
+                }
             }
 
             // Configure the HTTP request pipeline.
