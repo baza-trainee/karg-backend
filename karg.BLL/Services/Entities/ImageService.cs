@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
-using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace karg.BLL.Services.Entities
 {
@@ -10,11 +13,13 @@ namespace karg.BLL.Services.Entities
     {
         private readonly IImageRepository _imageRepository;
         private IMapper _mapper;
+        private readonly string _baseImagePath;
 
-        public ImageService(IImageRepository imageRepository, IMapper mapper)
+        public ImageService(IImageRepository imageRepository, IMapper mapper, IConfiguration configuration)
         {
             _imageRepository = imageRepository;
             _mapper = mapper;
+            _baseImagePath = Path.Combine(configuration["FileStoragePath"], "uploads");
         }
 
         public async Task<List<Image>> GetImagesByEntity(string entityType, int entityId)
@@ -31,85 +36,63 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task AddImages(List<CreateImageDTO> imageDtos)
+        public async Task AddImages(string entityType, int entityId, List<byte[]> imageBytesList)
         {
-            try
+            string entityFolder = CreateEntityFolder(entityType, entityId);
+
+            foreach (var imageBytes in imageBytesList)
             {
-                foreach (var imageDto in imageDtos)
+                string fileName = Guid.NewGuid() + ".jpg";
+                string filePath = Path.Combine(entityFolder, fileName);
+
+                await File.WriteAllBytesAsync(filePath, imageBytes);
+
+                var newImage = new Image
                 {
-                    var image = _mapper.Map<Image>(imageDto);
-                    await ValidateImageEntity(image);
-                    await _imageRepository.Add(image);
-                }
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error adding images: {exception.Message}");
+                    Uri = filePath.Replace("\\", "/")
+                };
+                SetImageEntity(newImage, entityType, entityId);
+                await _imageRepository.Add(newImage);
             }
         }
 
-        public async Task UpdateEntityImages(string entityType, int entityId, List<Uri> updatedImageUris)
+        public async Task UpdateEntityImages(string entityType, int entityId, List<byte[]> updatedImages)
         {
-            try
+            var existingImages = await GetImagesByEntity(entityType, entityId);
+            foreach (var image in existingImages)
             {
-                var existingImages = await GetImagesByEntity(entityType, entityId);
-
-                await _imageRepository.DeleteRange(existingImages);
-
-                foreach (var updatedImageUri in updatedImageUris)
-                {
-                    var newImageDto = new CreateImageDTO { Uri = updatedImageUri };
-                    SetImageEntity(newImageDto, entityType, entityId);
-                    await AddImage(newImageDto);
-                }
+                DeleteFile(image.Uri.ToString());
             }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error when updating entity images: {exception.Message}");
-            }
+            await _imageRepository.DeleteRange(existingImages);
+            await AddImages(entityType, entityId, updatedImages);
         }
 
         public async Task DeleteImages(string entityType, int entityId)
         {
-            try
-            {
-                var removedImage = await GetImagesByEntity(entityType, entityId);
-                await _imageRepository.DeleteRange(removedImage);
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error deleting the images: {exception.Message}");
-            }
+            var imagesToRemove = await GetImagesByEntity(entityType, entityId);
+            string folderPath = Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString());
+            Directory.Delete(folderPath, true);
+
+            await _imageRepository.DeleteRange(imagesToRemove);
         }
 
-        private async Task<int> AddImage(CreateImageDTO imageDto)
+        private string CreateEntityFolder(string entityType, int entityId)
         {
-            try
+            string folderPath = Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString());
+            if (!Directory.Exists(folderPath))
             {
-                var image = _mapper.Map<Image>(imageDto);
-                await ValidateImageEntity(image);
-                await _imageRepository.Add(image);
-                return image.Id;
+                Directory.CreateDirectory(folderPath);
+            
             }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error adding the image: {exception.Message}");
-            }
+            return folderPath;
         }
 
-        private async Task ValidateImageEntity(Image image)
+        private void DeleteFile(string fileUri)
         {
-            var entityIds = new List<int?> { image.AnimalId, image.AdviceId, image.RescuerId, image.PartnerId, image.YearResultId };
-            var associatedEntitiesCount = entityIds.Count(id => id != null);
-
-            if (associatedEntitiesCount == 0)
+            string filePath = Path.Combine(_baseImagePath, fileUri.TrimStart('/'));
+            if (File.Exists(filePath))
             {
-                throw new ApplicationException("Image must be associated with at least one entity.");
-            }
-
-            if (associatedEntitiesCount > 1)
-            {
-                throw new ApplicationException("Image cannot be associated with more than one entity.");
+                File.Delete(filePath);
             }
         }
 
@@ -126,7 +109,7 @@ namespace karg.BLL.Services.Entities
             };
         }
 
-        private void SetImageEntity(CreateImageDTO imageDto, string entityType, int entityId)
+        private void SetImageEntity(Image imageDto, string entityType, int entityId)
         {
             switch (entityType)
             {

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using karg.BLL.DTO.Utilities;
 using karg.DAL.Models;
 
 namespace karg.BLL.Profiles
@@ -8,8 +7,6 @@ namespace karg.BLL.Profiles
     {
         public ImageProfile() 
         {
-            CreateMap<CreateImageDTO, Image>();
-            CreateMap<Image, CreateImageDTO>();
         }
     }
 }

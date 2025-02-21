@@ -121,9 +121,9 @@ namespace karg.API.Controllers
         {
             try
             {
-                await _animalService.CreateAnimal(animalDto);
+                var newAnimal = await _animalService.CreateAnimal(animalDto);
 
-                return Created("CreateAnimal", animalDto);
+                return Created("CreateAnimal", newAnimal);
             }
             catch(Exception exception)
             {

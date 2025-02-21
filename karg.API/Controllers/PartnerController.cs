@@ -104,9 +104,9 @@ namespace karg.API.Controllers
         {
             try
             {
-                await _partnerService.CreatePartner(partnerDto);
+                var newPartner = await _partnerService.CreatePartner(partnerDto);
 
-                return Created("CreatePartner", partnerDto);
+                return Created("CreatePartner", newPartner);
             }
             catch (Exception exception)
             {

@@ -22,6 +22,11 @@ namespace karg.DAL.Context.EntityConfigurations
             builder.Property(rescuer => rescuer.PhoneNumber).HasMaxLength(50);
             builder.Property(rescuer => rescuer.Current_Password).HasMaxLength(64).IsRequired();
             builder.Property(rescuer => rescuer.Role).HasConversion(rescuerRoleConverter).IsRequired();
+
+
+            builder.HasData(
+                new Rescuer { Id = 1, Email = "admin@gmail.com", Current_Password = "001He87I8P1n8k7a70SJizxEyQdPQsTGcSOgRls0V8Y=", FullName = "Admin KARG", Role = RescuerRole.Director, TokenId = 1 }
+            );
         }
     }
 }

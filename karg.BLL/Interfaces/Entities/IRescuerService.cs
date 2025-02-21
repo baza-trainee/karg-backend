@@ -7,7 +7,7 @@ namespace karg.BLL.Interfaces.Entities
     {
         Task<List<RescuerDTO>> GetRescuers();
         Task<RescuerDTO> GetRescuerById(int rescuerId);
-        Task CreateRescuer(CreateAndUpdateRescuerDTO rescuerDto);
+        Task<CreateAndUpdateRescuerDTO> CreateRescuer(CreateAndUpdateRescuerDTO rescuerDto);
         Task<CreateAndUpdateRescuerDTO> UpdateRescuer(int rescuerId, JsonPatchDocument<CreateAndUpdateRescuerDTO> patchDoc);
         Task DeleteRescuer(int rescuerId);
     }

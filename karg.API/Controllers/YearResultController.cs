@@ -121,9 +121,9 @@ namespace karg.API.Controllers
         {
             try
             {
-                await _yearResultService.CreateYearResult(yearResultDto);
+                var newYearResult = await _yearResultService.CreateYearResult(yearResultDto);
 
-                return Created("CreateYearResult", yearResultDto);
+                return Created("CreateYearResult", newYearResult);
             }
             catch (Exception exception)
             {

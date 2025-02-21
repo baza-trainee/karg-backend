@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Authentication;
+using karg.BLL.DTO.Partners;
 using karg.BLL.DTO.Rescuers;
-using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Authentication;
 using karg.BLL.Interfaces.Entities;
 using karg.DAL.Interfaces;
@@ -88,7 +89,7 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task CreateRescuer(CreateAndUpdateRescuerDTO rescuerDto)
+        public async Task<CreateAndUpdateRescuerDTO> CreateRescuer(CreateAndUpdateRescuerDTO rescuerDto)
         {
             try
             {
@@ -103,14 +104,16 @@ namespace karg.BLL.Services.Entities
 
                 if (rescuerDto.Images != null && rescuerDto.Images.Any())
                 {
-                    var newImages = rescuerDto.Images.Select(uri => new CreateImageDTO
-                    {
-                        Uri = uri,
-                        RescuerId = rescuerId
-                    }).ToList();
+                    var imageBytesList = rescuerDto.Images
+                        .Select(Convert.FromBase64String)
+                        .ToList();
 
-                    await _imageService.AddImages(newImages);
+                    await _imageService.AddImages(nameof(Rescuer), rescuerId, imageBytesList);
                 }
+
+                rescuerDto.Images = (await _imageService.GetImagesByEntity(nameof(Rescuer), rescuerId)).Select(image => image.Uri).ToList();
+
+                return rescuerDto;
             }
             catch (Exception exception)
             {
@@ -125,9 +128,15 @@ namespace karg.BLL.Services.Entities
                 var existingRescuer = await _rescuerRepository.GetById(rescuerId);
                 var patchedRescuer = _mapper.Map<CreateAndUpdateRescuerDTO>(existingRescuer);
 
-                patchedRescuer.Images = (await _imageService.GetImagesByEntity("Rescuer", rescuerId)).Select(image => image.Uri).ToList();
-
                 patchDoc.ApplyTo(patchedRescuer);
+
+                if (patchDoc.Operations.Any(op => op.path == "/images"))
+                {
+                    var imageBytesList = patchedRescuer.Images
+                                .Select(Convert.FromBase64String)
+                                .ToList();
+                    await _imageService.UpdateEntityImages(nameof(Rescuer), rescuerId, imageBytesList);
+                }
 
                 existingRescuer.FullName = patchedRescuer.FullName;
                 existingRescuer.PhoneNumber = patchedRescuer.PhoneNumber;
@@ -136,8 +145,8 @@ namespace karg.BLL.Services.Entities
                 var newJwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { FullName = existingRescuer.FullName, Email = existingRescuer.Email, Role = existingRescuer.Role.ToString() });
 
                 await _jwtTokenService.UpdateJwtToken(existingRescuer.TokenId, newJwtToken);
-                await _imageService.UpdateEntityImages("Rescuer", existingRescuer.Id, patchedRescuer.Images);
                 await _rescuerRepository.Update(existingRescuer);
+                patchedRescuer.Images = (await _imageService.GetImagesByEntity(nameof(Rescuer), rescuerId)).Select(image => image.Uri).ToList();
 
                 return patchedRescuer;
             }

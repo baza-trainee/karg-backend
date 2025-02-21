@@ -110,9 +110,9 @@ namespace karg.API.Controllers
         {
             try
             {
-                await _rescuerService.CreateRescuer(rescuerDto);
+                var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
 
-                return Created("CreateRescuer", rescuerDto);
+                return Created("CreateRescuer", newRescuer);
             }
             catch (Exception exception)
             {
