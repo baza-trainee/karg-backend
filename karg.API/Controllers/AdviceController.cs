@@ -121,9 +121,9 @@ namespace karg.API.Controllers
         {
             try
             {
-                await _adviceService.CreateAdvice(adviceDto);
+                var newAdvice = await _adviceService.CreateAdvice(adviceDto);
 
-                return Created("CreateAdvice", adviceDto);
+                return Created("CreateAdvice", newAdvice);
             }
             catch (Exception exception)
             {

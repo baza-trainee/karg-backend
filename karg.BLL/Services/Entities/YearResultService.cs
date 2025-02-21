@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using karg.BLL.DTO.Utilities;
+using karg.BLL.DTO.Animals;
+using karg.BLL.DTO.Partners;
 using karg.BLL.DTO.YearsResults;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
@@ -83,7 +84,7 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task CreateYearResult(CreateAndUpdateYearResultDTO yearResultDto)
+        public async Task<CreateAndUpdateYearResultDTO> CreateYearResult(CreateAndUpdateYearResultDTO yearResultDto)
         {
             try
             {
@@ -94,14 +95,16 @@ namespace karg.BLL.Services.Entities
 
                 if (yearResultDto.Images != null && yearResultDto.Images.Any())
                 {
-                    var newImages = yearResultDto.Images.Select(uri => new CreateImageDTO
-                    {
-                        Uri = uri,
-                        YearResultId = yearResultId
-                    }).ToList();
+                    var imageBytesList = yearResultDto.Images
+                        .Select(Convert.FromBase64String)
+                        .ToList();
 
-                    await _imageService.AddImages(newImages);
+                    await _imageService.AddImages(nameof(YearResult), yearResultId, imageBytesList);
                 }
+
+                yearResultDto.Images = (await _imageService.GetImagesByEntity(nameof(YearResult), yearResultId)).Select(image => image.Uri).ToList();
+
+                return yearResultDto;
             }
             catch (Exception exception)
             {
@@ -119,16 +122,22 @@ namespace karg.BLL.Services.Entities
                 patchedYearResult.Description_ua = _localizationService.GetLocalizedValue(existingYearResult.Description, "ua", existingYearResult.DescriptionId);
                 patchedYearResult.Description_en = _localizationService.GetLocalizedValue(existingYearResult.Description, "en", existingYearResult.DescriptionId);
                 patchedYearResult.Year = existingYearResult.Year.Year.ToString();
-                patchedYearResult.Images = (await _imageService.GetImagesByEntity("YearResult", yearResultId)).Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedYearResult);
 
-                await _imageService.UpdateEntityImages("YearResult", existingYearResult.Id, patchedYearResult.Images);
+                if (patchDoc.Operations.Any(op => op.path == "/images"))
+                {
+                    var imageBytesList = patchedYearResult.Images
+                                .Select(Convert.FromBase64String)
+                                .ToList();
+                    await _imageService.UpdateEntityImages(nameof(YearResult), yearResultId, imageBytesList);
+                }
 
                 existingYearResult.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.DescriptionId, patchedYearResult.Description_en, patchedYearResult.Description_ua);
                 existingYearResult.Year = new DateOnly(int.Parse(patchedYearResult.Year), 1, 1);
 
                 await _yearResultRepository.Update(existingYearResult);
+                patchedYearResult.Images = (await _imageService.GetImagesByEntity(nameof(YearResult), yearResultId)).Select(image => image.Uri).ToList();
 
                 return patchedYearResult;
             }

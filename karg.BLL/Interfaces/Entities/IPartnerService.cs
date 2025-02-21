@@ -7,7 +7,7 @@ namespace karg.BLL.Interfaces.Entities
     {
         Task<List<PartnerDTO>> GetPartners();
         Task<PartnerDTO> GetPartnerById(int partnerId);
-        Task CreatePartner(CreateAndUpdatePartnerDTO partnerDto);
+        Task<CreateAndUpdatePartnerDTO> CreatePartner(CreateAndUpdatePartnerDTO partnerDto);
         Task<CreateAndUpdatePartnerDTO> UpdatePartner(int partnerId, JsonPatchDocument<CreateAndUpdatePartnerDTO> patchDoc);
         Task DeletePartner(int partnerId);
     }

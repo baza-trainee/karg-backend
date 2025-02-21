@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Partners;
-using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
@@ -62,7 +63,7 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task CreatePartner(CreateAndUpdatePartnerDTO partnerDto)
+        public async Task<CreateAndUpdatePartnerDTO> CreatePartner(CreateAndUpdatePartnerDTO partnerDto)
         {
             try
             {
@@ -71,14 +72,16 @@ namespace karg.BLL.Services.Entities
 
                 if (partnerDto.Images != null && partnerDto.Images.Any())
                 {
-                    var newImages = partnerDto.Images.Select(uri => new CreateImageDTO
-                    {
-                        Uri = uri,
-                        PartnerId = partnerId
-                    }).ToList();
+                    var imageBytesList = partnerDto.Images
+                        .Select(Convert.FromBase64String)
+                        .ToList();
 
-                    await _imageService.AddImages(newImages);
+                    await _imageService.AddImages(nameof(Partner), partnerId, imageBytesList);
                 }
+
+                partnerDto.Images = (await _imageService.GetImagesByEntity(nameof(Partner), partnerId)).Select(image => image.Uri).ToList();
+
+                return partnerDto;
             }
             catch (Exception exception)
             {
@@ -93,15 +96,21 @@ namespace karg.BLL.Services.Entities
                 var existingPartner = await _partnerRepository.GetById(partnerId);
                 var patchedPartner = _mapper.Map<CreateAndUpdatePartnerDTO>(existingPartner);
 
-                patchedPartner.Images = (await _imageService.GetImagesByEntity("Partner", partnerId)).Select(image => image.Uri).ToList();
                 patchDoc.ApplyTo(patchedPartner);
 
-                await _imageService.UpdateEntityImages("Partner", partnerId, patchedPartner.Images);
+                if (patchDoc.Operations.Any(op => op.path == "/images"))
+                {
+                    var imageBytesList = patchedPartner.Images
+                                .Select(Convert.FromBase64String)
+                                .ToList();
+                    await _imageService.UpdateEntityImages(nameof(Partner), partnerId, imageBytesList);
+                }
 
                 existingPartner.Name = patchedPartner.Name;
                 existingPartner.Uri = patchedPartner.Uri;
 
                 await _partnerRepository.Update(existingPartner);
+                patchedPartner.Images = (await _imageService.GetImagesByEntity(nameof(Partner), partnerId)).Select(image => image.Uri).ToList();
 
                 return patchedPartner;
             }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
-using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
 using karg.BLL.Interfaces.Utilities;
@@ -87,7 +86,7 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task CreateAdvice(CreateAndUpdateAdviceDTO adviceDto)
+        public async Task<CreateAndUpdateAdviceDTO> CreateAdvice(CreateAndUpdateAdviceDTO adviceDto)
         {
             try
             {
@@ -99,14 +98,16 @@ namespace karg.BLL.Services.Entities
 
                 if (adviceDto.Images != null && adviceDto.Images.Any())
                 {
-                    var newImages = adviceDto.Images.Select(uri => new CreateImageDTO
-                    {
-                        Uri = uri,
-                        AdviceId = adviceId
-                    }).ToList();
+                    var imageBytesList = adviceDto.Images
+                        .Select(Convert.FromBase64String)
+                        .ToList();
 
-                    await _imageService.AddImages(newImages);
+                    await _imageService.AddImages(nameof(Advice), adviceId, imageBytesList);
                 }
+
+                adviceDto.Images = (await _imageService.GetImagesByEntity(nameof(Advice), adviceId)).Select(image => image.Uri).ToList();
+
+                return adviceDto;
             }
             catch (Exception exception)
             {
@@ -125,17 +126,23 @@ namespace karg.BLL.Services.Entities
                 patchedAdvice.Title_en = _localizationService.GetLocalizedValue(existingAdvice.Title, "en", existingAdvice.TitleId);
                 patchedAdvice.Description_ua = _localizationService.GetLocalizedValue(existingAdvice.Description, "ua", existingAdvice.DescriptionId);
                 patchedAdvice.Description_en = _localizationService.GetLocalizedValue(existingAdvice.Description, "en", existingAdvice.DescriptionId);
-                patchedAdvice.Images = (await _imageService.GetImagesByEntity("Advice", adviceId)).Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedAdvice);
 
-                await _imageService.UpdateEntityImages("Advice", adviceId, patchedAdvice.Images);
+                if (patchDoc.Operations.Any(op => op.path == "/images"))
+                {
+                    var imageBytesList = patchedAdvice.Images
+                                    .Select(Convert.FromBase64String)
+                                    .ToList();
+                    await _imageService.UpdateEntityImages(nameof(Advice), adviceId, imageBytesList);
+                }
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
                 existingAdvice.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.DescriptionId, patchedAdvice.Description_en, patchedAdvice.Description_ua);
                 existingAdvice.Created_At = DateOnly.ParseExact(patchedAdvice.Created_At, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 await _adviceRepository.Update(existingAdvice);
+                patchedAdvice.Images = (await _imageService.GetImagesByEntity(nameof(Advice), adviceId)).Select(image => image.Uri).ToList();
 
                 return patchedAdvice;
             }

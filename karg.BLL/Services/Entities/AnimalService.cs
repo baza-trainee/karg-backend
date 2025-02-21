@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Animals;
-using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
 using karg.BLL.Interfaces.Utilities;
@@ -91,7 +91,7 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task CreateAnimal(CreateAndUpdateAnimalDTO animalDto)
+        public async Task<CreateAndUpdateAnimalDTO> CreateAnimal(CreateAndUpdateAnimalDTO animalDto)
         {
             try
             {
@@ -104,14 +104,16 @@ namespace karg.BLL.Services.Entities
 
                 if (animalDto.Images != null && animalDto.Images.Any())
                 {
-                    var newImages = animalDto.Images.Select(uri => new CreateImageDTO
-                    {
-                        Uri = uri,
-                        AnimalId = animalId
-                    }).ToList();
+                    var imageBytesList = animalDto.Images
+                        .Select(Convert.FromBase64String)
+                        .ToList();
 
-                    await _imageService.AddImages(newImages);
+                    await _imageService.AddImages(nameof(Animal), animalId, imageBytesList);
                 }
+
+                animalDto.Images = (await _imageService.GetImagesByEntity(nameof(Animal), animalId)).Select(image => image.Uri).ToList();
+
+                return animalDto;
             }
             catch (Exception exception)
             {
@@ -132,11 +134,16 @@ namespace karg.BLL.Services.Entities
                 patchedAnimal.Description_en = _localizationService.GetLocalizedValue(existingAnimal.Description, "en", existingAnimal.DescriptionId);
                 patchedAnimal.Story_ua = _localizationService.GetLocalizedValue(existingAnimal.Story, "ua", existingAnimal.StoryId);
                 patchedAnimal.Story_en = _localizationService.GetLocalizedValue(existingAnimal.Story, "en", existingAnimal.StoryId);
-                patchedAnimal.Images = (await _imageService.GetImagesByEntity("Animal", animalId)).Select(image => image.Uri).ToList();
 
                 patchDoc.ApplyTo(patchedAnimal);
 
-                await _imageService.UpdateEntityImages("Animal", animalId, patchedAnimal.Images);
+                if (patchDoc.Operations.Any(op => op.path == "/images"))
+                {
+                    var imageBytesList = patchedAnimal.Images
+                                .Select(Convert.FromBase64String)
+                                .ToList();
+                    await _imageService.UpdateEntityImages(nameof(Advice), animalId, imageBytesList);
+                }
 
                 existingAnimal.NameId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.NameId, patchedAnimal.Name_en, patchedAnimal.Name_ua);
                 existingAnimal.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.DescriptionId, patchedAnimal.Description_en, patchedAnimal.Description_ua);
@@ -144,6 +151,7 @@ namespace karg.BLL.Services.Entities
                 existingAnimal.Category = Enum.Parse<AnimalCategory>(patchedAnimal.Category);
 
                 await _animalRepository.Update(existingAnimal);
+                patchedAnimal.Images = (await _imageService.GetImagesByEntity(nameof(Animal), animalId)).Select(image => image.Uri).ToList();
 
                 return patchedAnimal;
             }

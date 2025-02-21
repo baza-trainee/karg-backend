@@ -161,7 +161,7 @@ namespace karg.API
                 var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
                 string fileStoragePath = configuration["FileStoragePath"];
                 string rootPath = Path.Combine(fileStoragePath, "uploads");
-                string[] categories = { "animals", "advices", "rescuers", "partners", "yearsresults" };
+                string[] categories = { "animal", "advice", "rescuer", "partner", "yearresult" };
 
                 foreach (var category in categories)
                 {
@@ -173,12 +173,8 @@ namespace karg.API
                 }
             }
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseCors("corspolicy");
 
