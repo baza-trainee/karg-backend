@@ -1,22 +1,22 @@
 ﻿using AutoMapper;
 using karg.BLL.Interfaces.Entities;
+using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
 
 namespace karg.BLL.Services.Entities
 {
     public class ImageService : IImageService
     {
+        private readonly IFileService _fileService;
         private readonly IImageRepository _imageRepository;
         private IMapper _mapper;
         private readonly string _baseImagePath;
 
-        public ImageService(IImageRepository imageRepository, IMapper mapper, IConfiguration configuration)
+        public ImageService(IFileService fileService, IImageRepository imageRepository, IMapper mapper, IConfiguration configuration)
         {
+            _fileService = fileService;
             _imageRepository = imageRepository;
             _mapper = mapper;
             _baseImagePath = Path.Combine(configuration["FileStoragePath"], "uploads");
@@ -28,6 +28,7 @@ namespace karg.BLL.Services.Entities
             {
                 var allImages = await _imageRepository.GetAll();
                 var entityImages = allImages.Where(image => IsImageMatchingEntity(image, entityType, entityId)).ToList();
+
                 return entityImages;
             }
             catch (Exception exception)
@@ -36,63 +37,49 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task AddImages(string entityType, int entityId, List<byte[]> imageBytesList)
+        public async Task<List<string>> SaveImages(string entityType, int entityId, List<string> imageBytesList, bool isUpdate = false)
         {
-            string entityFolder = CreateEntityFolder(entityType, entityId);
-
-            foreach (var imageBytes in imageBytesList)
+            try
             {
-                string fileName = Guid.NewGuid() + ".jpg";
-                string filePath = Path.Combine(entityFolder, fileName);
-
-                await File.WriteAllBytesAsync(filePath, imageBytes);
-
-                var newImage = new Image
+                if (isUpdate)
                 {
-                    Uri = filePath.Replace("\\", "/")
-                };
-                SetImageEntity(newImage, entityType, entityId);
-                await _imageRepository.Add(newImage);
-            }
-        }
+                    await DeleteImages(entityType, entityId);
+                }
 
-        public async Task UpdateEntityImages(string entityType, int entityId, List<byte[]> updatedImages)
-        {
-            var existingImages = await GetImagesByEntity(entityType, entityId);
-            foreach (var image in existingImages)
-            {
-                DeleteFile(image.Uri.ToString());
+                var savedImages = new List<string>();
+                foreach (var imageBytes in imageBytesList.Select(Convert.FromBase64String))
+                {
+                    var fileName = Guid.NewGuid() + ".jpg";
+                    var folderPath = _fileService.CreateDirectory(Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString()));
+                    var imageUri = await _fileService.SaveFileAsync(folderPath, imageBytes, fileName);
+                    var newImage = new Image { Uri = imageUri };
+
+                    SetImageEntity(newImage, entityType, entityId);
+                    await _imageRepository.Add(newImage);
+                    savedImages.Add(imageUri);
+                }
+
+                return savedImages;
             }
-            await _imageRepository.DeleteRange(existingImages);
-            await AddImages(entityType, entityId, updatedImages);
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error processing images: {exception.Message}");
+            }
         }
 
         public async Task DeleteImages(string entityType, int entityId)
         {
-            var imagesToRemove = await GetImagesByEntity(entityType, entityId);
-            string folderPath = Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString());
-            Directory.Delete(folderPath, true);
-
-            await _imageRepository.DeleteRange(imagesToRemove);
-        }
-
-        private string CreateEntityFolder(string entityType, int entityId)
-        {
-            string folderPath = Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString());
-            if (!Directory.Exists(folderPath))
+            try
             {
-                Directory.CreateDirectory(folderPath);
-            
+                var imagesToRemove = await GetImagesByEntity(entityType, entityId);
+                string folderPath = Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString());
+
+                _fileService.DeleteDirectory(folderPath);
+                await _imageRepository.DeleteRange(imagesToRemove);
             }
-            return folderPath;
-        }
-
-        private void DeleteFile(string fileUri)
-        {
-            string filePath = Path.Combine(_baseImagePath, fileUri.TrimStart('/'));
-            if (File.Exists(filePath))
+            catch (Exception exception)
             {
-                File.Delete(filePath);
+                throw new ApplicationException($"Error deleting the images: {exception.Message}");
             }
         }
 
