@@ -95,7 +95,7 @@ namespace karg.BLL.Services.Entities
                 advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
 
                 var adviceId = await _adviceRepository.Add(advice);
-                adviceDto.Images = await _imageService.SaveImages(nameof(Advice), adviceId, adviceDto.Images, isUpdate: true);
+                adviceDto.Images = await _imageService.UploadImages(nameof(Advice), adviceId, adviceDto.Images);
 
                 return adviceDto;
             }
@@ -121,7 +121,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    patchedAdvice.Images = await _imageService.SaveImages(nameof(Advice), adviceId, patchedAdvice.Images, isUpdate: true);
+                    patchedAdvice.Images = await _imageService.UploadImages(nameof(Advice), adviceId, patchedAdvice.Images);
                 }
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);

@@ -37,34 +37,19 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task<List<string>> SaveImages(string entityType, int entityId, List<string> imageBytesList, bool isUpdate = false)
+        public async Task<List<string>> UploadImages(string entityType, int entityId, List<string> imagesData)
         {
-            try
+            var uploadedImageUris = new List<string>();
+            var entityFolderPath = _fileService.CreateDirectory(Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString()));
+
+            foreach (var imageData in imagesData)
             {
-                if (isUpdate)
-                {
-                    await DeleteImages(entityType, entityId);
-                }
-
-                var savedImages = new List<string>();
-                foreach (var imageBytes in imageBytesList.Select(Convert.FromBase64String))
-                {
-                    var fileName = Guid.NewGuid() + ".jpg";
-                    var folderPath = _fileService.CreateDirectory(Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString()));
-                    var imageUri = await _fileService.SaveFileAsync(folderPath, imageBytes, fileName);
-                    var newImage = new Image { Uri = imageUri };
-
-                    SetImageEntity(newImage, entityType, entityId);
-                    await _imageRepository.Add(newImage);
-                    savedImages.Add(imageUri);
-                }
-
-                return savedImages;
+                var imageUri = await StoreImage(imageData, entityFolderPath);
+                await RegisterImage(entityType, entityId, imageUri);
+                uploadedImageUris.Add(imageUri);
             }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error processing images: {exception.Message}");
-            }
+
+            return uploadedImageUris; 
         }
 
         public async Task DeleteImages(string entityType, int entityId)
@@ -116,6 +101,43 @@ namespace karg.BLL.Services.Entities
                     imageDto.YearResultId = entityId;
                     break;
             }
+        }
+
+        private bool IsUri(string imageData)
+        {
+            return imageData.StartsWith("/img");
+        }
+
+        private async Task RemoveObsoleteImages(string entityType, int entityId, List<string> updatedImageUris)
+        {
+            var existingImages = await GetImagesByEntity(entityType, entityId);
+            var imagesToDelete = existingImages.Where(img => !updatedImageUris.Contains(img.Uri)).ToList();
+
+            foreach (var image in imagesToDelete)
+            {
+                _fileService.DeleteFile(image.Uri);
+                await _imageRepository.Delete(image);
+            }
+        }
+
+        private async Task<string> StoreImage(string imageData, string folderPath)
+        {
+            if (IsUri(imageData))
+            {
+                return imageData;
+            }
+
+            var imageBytes = Convert.FromBase64String(imageData);
+            var fileName = $"{Guid.NewGuid()}.jpg";
+
+            return await _fileService.SaveFileAsync(folderPath, imageBytes, fileName);
+        }
+
+        private async Task RegisterImage(string entityType, int entityId, string imageUri)
+        {
+            var newImage = new Image { Uri = imageUri };
+            SetImageEntity(newImage, entityType, entityId);
+            await _imageRepository.Add(newImage);
         }
     }
 }
