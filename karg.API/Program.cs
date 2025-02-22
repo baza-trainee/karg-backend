@@ -13,6 +13,7 @@ using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Models.Enums;
 using karg.DAL.Repositories;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,7 +34,15 @@ namespace karg.API
 
             builder.Services.AddDbContext<KargDbContext>((serviceProvider, options) =>
             {
-                options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"), new MySqlServerVersion(new Version(8, 0, 30)));
+                options.UseMySql(builder.Configuration.GetConnectionString("KargDbConnection"),
+                    new MySqlServerVersion(new Version(8, 0, 30)), mySqlConfig =>
+                    {
+                        mySqlConfig.EnableRetryOnFailure(
+                            maxRetryCount: 10,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null
+                        );
+                    });
             });
 
             builder.Services.AddAuthentication(options =>
