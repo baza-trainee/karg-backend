@@ -102,7 +102,7 @@ namespace karg.BLL.Services.Entities
                 rescuer.Current_Password = string.Empty;
 
                 var rescuerId = await _rescuerRepository.Add(rescuer);
-                rescuerDto.Images = await _imageService.SaveImages(nameof(Rescuer), rescuerId, rescuerDto.Images, isUpdate: true);
+                rescuerDto.Images = await _imageService.UploadImages(nameof(Rescuer), rescuerId, rescuerDto.Images);
 
                 return rescuerDto;
             }
@@ -123,7 +123,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    patchedRescuer.Images = await _imageService.SaveImages(nameof(Rescuer), rescuerId, patchedRescuer.Images, isUpdate: true);
+                    patchedRescuer.Images = await _imageService.UploadImages(nameof(Rescuer), rescuerId, patchedRescuer.Images);
                 }
 
                 existingRescuer.FullName = patchedRescuer.FullName;

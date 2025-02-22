@@ -70,7 +70,7 @@ namespace karg.BLL.Services.Entities
                 var partner = _mapper.Map<Partner>(partnerDto);
                 var partnerId = await _partnerRepository.Add(partner);
 
-                partnerDto.Images = await _imageService.SaveImages(nameof(Partner), partnerId, partnerDto.Images, isUpdate: true);
+                partnerDto.Images = await _imageService.UploadImages(nameof(Partner), partnerId, partnerDto.Images);
 
                 return partnerDto;
             }
@@ -91,7 +91,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    patchedPartner.Images = await _imageService.SaveImages(nameof(Partner), partnerId, patchedPartner.Images, isUpdate: true);
+                    patchedPartner.Images = await _imageService.UploadImages(nameof(Partner), partnerId, patchedPartner.Images);
                 }
 
                 existingPartner.Name = patchedPartner.Name;
