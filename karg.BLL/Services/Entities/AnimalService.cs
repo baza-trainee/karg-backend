@@ -101,17 +101,7 @@ namespace karg.BLL.Services.Entities
                 animal.StoryId = await _localizationSetService.CreateAndSaveLocalizationSet(animalDto.Story_en, animalDto.Story_ua);
 
                 var animalId = await _animalRepository.Add(animal);
-
-                if (animalDto.Images != null && animalDto.Images.Any())
-                {
-                    var imageBytesList = animalDto.Images
-                        .Select(Convert.FromBase64String)
-                        .ToList();
-
-                    await _imageService.AddImages(nameof(Animal), animalId, imageBytesList);
-                }
-
-                animalDto.Images = (await _imageService.GetImagesByEntity(nameof(Animal), animalId)).Select(image => image.Uri).ToList();
+                animalDto.Images = await _imageService.SaveImages(nameof(Animal), animalId, animalDto.Images, isUpdate: true);
 
                 return animalDto;
             }
@@ -139,10 +129,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    var imageBytesList = patchedAnimal.Images
-                                .Select(Convert.FromBase64String)
-                                .ToList();
-                    await _imageService.UpdateEntityImages(nameof(Advice), animalId, imageBytesList);
+                    patchedAnimal.Images = await _imageService.SaveImages(nameof(Animal), animalId, patchedAnimal.Images, isUpdate: true);
                 }
 
                 existingAnimal.NameId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.NameId, patchedAnimal.Name_en, patchedAnimal.Name_ua);
@@ -151,7 +138,6 @@ namespace karg.BLL.Services.Entities
                 existingAnimal.Category = Enum.Parse<AnimalCategory>(patchedAnimal.Category);
 
                 await _animalRepository.Update(existingAnimal);
-                patchedAnimal.Images = (await _imageService.GetImagesByEntity(nameof(Animal), animalId)).Select(image => image.Uri).ToList();
 
                 return patchedAnimal;
             }

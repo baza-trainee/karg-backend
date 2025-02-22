@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Authentication;
 using karg.BLL.DTO.Partners;
@@ -101,17 +102,7 @@ namespace karg.BLL.Services.Entities
                 rescuer.Current_Password = string.Empty;
 
                 var rescuerId = await _rescuerRepository.Add(rescuer);
-
-                if (rescuerDto.Images != null && rescuerDto.Images.Any())
-                {
-                    var imageBytesList = rescuerDto.Images
-                        .Select(Convert.FromBase64String)
-                        .ToList();
-
-                    await _imageService.AddImages(nameof(Rescuer), rescuerId, imageBytesList);
-                }
-
-                rescuerDto.Images = (await _imageService.GetImagesByEntity(nameof(Rescuer), rescuerId)).Select(image => image.Uri).ToList();
+                rescuerDto.Images = await _imageService.SaveImages(nameof(Rescuer), rescuerId, rescuerDto.Images, isUpdate: true);
 
                 return rescuerDto;
             }
@@ -132,10 +123,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    var imageBytesList = patchedRescuer.Images
-                                .Select(Convert.FromBase64String)
-                                .ToList();
-                    await _imageService.UpdateEntityImages(nameof(Rescuer), rescuerId, imageBytesList);
+                    patchedRescuer.Images = await _imageService.SaveImages(nameof(Rescuer), rescuerId, patchedRescuer.Images, isUpdate: true);
                 }
 
                 existingRescuer.FullName = patchedRescuer.FullName;
@@ -146,7 +134,6 @@ namespace karg.BLL.Services.Entities
 
                 await _jwtTokenService.UpdateJwtToken(existingRescuer.TokenId, newJwtToken);
                 await _rescuerRepository.Update(existingRescuer);
-                patchedRescuer.Images = (await _imageService.GetImagesByEntity(nameof(Rescuer), rescuerId)).Select(image => image.Uri).ToList();
 
                 return patchedRescuer;
             }

@@ -95,17 +95,7 @@ namespace karg.BLL.Services.Entities
                 advice.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(adviceDto.Description_en, adviceDto.Description_ua);
 
                 var adviceId = await _adviceRepository.Add(advice);
-
-                if (adviceDto.Images != null && adviceDto.Images.Any())
-                {
-                    var imageBytesList = adviceDto.Images
-                        .Select(Convert.FromBase64String)
-                        .ToList();
-
-                    await _imageService.AddImages(nameof(Advice), adviceId, imageBytesList);
-                }
-
-                adviceDto.Images = (await _imageService.GetImagesByEntity(nameof(Advice), adviceId)).Select(image => image.Uri).ToList();
+                adviceDto.Images = await _imageService.SaveImages(nameof(Advice), adviceId, adviceDto.Images, isUpdate: true);
 
                 return adviceDto;
             }
@@ -131,10 +121,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    var imageBytesList = patchedAdvice.Images
-                                    .Select(Convert.FromBase64String)
-                                    .ToList();
-                    await _imageService.UpdateEntityImages(nameof(Advice), adviceId, imageBytesList);
+                    patchedAdvice.Images = await _imageService.SaveImages(nameof(Advice), adviceId, patchedAdvice.Images, isUpdate: true);
                 }
 
                 existingAdvice.TitleId = await _localizationSetService.UpdateLocalizationSet(existingAdvice.TitleId, patchedAdvice.Title_en, patchedAdvice.Title_ua);
@@ -142,7 +129,6 @@ namespace karg.BLL.Services.Entities
                 existingAdvice.Created_At = DateOnly.ParseExact(patchedAdvice.Created_At, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 await _adviceRepository.Update(existingAdvice);
-                patchedAdvice.Images = (await _imageService.GetImagesByEntity(nameof(Advice), adviceId)).Select(image => image.Uri).ToList();
 
                 return patchedAdvice;
             }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Partners;
 using karg.BLL.DTO.YearsResults;
@@ -92,17 +93,7 @@ namespace karg.BLL.Services.Entities
                 yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
 
                 var yearResultId = await _yearResultRepository.Add(yearResult);
-
-                if (yearResultDto.Images != null && yearResultDto.Images.Any())
-                {
-                    var imageBytesList = yearResultDto.Images
-                        .Select(Convert.FromBase64String)
-                        .ToList();
-
-                    await _imageService.AddImages(nameof(YearResult), yearResultId, imageBytesList);
-                }
-
-                yearResultDto.Images = (await _imageService.GetImagesByEntity(nameof(YearResult), yearResultId)).Select(image => image.Uri).ToList();
+                yearResultDto.Images = await _imageService.SaveImages(nameof(YearResult), yearResultId, yearResultDto.Images, isUpdate: true);
 
                 return yearResultDto;
             }
@@ -127,17 +118,13 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    var imageBytesList = patchedYearResult.Images
-                                .Select(Convert.FromBase64String)
-                                .ToList();
-                    await _imageService.UpdateEntityImages(nameof(YearResult), yearResultId, imageBytesList);
+                    patchedYearResult.Images = await _imageService.SaveImages(nameof(YearResult), yearResultId, patchedYearResult.Images, isUpdate: true);
                 }
 
                 existingYearResult.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.DescriptionId, patchedYearResult.Description_en, patchedYearResult.Description_ua);
                 existingYearResult.Year = new DateOnly(int.Parse(patchedYearResult.Year), 1, 1);
 
                 await _yearResultRepository.Update(existingYearResult);
-                patchedYearResult.Images = (await _imageService.GetImagesByEntity(nameof(YearResult), yearResultId)).Select(image => image.Uri).ToList();
 
                 return patchedYearResult;
             }

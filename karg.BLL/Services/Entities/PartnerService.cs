@@ -70,16 +70,7 @@ namespace karg.BLL.Services.Entities
                 var partner = _mapper.Map<Partner>(partnerDto);
                 var partnerId = await _partnerRepository.Add(partner);
 
-                if (partnerDto.Images != null && partnerDto.Images.Any())
-                {
-                    var imageBytesList = partnerDto.Images
-                        .Select(Convert.FromBase64String)
-                        .ToList();
-
-                    await _imageService.AddImages(nameof(Partner), partnerId, imageBytesList);
-                }
-
-                partnerDto.Images = (await _imageService.GetImagesByEntity(nameof(Partner), partnerId)).Select(image => image.Uri).ToList();
+                partnerDto.Images = await _imageService.SaveImages(nameof(Partner), partnerId, partnerDto.Images, isUpdate: true);
 
                 return partnerDto;
             }
@@ -100,17 +91,13 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    var imageBytesList = patchedPartner.Images
-                                .Select(Convert.FromBase64String)
-                                .ToList();
-                    await _imageService.UpdateEntityImages(nameof(Partner), partnerId, imageBytesList);
+                    patchedPartner.Images = await _imageService.SaveImages(nameof(Partner), partnerId, patchedPartner.Images, isUpdate: true);
                 }
 
                 existingPartner.Name = patchedPartner.Name;
                 existingPartner.Uri = patchedPartner.Uri;
 
                 await _partnerRepository.Update(existingPartner);
-                patchedPartner.Images = (await _imageService.GetImagesByEntity(nameof(Partner), partnerId)).Select(image => image.Uri).ToList();
 
                 return patchedPartner;
             }

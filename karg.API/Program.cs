@@ -127,6 +127,7 @@ namespace karg.API
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
             builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+            builder.Services.AddScoped<IFileService, FileService>();
 
             builder.Services.AddScoped<IAdviceRepository, AdviceRepository>();
             builder.Services.AddScoped<IYearResultRepository, YearResultRepository>();
@@ -146,7 +147,6 @@ namespace karg.API
             builder.Services.AddAutoMapper(typeof(RescuerProfile));
             builder.Services.AddAutoMapper(typeof(PartnerProfile));
             builder.Services.AddAutoMapper(typeof(FAQProfile));
-            builder.Services.AddAutoMapper(typeof(ImageProfile));
             builder.Services.AddAutoMapper(typeof(YearResultProfile));
             builder.Services.AddAutoMapper(typeof(JwtTokenProfile));
             builder.Services.AddAutoMapper(typeof(ContactProfile));
