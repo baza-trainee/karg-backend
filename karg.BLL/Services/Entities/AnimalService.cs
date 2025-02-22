@@ -101,7 +101,7 @@ namespace karg.BLL.Services.Entities
                 animal.StoryId = await _localizationSetService.CreateAndSaveLocalizationSet(animalDto.Story_en, animalDto.Story_ua);
 
                 var animalId = await _animalRepository.Add(animal);
-                animalDto.Images = await _imageService.UploadImages(nameof(Animal), animalId, animalDto.Images);
+                animalDto.Images = await _imageService.UploadImages(nameof(Animal), animalId, animalDto.Images, false);
 
                 return animalDto;
             }
@@ -129,7 +129,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    patchedAnimal.Images = await _imageService.UploadImages(nameof(Animal), animalId, patchedAnimal.Images);
+                    patchedAnimal.Images = await _imageService.UploadImages(nameof(Animal), animalId, patchedAnimal.Images, true);
                 }
 
                 existingAnimal.NameId = await _localizationSetService.UpdateLocalizationSet(existingAnimal.NameId, patchedAnimal.Name_en, patchedAnimal.Name_ua);

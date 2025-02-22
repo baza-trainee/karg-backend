@@ -3,6 +3,7 @@ using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 
 namespace karg.BLL.Services.Entities
@@ -37,15 +38,19 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task<List<string>> UploadImages(string entityType, int entityId, List<string> imagesData)
+        public async Task<List<string>> UploadImages(string entityType, int entityId, List<string> imagesData, bool isUpdate = false)
         {
             var uploadedImageUris = new List<string>();
             var entityFolderPath = _fileService.CreateDirectory(Path.Combine(_baseImagePath, entityType.ToLower(), entityId.ToString()));
 
+            if (isUpdate)
+            {
+                await RemoveObsoleteImages(entityType, entityId, imagesData);
+            }
+
             foreach (var imageData in imagesData)
             {
-                var imageUri = await StoreImage(imageData, entityFolderPath);
-                await RegisterImage(entityType, entityId, imageUri);
+                var imageUri = await StoreImage(imageData, entityFolderPath, entityType, entityId);
                 uploadedImageUris.Add(imageUri);
             }
 
@@ -120,7 +125,7 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        private async Task<string> StoreImage(string imageData, string folderPath)
+        private async Task<string> StoreImage(string imageData, string folderPath, string entityType, int entityId)
         {
             if (IsUri(imageData))
             {
@@ -129,8 +134,11 @@ namespace karg.BLL.Services.Entities
 
             var imageBytes = Convert.FromBase64String(imageData);
             var fileName = $"{Guid.NewGuid()}.jpg";
+            var imageUri = await _fileService.SaveFileAsync(folderPath, imageBytes, fileName);
 
-            return await _fileService.SaveFileAsync(folderPath, imageBytes, fileName);
+            await RegisterImage(entityType, entityId, imageUri);
+
+            return imageUri;
         }
 
         private async Task RegisterImage(string entityType, int entityId, string imageUri)

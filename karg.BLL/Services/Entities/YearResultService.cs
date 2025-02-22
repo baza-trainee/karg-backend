@@ -93,7 +93,7 @@ namespace karg.BLL.Services.Entities
                 yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
 
                 var yearResultId = await _yearResultRepository.Add(yearResult);
-                yearResultDto.Images = await _imageService.UploadImages(nameof(YearResult), yearResultId, yearResultDto.Images);
+                yearResultDto.Images = await _imageService.UploadImages(nameof(YearResult), yearResultId, yearResultDto.Images, false);
 
                 return yearResultDto;
             }
@@ -118,7 +118,7 @@ namespace karg.BLL.Services.Entities
 
                 if (patchDoc.Operations.Any(op => op.path == "/images"))
                 {
-                    patchedYearResult.Images = await _imageService.UploadImages(nameof(YearResult), yearResultId, patchedYearResult.Images);
+                    patchedYearResult.Images = await _imageService.UploadImages(nameof(YearResult), yearResultId, patchedYearResult.Images, true);
                 }
 
                 existingYearResult.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.DescriptionId, patchedYearResult.Description_en, patchedYearResult.Description_ua);
