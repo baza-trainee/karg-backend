@@ -1,4 +1,5 @@
-﻿using karg.BLL.DTO.Partners;
+﻿using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Partners;
 using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -29,18 +30,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllPartners()
+        public async Task<IActionResult> GetAllPartners([FromQuery] PartnerFilterDTO filter)
         {
             try
             {
-                var partners = await _partnerService.GetPartners();
+                var paginatedPartners = await _partnerService.GetPartners(filter);
 
-                if (partners.Count() == 0)
+                if (paginatedPartners.Partners.Count() == 0)
                 {
                     return NotFound("Partners not found.");
                 }
 
-                return Ok(partners);
+                return Ok(paginatedPartners);
             }
             catch (Exception exception)
             {
