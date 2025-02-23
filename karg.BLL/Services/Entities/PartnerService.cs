@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
-using karg.BLL.DTO.Animals;
 using karg.BLL.DTO.Partners;
 using karg.BLL.Interfaces.Entities;
+using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.JsonPatch;
@@ -12,24 +12,27 @@ namespace karg.BLL.Services.Entities
     public class PartnerService : IPartnerService
     {
         private readonly IPartnerRepository _partnerRepository;
+        private readonly IPaginationService<Partner> _paginationService;
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
 
-        public PartnerService(IPartnerRepository partnerRepository, IMapper mapper, IImageService imageService)
+        public PartnerService(IPartnerRepository partnerRepository, IPaginationService<Partner> paginationService, IMapper mapper, IImageService imageService)
         {
             _partnerRepository = partnerRepository;
+            _paginationService = paginationService;
             _mapper = mapper;
             _imageService = imageService;
         }
 
-        public async Task<List<PartnerDTO>> GetPartners()
+        public async Task<PaginatedAllPartnersDTO> GetPartners(PartnerFilterDTO filter)
         {
             try
             {
                 var partners = await _partnerRepository.GetAll();
+                var paginatedPartners = await _paginationService.PaginateWithTotalPages(partners, filter.Page, filter.PageSize);
                 var partnersDto = new List<PartnerDTO>();
 
-                foreach (var partner in partners)
+                foreach (var partner in paginatedPartners.Items)
                 {
                     var partnerDto = _mapper.Map<PartnerDTO>(partner);
 
@@ -37,7 +40,11 @@ namespace karg.BLL.Services.Entities
                     partnersDto.Add(partnerDto);
                 }
 
-                return partnersDto;
+                return new PaginatedAllPartnersDTO
+                {
+                    Partners = partnersDto,
+                    TotalPages = paginatedPartners.TotalPages
+                };
             }
             catch (Exception exception)
             {
