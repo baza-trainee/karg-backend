@@ -15,7 +15,11 @@ namespace karg.BLL.Services.Entities
         private IMapper _mapper;
         private readonly string _baseImagePath;
 
-        public ImageService(IFileService fileService, IImageRepository imageRepository, IMapper mapper, IConfiguration configuration)
+        public ImageService(
+            IFileService fileService,
+            IImageRepository imageRepository,
+            IMapper mapper,
+            IConfiguration configuration)
         {
             _fileService = fileService;
             _imageRepository = imageRepository;

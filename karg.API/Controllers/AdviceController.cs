@@ -49,7 +49,7 @@ namespace karg.API.Controllers
 
                 var paginatedAdvices = await _adviceService.GetAdvices(filter, cultureCode);
 
-                if (paginatedAdvices.Advices.Count == 0)
+                if (paginatedAdvices.Items.Count == 0)
                 {
                     return NotFound("Advices not found.");
                 }

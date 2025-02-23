@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Animals;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
 using karg.BLL.Interfaces.Utilities;
@@ -36,7 +36,7 @@ namespace karg.BLL.Services.Entities
             _mapper = mapper;
         }
 
-        public async Task<PaginatedAllAnimalsDTO> GetAnimals(AnimalsFilterDTO filter, string cultureCode)
+        public async Task<PaginatedResult<AnimalDTO>> GetAnimals(AnimalsFilterDTO filter, string cultureCode)
         {
             try
             {
@@ -56,9 +56,9 @@ namespace karg.BLL.Services.Entities
                     animalsDto.Add(animalDto);
                 }
 
-                return new PaginatedAllAnimalsDTO
+                return new PaginatedResult<AnimalDTO>
                 {
-                    Animals = animalsDto,
+                    Items = animalsDto,
                     TotalPages = paginatedAnimals.TotalPages
                 };
             }

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using karg.BLL.DTO.Advices;
-using karg.BLL.DTO.Animals;
-using karg.BLL.DTO.Partners;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.DTO.YearsResults;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
@@ -37,7 +35,7 @@ namespace karg.BLL.Services.Entities
             _mapper = mapper;
         }
 
-        public async Task<PaginatedAllYearsResultsDTO> GetYearsResults(YearsResultsFilterDTO filter, string cultureCode)
+        public async Task<PaginatedResult<YearResultDTO>> GetYearsResults(YearsResultsFilterDTO filter, string cultureCode)
         {
             try
             {
@@ -54,9 +52,9 @@ namespace karg.BLL.Services.Entities
                     yearsResultsDto.Add(yearResultDto);
                 }
 
-                return new PaginatedAllYearsResultsDTO
+                return new PaginatedResult<YearResultDTO>
                 {
-                    YearsResults = yearsResultsDto,
+                    Items = yearsResultsDto,
                     TotalPages = paginatedYearsResults.TotalPages
                 };
             }

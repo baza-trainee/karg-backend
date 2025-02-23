@@ -49,7 +49,7 @@ namespace karg.API.Controllers
 
                 var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
 
-                if (paginatedAnimals.Animals.Count == 0)
+                if (paginatedAnimals.Items.Count == 0)
                 {
                     return NotFound("Animals not found.");
                 }
