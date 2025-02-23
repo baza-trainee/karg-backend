@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.Advices;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
 using karg.BLL.Interfaces.Utilities;
@@ -35,7 +36,7 @@ namespace karg.BLL.Services.Entities
             _mapper = mapper;
         }
 
-        public async Task<PaginatedAllAdvicesDTO> GetAdvices(AdvicesFilterDTO filter, string cultureCode)
+        public async Task<PaginatedResult<AdviceDTO>> GetAdvices(AdvicesFilterDTO filter, string cultureCode)
         {
             try
             {
@@ -53,9 +54,9 @@ namespace karg.BLL.Services.Entities
                     advicesDto.Add(adviceDto);
                 }
 
-                return new PaginatedAllAdvicesDTO
+                return new PaginatedResult<AdviceDTO>
                 {
-                    Advices = advicesDto,
+                    Items = advicesDto,
                     TotalPages = paginatedAdvices.TotalPages
                 };
             }

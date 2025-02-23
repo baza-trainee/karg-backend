@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Partners;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
@@ -16,7 +16,11 @@ namespace karg.BLL.Services.Entities
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
 
-        public PartnerService(IPartnerRepository partnerRepository, IPaginationService<Partner> paginationService, IMapper mapper, IImageService imageService)
+        public PartnerService(
+            IPartnerRepository partnerRepository,
+            IPaginationService<Partner> paginationService,
+            IMapper mapper,
+            IImageService imageService)
         {
             _partnerRepository = partnerRepository;
             _paginationService = paginationService;
@@ -24,7 +28,7 @@ namespace karg.BLL.Services.Entities
             _imageService = imageService;
         }
 
-        public async Task<PaginatedAllPartnersDTO> GetPartners(PartnerFilterDTO filter)
+        public async Task<PaginatedResult<PartnerDTO>> GetPartners(PartnerFilterDTO filter)
         {
             try
             {
@@ -40,9 +44,9 @@ namespace karg.BLL.Services.Entities
                     partnersDto.Add(partnerDto);
                 }
 
-                return new PaginatedAllPartnersDTO
+                return new PaginatedResult<PartnerDTO>
                 {
-                    Partners = partnersDto,
+                    Items = partnersDto,
                     TotalPages = paginatedPartners.TotalPages
                 };
             }

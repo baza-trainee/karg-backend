@@ -35,7 +35,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllFAQs(string cultureCode = "ua")
+        public async Task<IActionResult> GetAllFAQs([FromQuery] FAQsFilterDTO filter, string cultureCode = "ua")
         {
             try
             {
@@ -46,14 +46,14 @@ namespace karg.API.Controllers
                     return BadRequest("Invalid request parameters provided.");
                 }
 
-                var faqs = await _faqService.GetFAQs(cultureCode);
+                var paginatedFAQs = await _faqService.GetFAQs(filter, cultureCode);
 
-                if (faqs.Count() == 0)
+                if (paginatedFAQs.Items.Count() == 0)
                 {
                     return NotFound("FAQs not found.");
                 }
 
-                return Ok(faqs);
+                return Ok(paginatedFAQs);
             }
             catch (Exception exception)
             {

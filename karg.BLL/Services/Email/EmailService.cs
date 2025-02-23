@@ -3,6 +3,7 @@ using karg.BLL.DTO.Authentication;
 using System.Text.RegularExpressions;
 using karg.BLL.Interfaces.Email;
 using karg.BLL.Interfaces.Authentication;
+using Microsoft.Extensions.Configuration;
 
 namespace karg.BLL.Services.Email
 {
@@ -12,17 +13,20 @@ namespace karg.BLL.Services.Email
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IEmailSender _emailSender;
         private readonly IEmailTemplateService _emailTemplateService;
+        private readonly string _baseResetPasswordUrl;
 
         public EmailService(
             IRescuerRepository rescuerRepository,
             IJwtTokenService jwtTokenService,
             IEmailSender emailSender,
-            IEmailTemplateService emailTemplateService)
+            IEmailTemplateService emailTemplateService,
+            IConfiguration configuration)
         {
             _rescuerRepository = rescuerRepository;
             _jwtTokenService = jwtTokenService;
             _emailSender = emailSender;
             _emailTemplateService = emailTemplateService;
+            _baseResetPasswordUrl = configuration["ResetPasswordUrl"];
         }
 
         public async Task<SendResetPasswordEmailResultDTO> SendPasswordResetEmail(string recipientEmail)
@@ -41,8 +45,8 @@ namespace karg.BLL.Services.Email
                     return new SendResetPasswordEmailResultDTO { Status = 0, Message = "Недійсний або прострочений токен." };
                 }
 
-                var resetLink = $"https://karg-git-dev-romanhanas-projects.vercel.app/auth/reset?token={token}";
-                var emailBody = _emailTemplateService.GetPasswordResetEmailBody(recipientEmail, resetLink);
+                var resetPasswordLink = $"{_baseResetPasswordUrl}?token={token}";
+                var emailBody = _emailTemplateService.GetPasswordResetEmailBody(recipientEmail, resetPasswordLink);
 
                 await _emailSender.SendEmail(recipientEmail, "Відновлення паролю", emailBody);
 

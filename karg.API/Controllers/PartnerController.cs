@@ -36,7 +36,7 @@ namespace karg.API.Controllers
             {
                 var paginatedPartners = await _partnerService.GetPartners(filter);
 
-                if (paginatedPartners.Partners.Count() == 0)
+                if (paginatedPartners.Items.Count() == 0)
                 {
                     return NotFound("Partners not found.");
                 }

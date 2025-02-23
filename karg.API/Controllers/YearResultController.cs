@@ -49,7 +49,7 @@ namespace karg.API.Controllers
 
                 var paginatedYearsResults = await _yearResultService.GetYearsResults(filter, cultureCode);
 
-                if (paginatedYearsResults.YearsResults.Count == 0)
+                if (paginatedYearsResults.Items.Count == 0)
                 {
                     return NotFound("Years results not found.");
                 }

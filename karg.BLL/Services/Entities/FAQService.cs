@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using karg.BLL.DTO.FAQs;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
+using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.JsonPatch;
@@ -11,35 +13,43 @@ namespace karg.BLL.Services.Entities
     public class FAQService : IFAQService
     {
         private readonly IFAQRepository _faqRepository;
+        private readonly IPaginationService<FAQ> _paginationService;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizationSetService _localizationSetService;
         private readonly IMapper _mapper;
 
         public FAQService(
             IFAQRepository faqRepository,
+            IPaginationService<FAQ> paginationService,
             ILocalizationService localizationService,
             ILocalizationSetService localizationSetService,
             IMapper mapper)
         {
             _faqRepository = faqRepository;
+            _paginationService = paginationService;
             _localizationService = localizationService;
             _localizationSetService = localizationSetService;
             _mapper = mapper;
         }
 
-        public async Task<List<FAQDTO>> GetFAQs(string cultureCode)
+        public async Task<PaginatedResult<FAQDTO>> GetFAQs(FAQsFilterDTO filter, string cultureCode)
         {
             try
             {
                 var faqs = await _faqRepository.GetAll();
-                var faqsDto = faqs.Select(faq => new FAQDTO
+                var paginatedFAQs = await _paginationService.PaginateWithTotalPages(faqs, filter.Page, filter.PageSize);
+                var faqsDto = paginatedFAQs.Items.Select(faq => new FAQDTO
                 {
                     Id = faq.Id,
                     Answer = _localizationService.GetLocalizedValue(faq.Answer, cultureCode, faq.AnswerId),
                     Question = _localizationService.GetLocalizedValue(faq.Question, cultureCode, faq.QuestionId)
                 }).ToList();
 
-                return faqsDto;
+                return new PaginatedResult<FAQDTO>
+                {
+                    Items = faqsDto,
+                    TotalPages = paginatedFAQs.TotalPages
+                };
             }
             catch (Exception exception)
             {
