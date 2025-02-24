@@ -1,4 +1,5 @@
 ﻿using karg.BLL.DTO.FAQs;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
 using Microsoft.AspNetCore.Authorization;
@@ -47,11 +48,6 @@ namespace karg.API.Controllers
                 }
 
                 var paginatedFAQs = await _faqService.GetFAQs(filter, cultureCode);
-
-                if (paginatedFAQs.Items.Count() == 0)
-                {
-                    return NotFound("FAQs not found.");
-                }
 
                 return Ok(paginatedFAQs);
             }

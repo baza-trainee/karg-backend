@@ -1,4 +1,5 @@
-﻿using karg.BLL.DTO.YearsResults;
+﻿using karg.BLL.DTO.Utilities;
+using karg.BLL.DTO.YearsResults;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
 using Microsoft.AspNetCore.Authorization;
@@ -49,11 +50,6 @@ namespace karg.API.Controllers
 
                 var paginatedYearsResults = await _yearResultService.GetYearsResults(filter, cultureCode);
 
-                if (paginatedYearsResults.Items.Count == 0)
-                {
-                    return NotFound("Years results not found.");
-                }
-
                 return Ok(paginatedYearsResults);
             }
             catch (Exception exception)
@@ -93,7 +89,7 @@ namespace karg.API.Controllers
 
                 if (yearResult == null)
                 {
-                    return NotFound("Year result not found.");
+                    return Ok(yearResult);
                 }
 
                 return Ok(yearResult);

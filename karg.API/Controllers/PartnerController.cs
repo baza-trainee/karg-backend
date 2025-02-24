@@ -1,5 +1,5 @@
-﻿using karg.BLL.DTO.Advices;
-using karg.BLL.DTO.Partners;
+﻿using karg.BLL.DTO.Partners;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -35,11 +35,6 @@ namespace karg.API.Controllers
             try
             {
                 var paginatedPartners = await _partnerService.GetPartners(filter);
-
-                if (paginatedPartners.Items.Count() == 0)
-                {
-                    return NotFound("Partners not found.");
-                }
 
                 return Ok(paginatedPartners);
             }

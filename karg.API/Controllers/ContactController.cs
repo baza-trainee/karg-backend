@@ -42,11 +42,6 @@ namespace karg.API.Controllers
 
                 var contacts = await _contactService.GetContacts();
 
-                if (contacts.Count == 0)
-                {
-                    return NotFound("Contacts not found.");
-                }
-
                 return Ok(contacts);
             }
             catch (Exception exception)
