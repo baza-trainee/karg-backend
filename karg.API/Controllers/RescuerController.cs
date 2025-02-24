@@ -1,4 +1,5 @@
 using karg.BLL.DTO.Rescuers;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -31,18 +32,13 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllRescuers()
+        public async Task<IActionResult> GetAllRescuers([FromQuery] RescuersFilterDTO filter)
         {
             try
             {
-                var rescuers = await _rescuerService.GetRescuers();
+                var paginatedRescuers = await _rescuerService.GetRescuers(filter);
 
-                if (rescuers.Count() == 0)
-                {
-                    return NotFound("Rescuers not found.");
-                }
-
-                return Ok(rescuers);
+                return Ok(paginatedRescuers);
             }
             catch (Exception exception)
             {

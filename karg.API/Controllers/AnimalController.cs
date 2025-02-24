@@ -1,4 +1,5 @@
 ﻿using karg.BLL.DTO.Animals;
+using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
 using Microsoft.AspNetCore.Authorization;
@@ -48,11 +49,6 @@ namespace karg.API.Controllers
                 }
 
                 var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
-
-                if (paginatedAnimals.Items.Count == 0)
-                {
-                    return NotFound("Animals not found.");
-                }
 
                 return Ok(paginatedAnimals);
             }

@@ -4,6 +4,7 @@ using karg.BLL.DTO.Advices;
 using Microsoft.AspNetCore.JsonPatch;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
+using karg.BLL.DTO.Utilities;
 
 namespace karg.API.Controllers
 {
@@ -48,11 +49,6 @@ namespace karg.API.Controllers
                 }
 
                 var paginatedAdvices = await _adviceService.GetAdvices(filter, cultureCode);
-
-                if (paginatedAdvices.Items.Count == 0)
-                {
-                    return NotFound("Advices not found.");
-                }
 
                 return Ok(paginatedAdvices);
             }
