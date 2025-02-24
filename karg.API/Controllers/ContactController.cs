@@ -1,5 +1,6 @@
 ﻿using karg.BLL.DTO.Contacts;
 using karg.BLL.Interfaces.Entities;
+using karg.BLL.Services.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -117,6 +118,33 @@ namespace karg.API.Controllers
                 var resultContact = await _contactService.UpdateContact(id, patchDoc);
 
                 return Ok(resultContact);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a specific contact.
+        /// </summary>
+        /// <param name="id">The unique identifier of the contact to be deleted.</param>
+        /// <response code="204">Successful request. The contact has been deleted.</response>
+        /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="500">An internal server error occurred while trying to delete the contact.</response>
+        /// <returns>No content.</returns>
+        [HttpDelete("delete")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteContact(int id)
+        {
+            try
+            {
+                await _contactService.DeleteContact(id);
+
+                return NoContent();
             }
             catch (Exception exception)
             {

@@ -65,5 +65,19 @@ namespace karg.BLL.Services.Entities
                 throw new ApplicationException($"Error updating the FAQ: {exception.Message}");
             }
         }
+
+        public async Task DeleteContact(int contactId)
+        {
+            try
+            {
+                var removedContact = await _contactRepository.GetById(contactId);
+
+                await _contactRepository.Delete(removedContact);
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error delete the contact: {exception.Message}");
+            }
+        }
     }
 }
