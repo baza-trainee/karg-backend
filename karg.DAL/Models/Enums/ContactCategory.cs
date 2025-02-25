@@ -7,6 +7,7 @@
         Location,
         Telegram,
         Facebook,
-        Instagram
+        Instagram,
+        Statistics
     }
 }

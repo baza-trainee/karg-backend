@@ -52,45 +52,6 @@ namespace karg.API.Controllers
         }
 
         /// <summary>
-        /// Gets the details of a specific contact by its unique identifier.
-        /// </summary>
-        /// <param name="id">The unique identifier of the contact.</param>
-        /// <response code="200">Successful request. Returns the details of the specified contact.</response>
-        /// <response code="400">Invalid request parameters provided.</response>
-        /// <response code="404">No contact found with the specified identifier.</response>
-        /// <response code="500">An internal server error occurred while trying to retrieve the contact details.</response>
-        /// <returns>The details of the specified contact.</returns>
-        [HttpGet("getbyid")]
-        [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetContactById(int id)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest("Invalid request parameters provided.");
-                }
-
-                var contact = await _contactService.GetContactById(id);
-
-                if (contact == null)
-                {
-                    return NotFound("Contact not found.");
-                }
-
-                return Ok(contact);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
-        }
-
-        /// <summary>
         /// Updates the details of a specific contact.
         /// </summary>
         /// <param name="id">The unique identifier of the contact to be updated.</param>
@@ -118,33 +79,6 @@ namespace karg.API.Controllers
                 var resultContact = await _contactService.UpdateContact(id, patchDoc);
 
                 return Ok(resultContact);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
-        }
-
-        /// <summary>
-        /// Deletes a specific contact.
-        /// </summary>
-        /// <param name="id">The unique identifier of the contact to be deleted.</param>
-        /// <response code="204">Successful request. The contact has been deleted.</response>
-        /// <response code="401">Unauthorized. The request requires user authentication.</response>
-        /// <response code="500">An internal server error occurred while trying to delete the contact.</response>
-        /// <returns>No content.</returns>
-        [HttpDelete("delete")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteContact(int id)
-        {
-            try
-            {
-                await _contactService.DeleteContact(id);
-
-                return NoContent();
             }
             catch (Exception exception)
             {

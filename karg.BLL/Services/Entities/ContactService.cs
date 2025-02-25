@@ -31,19 +31,6 @@ namespace karg.BLL.Services.Entities
             }
         }
 
-        public async Task<ContactDTO> GetContactById(int contactId)
-        {
-            try
-            {
-                var contact = await _contactRepository.GetById(contactId);
-                return _mapper.Map<ContactDTO>(contact);
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error retrieving contact by id: {exception.Message}");
-            }
-        }
-
         public async Task<UpdateContactDTO> UpdateContact(int contactId, JsonPatchDocument<UpdateContactDTO> patchDoc)
         {
             try
@@ -63,20 +50,6 @@ namespace karg.BLL.Services.Entities
             catch (Exception exception)
             {
                 throw new ApplicationException($"Error updating the FAQ: {exception.Message}");
-            }
-        }
-
-        public async Task DeleteContact(int contactId)
-        {
-            try
-            {
-                var removedContact = await _contactRepository.GetById(contactId);
-
-                await _contactRepository.Delete(removedContact);
-            }
-            catch (Exception exception)
-            {
-                throw new ApplicationException($"Error delete the contact: {exception.Message}");
             }
         }
     }
