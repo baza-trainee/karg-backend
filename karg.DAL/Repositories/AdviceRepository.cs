@@ -15,6 +15,7 @@ namespace karg.DAL.Repositories
                 .AsNoTracking()
                 .Include(advice => advice.Title).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .OrderByDescending(advice => advice.Id)
                 .ToListAsync();
         }
 

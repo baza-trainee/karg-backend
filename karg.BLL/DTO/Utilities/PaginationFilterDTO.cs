@@ -14,6 +14,6 @@ namespace karg.BLL.DTO.Utilities
         [FromQuery(Name = "pageSize")]
         [DefaultValue(6)]
         [Range(1, 50, ErrorMessage = "Page size must be between 1 and 50.")]
-        public int PageSize { get; set; } = 6;
+        public virtual int PageSize { get; set; } = 6;
     }
 }
