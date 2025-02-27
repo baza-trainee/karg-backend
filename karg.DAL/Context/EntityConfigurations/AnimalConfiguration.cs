@@ -18,6 +18,7 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.Property(animal => animal.Id).ValueGeneratedOnAdd().IsRequired();
             builder.Property(animal => animal.Category).HasConversion(animalCategoryConverter).IsRequired();
+            builder.Property(animal => animal.DateCreated).HasColumnType("datetime").IsRequired();
         }
     }
 }

@@ -22,7 +22,8 @@ namespace karg.BLL.Profiles
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.Name, opt => opt.Ignore())
                 .ForMember(dest => dest.Description, opt => opt.Ignore())
-                .ForMember(dest => dest.Story, opt => opt.Ignore());
+                .ForMember(dest => dest.Story, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore());
         }
     }
 }

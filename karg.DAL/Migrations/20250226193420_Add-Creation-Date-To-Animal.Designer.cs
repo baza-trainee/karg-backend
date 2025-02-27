@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using karg.DAL.Context;
 
@@ -10,9 +11,11 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    partial class KargDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250226193420_Add-Creation-Date-To-Animal")]
+    partial class AddCreationDateToAnimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

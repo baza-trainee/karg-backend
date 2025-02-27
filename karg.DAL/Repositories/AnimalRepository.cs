@@ -10,7 +10,7 @@ namespace karg.DAL.Repositories
     {
         public AnimalRepository(KargDbContext context) : base(context) { }
 
-        public async Task<List<Animal>> GetAll(string categoryFilter = null, string nameSearch = null)
+        public async Task<List<Animal>> GetAll(AnimalSortOrder sortOrder, string categoryFilter = null, string nameSearch = null)
         {
             var animals = _context.Animals
                 .AsNoTracking()
@@ -31,6 +31,13 @@ namespace karg.DAL.Repositories
                 animals = animals.Where(animal =>
                     animal.Name.Localizations.Any(localization => localization.Value.ToLower() == nameSearch));
             }
+
+            animals = sortOrder switch
+            {
+                AnimalSortOrder.Latest => animals.OrderByDescending(animal => animal.DateCreated),
+                AnimalSortOrder.Oldest => animals.OrderBy(animal => animal.DateCreated),
+                _ => animals
+            };
 
             return await animals.ToListAsync();
         }

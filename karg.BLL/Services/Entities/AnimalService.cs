@@ -40,7 +40,7 @@ namespace karg.BLL.Services.Entities
         {
             try
             {
-                var animals = await _animalRepository.GetAll(filter.CategoryFilter, filter.NameSearch);
+                var animals = await _animalRepository.GetAll(filter.SortOrder, filter.CategoryFilter, filter.NameSearch);
                 var paginatedAnimals = await _paginationService.PaginateWithTotalPages(animals, filter.Page, filter.PageSize);
                 var animalsDto = new List<AnimalDTO>();
 
@@ -53,6 +53,7 @@ namespace karg.BLL.Services.Entities
                     animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                     animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
                     animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
+                    animalDto.DateCreated = animal.DateCreated.ToString();
                     animalsDto.Add(animalDto);
                 }
 
@@ -82,6 +83,7 @@ namespace karg.BLL.Services.Entities
                 animalDto.Name = _localizationService.GetLocalizedValue(animal.Name, cultureCode, animal.NameId);
                 animalDto.Story = _localizationService.GetLocalizedValue(animal.Story, cultureCode, animal.StoryId);
                 animalDto.Description = _localizationService.GetLocalizedValue(animal.Description, cultureCode, animal.DescriptionId);
+                animalDto.DateCreated = animal.DateCreated.ToString();
 
                 return animalDto;
             }

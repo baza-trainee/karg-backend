@@ -13,12 +13,10 @@ using karg.DAL.Context;
 using karg.DAL.Interfaces;
 using karg.DAL.Models.Enums;
 using karg.DAL.Repositories;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
 using System.Reflection;
 using System.Text;
 

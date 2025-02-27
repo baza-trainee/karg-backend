@@ -13,7 +13,8 @@ namespace karg.DAL.Repositories
         {
             return await _context.YearsResults
                 .AsNoTracking()
-                .Include(advice => advice.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .OrderByDescending(yearResult => yearResult.Id)
                 .ToListAsync();
         }
 

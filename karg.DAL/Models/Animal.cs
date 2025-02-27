@@ -7,6 +7,7 @@ namespace karg.DAL.Models
         public int Id { get; set; }
         public int NameId { get; set; }
         public AnimalCategory Category { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
         public int DescriptionId { get; set; }
         public int StoryId { get; set; }
         public decimal Donats { get; set; }
