@@ -2,8 +2,10 @@
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Services.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace karg.API.Controllers
 {
@@ -44,6 +46,45 @@ namespace karg.API.Controllers
                 var contacts = await _contactService.GetContacts();
 
                 return Ok(contacts);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets the details of a specific contact by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the contact.</param>
+        /// <response code="200">Successful request. Returns the details of the specified contact.</response>
+        /// <response code="400">Invalid request parameters provided.</response>
+        /// <response code="404">No contact found with the specified identifier.</response>
+        /// <response code="500">An internal server error occurred while trying to retrieve the contact details.</response>
+        /// <returns>The details of the specified contact.</returns>
+        [HttpGet("getbyid")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetContactById(int id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid request parameters provided.");
+                }
+
+                var contact = await _contactService.GetContactById(id);
+
+                if (contact == null)
+                {
+                    return NotFound("Contact not found.");
+                }
+
+                return Ok(contact);
             }
             catch (Exception exception)
             {
