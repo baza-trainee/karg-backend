@@ -11,8 +11,8 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    [Migration("20250221105434_Changed-Image-Storage-And-Added-Test-Data")]
-    partial class ChangedImageStorageAndAddedTestData
+    [Migration("20250304100846_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,9 @@ namespace karg.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("DescriptionId")
                         .HasColumnType("int");
 
@@ -96,6 +99,80 @@ namespace karg.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Contacts", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Category = "PhoneNumber",
+                            Value = "+38 (093) 986-2262"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Category = "PhoneNumber",
+                            Value = "+38 (098) 844-7937"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Category = "Email",
+                            Value = "karg.inform@gmail.com"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Category = "LocationUa",
+                            Value = "м. Київ"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Category = "LocationUa",
+                            Value = "Kyiv"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Category = "Instagram",
+                            Value = "https://www.instagram.com/karg.kyiv?fbclid=IwAR1OSBKSNd-YuMMDs0Wk4yX4wnH9YZFfNU9RRpG5fhI1uQQh-cmGZV29hlg"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Category = "Facebook",
+                            Value = "https://www.facebook.com/KARG.kyivanimalrescuegroup/?locale=ua_UA"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Category = "Telegram",
+                            Value = "Посилання на телеграм"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Category = "Statistics",
+                            Value = "2427"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Category = "Statistics",
+                            Value = "2300"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Category = "Statistics",
+                            Value = "720"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Category = "Statistics",
+                            Value = "115"
+                        });
                 });
 
             modelBuilder.Entity("karg.DAL.Models.Culture", b =>

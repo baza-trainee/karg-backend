@@ -131,6 +131,7 @@ namespace karg.DAL.Migrations
                     NameId = table.Column<int>(type: "int", nullable: false),
                     Category = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    DateCreated = table.Column<DateTime>(type: "datetime", nullable: false),
                     DescriptionId = table.Column<int>(type: "int", nullable: false),
                     StoryId = table.Column<int>(type: "int", nullable: false),
                     Donats = table.Column<decimal>(type: "decimal(65,30)", nullable: false)
@@ -318,6 +319,25 @@ namespace karg.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.InsertData(
+                table: "Contacts",
+                columns: new[] { "Id", "Category", "Value" },
+                values: new object[,]
+                {
+                    { 1, "PhoneNumber", "+38 (093) 986-2262" },
+                    { 2, "PhoneNumber", "+38 (098) 844-7937" },
+                    { 3, "Email", "karg.inform@gmail.com" },
+                    { 4, "LocationUa", "м. Київ" },
+                    { 5, "LocationUa", "Kyiv" },
+                    { 6, "Instagram", "https://www.instagram.com/karg.kyiv?fbclid=IwAR1OSBKSNd-YuMMDs0Wk4yX4wnH9YZFfNU9RRpG5fhI1uQQh-cmGZV29hlg" },
+                    { 7, "Facebook", "https://www.facebook.com/KARG.kyivanimalrescuegroup/?locale=ua_UA" },
+                    { 8, "Telegram", "Посилання на телеграм" },
+                    { 9, "Statistics", "2427" },
+                    { 10, "Statistics", "2300" },
+                    { 11, "Statistics", "720" },
+                    { 12, "Statistics", "115" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Cultures",
                 columns: new[] { "Code", "Name" },
                 values: new object[,]
@@ -325,6 +345,16 @@ namespace karg.DAL.Migrations
                     { "en", "English" },
                     { "ua", "Ukrainian" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Tokens",
+                columns: new[] { "Id", "Token" },
+                values: new object[] { 1, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJGdWxsbmFtZSI6IkFkbWluIEtBUkciLCJSb2xlIjoiRGlyZWN0b3IiLCJFbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImV4cCI6MzMyNTYxODA4OTEsImlzcyI6ImthcmcuY29tIiwiYXVkIjoia2FyZy5jb20ifQ.2RcVCXa9B_xS3zBEBTEAFsEyfS0DIpyWQtIBxs3IabM" });
+
+            migrationBuilder.InsertData(
+                table: "Rescuers",
+                columns: new[] { "Id", "Current_Password", "Email", "FullName", "PhoneNumber", "Previous_Password", "Role", "TokenId" },
+                values: new object[] { 1, "001He87I8P1n8k7a70SJizxEyQdPQsTGcSOgRls0V8Y=", "admin@gmail.com", "Admin KARG", null, null, "Director", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Advices_DescriptionId",
