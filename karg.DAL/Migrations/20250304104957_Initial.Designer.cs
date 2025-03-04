@@ -11,7 +11,7 @@ using karg.DAL.Context;
 namespace karg.DAL.Migrations
 {
     [DbContext(typeof(KargDbContext))]
-    [Migration("20250304100846_Initial")]
+    [Migration("20250304104957_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -128,7 +128,7 @@ namespace karg.DAL.Migrations
                         new
                         {
                             Id = 5,
-                            Category = "LocationUa",
+                            Category = "LocationEn",
                             Value = "Kyiv"
                         },
                         new
