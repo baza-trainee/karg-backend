@@ -124,7 +124,7 @@ namespace karg.BLL.Services.Entities
 
             foreach (var image in imagesToDelete)
             {
-                _fileService.DeleteFile(image.Uri);
+                _fileService.DeleteImageFile(image.Uri);
                 await _imageRepository.Delete(image);
             }
         }
@@ -138,7 +138,7 @@ namespace karg.BLL.Services.Entities
 
             var imageBytes = Convert.FromBase64String(imageData);
             var fileName = $"{Guid.NewGuid()}.jpg";
-            var imageUri = await _fileService.SaveFileAsync(folderPath, imageBytes, fileName);
+            var imageUri = await _fileService.SaveImageFile(folderPath, imageBytes, fileName);
 
             await RegisterImage(entityType, entityId, imageUri);
 

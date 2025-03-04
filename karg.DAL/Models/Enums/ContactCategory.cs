@@ -4,7 +4,8 @@
     {
         PhoneNumber,
         Email,
-        Location,
+        LocationUa,
+        LocationEn,
         Telegram,
         Facebook,
         Instagram,

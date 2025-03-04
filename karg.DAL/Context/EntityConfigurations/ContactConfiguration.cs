@@ -24,11 +24,15 @@ namespace karg.DAL.Context.EntityConfigurations
                 new Contact { Id = 1, Category = ContactCategory.PhoneNumber, Value = "+38 (093) 986-2262" },
                 new Contact { Id = 2, Category = ContactCategory.PhoneNumber, Value = "+38 (098) 844-7937" },
                 new Contact { Id = 3, Category = ContactCategory.Email, Value = "karg.inform@gmail.com" },
-                new Contact { Id = 4, Category = ContactCategory.Location, Value = "м. Київ" },
-                new Contact { Id = 5, Category = ContactCategory.Instagram, Value = "https://www.instagram.com/karg.kyiv?fbclid=IwAR1OSBKSNd-YuMMDs0Wk4yX4wnH9YZFfNU9RRpG5fhI1uQQh-cmGZV29hlg" },
-                new Contact { Id = 6, Category = ContactCategory.Facebook, Value = "https://www.facebook.com/KARG.kyivanimalrescuegroup/?locale=ua_UA" },
-                new Contact { Id = 7, Category = ContactCategory.Telegram, Value = "Посилання на телеграм" },
-                new Contact { Id = 8, Category = ContactCategory.Statistics, Value = "2427 2300 720 115" }
+                new Contact { Id = 4, Category = ContactCategory.LocationUa, Value = "м. Київ" },
+                new Contact { Id = 5, Category = ContactCategory.LocationUa, Value = "Kyiv" },
+                new Contact { Id = 6, Category = ContactCategory.Instagram, Value = "https://www.instagram.com/karg.kyiv?fbclid=IwAR1OSBKSNd-YuMMDs0Wk4yX4wnH9YZFfNU9RRpG5fhI1uQQh-cmGZV29hlg" },
+                new Contact { Id = 7, Category = ContactCategory.Facebook, Value = "https://www.facebook.com/KARG.kyivanimalrescuegroup/?locale=ua_UA" },
+                new Contact { Id = 8, Category = ContactCategory.Telegram, Value = "Посилання на телеграм" },
+                new Contact { Id = 9, Category = ContactCategory.Statistics, Value = "2427" },
+                new Contact { Id = 10, Category = ContactCategory.Statistics, Value = "2300" },
+                new Contact { Id = 11, Category = ContactCategory.Statistics, Value = "720" },
+                new Contact { Id = 12, Category = ContactCategory.Statistics, Value = "115" }
             );
         }
     }
