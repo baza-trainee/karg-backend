@@ -164,7 +164,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<KargDbContext>();
-    context.Database.Migrate();
+    context.Database.EnsureCreated();
 
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
     string fileStoragePath = configuration["FileStoragePath"];

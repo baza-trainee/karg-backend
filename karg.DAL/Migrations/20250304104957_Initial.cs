@@ -327,7 +327,7 @@ namespace karg.DAL.Migrations
                     { 2, "PhoneNumber", "+38 (098) 844-7937" },
                     { 3, "Email", "karg.inform@gmail.com" },
                     { 4, "LocationUa", "м. Київ" },
-                    { 5, "LocationUa", "Kyiv" },
+                    { 5, "LocationEn", "Kyiv" },
                     { 6, "Instagram", "https://www.instagram.com/karg.kyiv?fbclid=IwAR1OSBKSNd-YuMMDs0Wk4yX4wnH9YZFfNU9RRpG5fhI1uQQh-cmGZV29hlg" },
                     { 7, "Facebook", "https://www.facebook.com/KARG.kyivanimalrescuegroup/?locale=ua_UA" },
                     { 8, "Telegram", "Посилання на телеграм" },

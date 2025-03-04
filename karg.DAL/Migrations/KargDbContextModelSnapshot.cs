@@ -125,7 +125,7 @@ namespace karg.DAL.Migrations
                         new
                         {
                             Id = 5,
-                            Category = "LocationUa",
+                            Category = "LocationEn",
                             Value = "Kyiv"
                         },
                         new
