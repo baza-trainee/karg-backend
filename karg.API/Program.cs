@@ -168,6 +168,12 @@ using (var scope = app.Services.CreateScope())
 
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
     string fileStoragePath = configuration["ImageStoragePath"];
+    if (string.IsNullOrEmpty(fileStoragePath))
+    {
+        Console.WriteLine("Error: 'FileStoragePath' is null or empty."); 
+        throw new ArgumentNullException("FileStoragePath is null or empty.");
+    }
+
     string rootPath = Path.Combine(fileStoragePath, "uploads");
     string[] categories = { "animal", "advice", "rescuer", "partner", "yearresult" };
 
