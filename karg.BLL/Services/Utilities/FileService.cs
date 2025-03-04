@@ -5,24 +5,26 @@ namespace karg.BLL.Services.Utilities
 {
     public class FileService : IFileService
     {
-        private readonly string _baseFilePath;
+        private readonly string _imageStoragePath;
+        private readonly string _chatIdsFilePath;
 
         public FileService(IConfiguration configuration)
         {
-            _baseFilePath = configuration["FileStoragePath"];
+            _imageStoragePath = configuration["ImageStoragePath"];
+            _chatIdsFilePath = configuration["ChatIdsFilePath"];
         }
 
-        public async Task<string> SaveFileAsync(string folderPath, byte[] fileBytes, string fileName)
+        public async Task<string> SaveImageFile(string folderPath, byte[] imageBytes, string imageName)
         {
-            string filePath = Path.Combine(folderPath, fileName);
-            await File.WriteAllBytesAsync(filePath, fileBytes);
+            string filePath = Path.Combine(folderPath, imageName);
+            await File.WriteAllBytesAsync(filePath, imageBytes);
 
             return filePath.Replace("\\", "/");
         }
 
-        public void DeleteFile(string fileUri)
+        public void DeleteImageFile(string imageUri)
         {
-            string filePath = Path.Combine(_baseFilePath, fileUri.TrimStart('/'));
+            string filePath = Path.Combine(_imageStoragePath, imageUri.TrimStart('/'));
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
@@ -45,6 +47,26 @@ namespace karg.BLL.Services.Utilities
             {
                 Directory.Delete(path, true);
             }
+        }
+
+        public async Task SaveChatId(long chatId)
+        {
+            var chatIds = await LoadChatIds();
+            if (!chatIds.Contains(chatId))
+            {
+                await File.AppendAllLinesAsync(_chatIdsFilePath, new[] { chatId.ToString() });
+            }
+        }
+
+        public async Task<List<long>> LoadChatIds()
+        {
+            if (!File.Exists(_chatIdsFilePath))
+            {
+                return new List<long>();
+            }
+
+            var lines = await File.ReadAllLinesAsync(_chatIdsFilePath);
+            return lines.Select(long.Parse).ToList();
         }
     }
 }

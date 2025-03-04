@@ -2,9 +2,11 @@
 {
     public interface IFileService
     {
-        Task<string> SaveFileAsync(string folderPath, byte[] fileBytes, string fileName);
-        void DeleteFile(string fileUri);
+        Task<string> SaveImageFile(string folderPath, byte[] fileBytes, string fileName);
+        void DeleteImageFile(string fileUri);
         string CreateDirectory(string path);
         void DeleteDirectory(string path);
+        Task SaveChatId(long chatId);
+        Task<List<long>> LoadChatIds();
     }
 }
