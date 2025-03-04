@@ -24,7 +24,7 @@ namespace karg.BLL.Services.Entities
             _fileService = fileService;
             _imageRepository = imageRepository;
             _mapper = mapper;
-            _baseImagePath = Path.Combine(configuration["FileStoragePath"], "uploads");
+            _baseImagePath = Path.Combine(configuration["ImageStoragePath"], "uploads");
         }
 
         public async Task<List<Image>> GetImagesByEntity(string entityType, int entityId)
