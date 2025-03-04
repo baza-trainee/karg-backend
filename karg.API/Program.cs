@@ -167,7 +167,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    string fileStoragePath = configuration["FileStoragePath"];
+    string fileStoragePath = configuration["ImageStoragePath"];
     string rootPath = Path.Combine(fileStoragePath, "uploads");
     string[] categories = { "animal", "advice", "rescuer", "partner", "yearresult" };
 
