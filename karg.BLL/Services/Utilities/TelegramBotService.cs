@@ -18,34 +18,48 @@ namespace karg.BLL.Services.Utilities
 
         public async Task HandleWebhookUpdateAsync(Update update)
         {
-            if (update.Message != null && update.Message.Text != null)
+            try
             {
-                var chatId = update.Message.Chat.Id;
-                var messageText = update.Message.Text;
-
-                if (messageText == "/start")
+                if (update.Message?.Text == "/start")
                 {
+                    var chatId = update.Message.Chat.Id;
+
                     await _fileService.SaveChatId(chatId);
                     await _botClient.SendTextMessageAsync(chatId, "Вас додано до розсилки!");
                 }
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error processing webhook update: {exception.Message}");
             }
         }
 
         public async Task SendAnnouncementAsync(AdoptionRequestDTO request)
         {
-            var adoptionInfo = $"📢 Заява на всиновлення\n" +
-                                 $"👤 Ім'я: {request.FullName}\n" +
-                                 $"📞 Номер телефону: {request.PhoneNumber}\n" +
-                                 $"🐾 Тварина, яку всиновлюють: {request.AnimalName}";
-            var chatIds = await _fileService.LoadChatIds();
-
-            foreach (var chatId in chatIds)
+            try
             {
-                if (!string.IsNullOrEmpty(request.AnimalImageUri))
+                var adoptionInfo = $"📢 Заява на всиновлення\n" +
+                                     $"👤 Ім'я: {request.FullName}\n" +
+                                     $"📞 Номер телефону: {request.PhoneNumber}\n" +
+                                     $"🐾 Тварина, яку всиновлюють: {request.AnimalName}";
+                var chatIds = await _fileService.LoadChatIds();
+
+                foreach (var chatId in chatIds)
                 {
-                    var inputFile = InputFile.FromUri(request.AnimalImageUri);
-                    await _botClient.SendPhotoAsync(chatId, inputFile, caption: adoptionInfo);
+                    if (!string.IsNullOrEmpty(request.AnimalImageUri))
+                    {
+                        var inputFile = InputFile.FromUri(request.AnimalImageUri);
+                        await _botClient.SendPhotoAsync(chatId, inputFile, caption: adoptionInfo);
+                    }
+                    else
+                    {
+                        await _botClient.SendTextMessageAsync(chatId, adoptionInfo);
+                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException($"Error sending announcement: {exception.Message}");
             }
         }
     }
