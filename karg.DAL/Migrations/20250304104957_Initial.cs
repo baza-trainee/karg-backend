@@ -14,6 +14,7 @@ namespace karg.DAL.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            /*
             migrationBuilder.AlterDatabase()
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -431,11 +432,13 @@ namespace karg.DAL.Migrations
                 name: "IX_YearsResults_DescriptionId",
                 table: "YearsResults",
                 column: "DescriptionId");
+            */
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            /*
             migrationBuilder.DropTable(
                 name: "Contacts");
 
@@ -471,6 +474,7 @@ namespace karg.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "LocalizationsSets");
+            */
         }
     }
 }
