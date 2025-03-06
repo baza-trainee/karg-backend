@@ -7,6 +7,7 @@ using karg.BLL.Interfaces.Utilities;
 using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.JsonPatch;
+using System.Globalization;
 
 namespace karg.BLL.Services.Entities
 {
@@ -110,7 +111,6 @@ namespace karg.BLL.Services.Entities
 
                 patchedYearResult.Description_ua = _localizationService.GetLocalizedValue(existingYearResult.Description, "ua", existingYearResult.DescriptionId);
                 patchedYearResult.Description_en = _localizationService.GetLocalizedValue(existingYearResult.Description, "en", existingYearResult.DescriptionId);
-                patchedYearResult.Year = existingYearResult.Year.Year.ToString();
 
                 patchDoc.ApplyTo(patchedYearResult);
 
@@ -119,8 +119,9 @@ namespace karg.BLL.Services.Entities
                     patchedYearResult.Images = await _imageService.UploadImages(nameof(YearResult), yearResultId, patchedYearResult.Images, true);
                 }
 
+                existingYearResult.Title = patchedYearResult.Title;
                 existingYearResult.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.DescriptionId, patchedYearResult.Description_en, patchedYearResult.Description_ua);
-                existingYearResult.Year = new DateOnly(int.Parse(patchedYearResult.Year), 1, 1);
+                existingYearResult.Created_At = DateOnly.ParseExact(patchedYearResult.Created_At, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 await _yearResultRepository.Update(existingYearResult);
 
