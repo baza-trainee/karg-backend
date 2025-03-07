@@ -51,7 +51,6 @@ namespace karg.BLL.Services.Entities
                     var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
 
                     yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResult.Id)).Select(image => image.Uri).ToList();
-
                     yearResultDto.Title = _localizationService.GetLocalizedValue(yearResult.Title, cultureCode, yearResult.TitleId);
                     yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
                     yearsResultsDto.Add(yearResultDto);
