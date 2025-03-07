@@ -13,6 +13,7 @@ namespace karg.DAL.Repositories
         {
             return await _context.YearsResults
                 .AsNoTracking()
+                .Include(yearResult => yearResult.Title).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .OrderByDescending(yearResult => yearResult.Id)
                 .ToListAsync();
@@ -22,6 +23,7 @@ namespace karg.DAL.Repositories
         {
             return await _context.YearsResults
                 .AsNoTracking()
+                .Include(yearResult => yearResult.Title).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .FirstOrDefaultAsync(yearResult => yearResult.Id == yearResultId);
         }
