@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using karg.BLL.DTO.Advices;
 using karg.BLL.DTO.Utilities;
 using karg.BLL.DTO.YearsResults;
 using karg.BLL.Interfaces.Entities;
@@ -8,6 +9,7 @@ using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Globalization;
+using Telegram.Bot.Types;
 
 namespace karg.BLL.Services.Entities
 {
@@ -49,6 +51,8 @@ namespace karg.BLL.Services.Entities
                     var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
 
                     yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResult.Id)).Select(image => image.Uri).ToList();
+
+                    yearResultDto.Title = _localizationService.GetLocalizedValue(yearResult.Title, cultureCode, yearResult.TitleId);
                     yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
                     yearsResultsDto.Add(yearResultDto);
                 }
@@ -73,6 +77,7 @@ namespace karg.BLL.Services.Entities
                 if (yearResult == null) return null;
 
                 var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
+                yearResultDto.Title = _localizationService.GetLocalizedValue(yearResult.Title, cultureCode, yearResult.TitleId);
                 yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
                 yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResultId)).Select(image => image.Uri).ToList();
 
@@ -89,6 +94,7 @@ namespace karg.BLL.Services.Entities
             try
             {
                 var yearResult = _mapper.Map<YearResult>(yearResultDto);
+                yearResult.TitleId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Title_en, yearResultDto.Title_ua);
                 yearResult.DescriptionId = await _localizationSetService.CreateAndSaveLocalizationSet(yearResultDto.Description_en, yearResultDto.Description_ua);
 
                 var yearResultId = await _yearResultRepository.Add(yearResult);
@@ -109,6 +115,8 @@ namespace karg.BLL.Services.Entities
                 var existingYearResult = await _yearResultRepository.GetById(yearResultId);
                 var patchedYearResult = _mapper.Map<CreateAndUpdateYearResultDTO>(existingYearResult);
 
+                patchedYearResult.Title_ua = _localizationService.GetLocalizedValue(existingYearResult.Title, "ua", existingYearResult.TitleId);
+                patchedYearResult.Title_en = _localizationService.GetLocalizedValue(existingYearResult.Title, "en", existingYearResult.TitleId);
                 patchedYearResult.Description_ua = _localizationService.GetLocalizedValue(existingYearResult.Description, "ua", existingYearResult.DescriptionId);
                 patchedYearResult.Description_en = _localizationService.GetLocalizedValue(existingYearResult.Description, "en", existingYearResult.DescriptionId);
 
@@ -119,7 +127,7 @@ namespace karg.BLL.Services.Entities
                     patchedYearResult.Images = await _imageService.UploadImages(nameof(YearResult), yearResultId, patchedYearResult.Images, true);
                 }
 
-                existingYearResult.Title = patchedYearResult.Title;
+                existingYearResult.TitleId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.TitleId, patchedYearResult.Title_en, patchedYearResult.Title_ua);
                 existingYearResult.DescriptionId = await _localizationSetService.UpdateLocalizationSet(existingYearResult.DescriptionId, patchedYearResult.Description_en, patchedYearResult.Description_ua);
                 existingYearResult.Created_At = DateOnly.ParseExact(patchedYearResult.Created_At, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 

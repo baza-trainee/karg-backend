@@ -13,7 +13,6 @@ namespace karg.DAL.Context.EntityConfigurations
             builder.HasKey(yearResult => yearResult.Id);
 
             builder.Property(yearResult => yearResult.Id).ValueGeneratedOnAdd();
-            builder.Property(yearResult => yearResult.Title).IsRequired();
             builder.Property(yearResult => yearResult.Created_At).IsRequired();
         }
     }
