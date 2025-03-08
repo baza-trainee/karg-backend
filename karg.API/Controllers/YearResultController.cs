@@ -89,7 +89,7 @@ namespace karg.API.Controllers
 
                 if (yearResult == null)
                 {
-                    return Ok(yearResult);
+                    return NotFound("Year result not found.");
                 }
 
                 return Ok(yearResult);
