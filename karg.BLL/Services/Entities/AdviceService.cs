@@ -40,7 +40,7 @@ namespace karg.BLL.Services.Entities
         {
             try
             {
-                var advices = await _adviceRepository.GetAll();
+                var advices = await _adviceRepository.GetAll(filter.NameSearch);
                 var paginatedAdvices = await _paginationService.PaginateWithTotalPages(advices, filter.Page, filter.PageSize);
                 var advicesDto = new List<AdviceDTO>();
 

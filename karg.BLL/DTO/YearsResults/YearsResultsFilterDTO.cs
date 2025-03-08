@@ -2,5 +2,5 @@
 
 namespace karg.BLL.DTO.YearsResults
 {
-    public class YearsResultsFilterDTO : PaginationFilterDTO { }
+    public class YearsResultsFilterDTO : PaginationFilter { }
 }
