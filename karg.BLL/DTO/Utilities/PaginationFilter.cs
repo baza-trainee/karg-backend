@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace karg.BLL.DTO.Utilities
 {
-    public class PaginationFilterDTO
+    public class PaginationFilter
     {
         [FromQuery(Name = "page")]
         [DefaultValue(1)]

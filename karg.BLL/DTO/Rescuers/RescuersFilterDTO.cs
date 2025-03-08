@@ -2,5 +2,5 @@
 
 namespace karg.BLL.DTO.Rescuers
 {
-    public class RescuersFilterDTO : PaginationFilterDTO { }
+    public class RescuersFilterDTO : PaginationFilter { }
 }

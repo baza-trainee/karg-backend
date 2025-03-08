@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace karg.BLL.DTO.Animals
 {
-    public class AnimalsFilterDTO : PaginationFilterDTO
+    public class AnimalsFilterDTO : PaginationFilter
     {
         [FromQuery(Name = "categoryFilter")]
         public string? CategoryFilter { get; set; } = null;

@@ -3,6 +3,7 @@ using karg.DAL.Interfaces;
 using karg.DAL.Models;
 using karg.DAL.Models.Enums;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace karg.DAL.Repositories
 {
@@ -19,17 +20,17 @@ namespace karg.DAL.Repositories
                 .Include(animal => animal.Story).ThenInclude(localizationSet => localizationSet.Localizations)
                 .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(categoryFilter))
+            if (!string.IsNullOrWhiteSpace(categoryFilter) && Enum.TryParse<AnimalCategory>(categoryFilter, true, out var category))
             {
-                var category = Enum.Parse<AnimalCategory>(categoryFilter, true);
                 animals = animals.Where(animal => animal.Category == category);
             }
 
             if (!string.IsNullOrWhiteSpace(nameSearch))
             {
-                nameSearch = nameSearch.ToLower();
+                string lowerNameSearch = nameSearch.ToLower();
                 animals = animals.Where(animal =>
-                    animal.Name.Localizations.Any(localization => localization.Value.ToLower() == nameSearch));
+                    animal.Name.Localizations.Any(localization =>
+                        localization.Value.ToLower().Contains(lowerNameSearch)));
             }
 
             animals = sortOrder switch

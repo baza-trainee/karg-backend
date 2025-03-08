@@ -2,5 +2,5 @@
 
 namespace karg.BLL.DTO.Partners
 {
-    public class PartnerFilterDTO : PaginationFilterDTO { }
+    public class PartnerFilterDTO : PaginationFilter { }
 }

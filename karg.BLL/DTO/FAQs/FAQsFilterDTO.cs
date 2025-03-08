@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace karg.BLL.DTO.FAQs
 {
-    public class FAQsFilterDTO : PaginationFilterDTO 
+    public class FAQsFilterDTO : PaginationFilter 
     {
         [FromQuery(Name = "pageSize")]
         [DefaultValue(10)]
