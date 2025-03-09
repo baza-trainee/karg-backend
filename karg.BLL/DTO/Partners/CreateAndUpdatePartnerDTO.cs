@@ -1,9 +1,15 @@
-﻿namespace karg.BLL.DTO.Partners
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace karg.BLL.DTO.Partners
 {
     public class CreateAndUpdatePartnerDTO
     {
+        [StringLength(500, ErrorMessage = "Max length is 500 characters")]
         public string Name { get; set; }
+
+        [StringLength(2000, ErrorMessage = "Max length is 500 characters")]
         public Uri Uri { get; set; }
+
         public List<string> Images { get; set; }
     }
 }
