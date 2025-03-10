@@ -19,7 +19,7 @@ namespace karg.DAL.Context.EntityConfigurations
 
             builder.Property(partner => partner.Id).ValueGeneratedOnAdd();
             builder.Property(partner => partner.Uri).IsRequired();
-            builder.Property(partner => partner.Name).HasMaxLength(50).IsRequired();
+            builder.Property(partner => partner.Name).HasMaxLength(500).IsRequired();
         }
     }
 }

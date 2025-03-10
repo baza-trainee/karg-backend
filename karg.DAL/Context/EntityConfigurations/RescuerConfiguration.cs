@@ -17,9 +17,9 @@ namespace karg.DAL.Context.EntityConfigurations
             builder.HasKey(rescuer => rescuer.Id);
 
             builder.Property(rescuer => rescuer.Id).ValueGeneratedOnAdd();
-            builder.Property(rescuer => rescuer.FullName).HasMaxLength(50).IsRequired();
-            builder.Property(rescuer => rescuer.Email).HasMaxLength(50).IsRequired();
-            builder.Property(rescuer => rescuer.PhoneNumber).HasMaxLength(50);
+            builder.Property(rescuer => rescuer.FullName).HasMaxLength(500).IsRequired();
+            builder.Property(rescuer => rescuer.Email).HasMaxLength(320).IsRequired();
+            builder.Property(rescuer => rescuer.PhoneNumber).HasMaxLength(320);
             builder.Property(rescuer => rescuer.Current_Password).HasMaxLength(64).IsRequired();
             builder.Property(rescuer => rescuer.Role).HasConversion(rescuerRoleConverter).IsRequired();
 
