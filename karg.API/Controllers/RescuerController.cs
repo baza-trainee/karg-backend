@@ -111,7 +111,7 @@ namespace karg.API.Controllers
                 var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
                 if (existingRescuer != null)
                 {
-                    return Conflict("Не вдалося створити працівника, оскільки цей email вже використовується.");
+                    return Conflict(new { message = "Не вдалося створити працівника, оскільки цей email вже використовується." });
                 }
 
                 var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
@@ -157,7 +157,7 @@ namespace karg.API.Controllers
                     var rescuerWithSameEmail = await _rescuerService.GetRescuerByEmail(emailOperation.value?.ToString());
                     if (rescuerWithSameEmail != null)
                     {
-                        return Conflict("Працівник з таким email вже існує.");
+                        return Conflict(new { message = "Працівник з таким email вже існує." });
 
                     }
                 }
