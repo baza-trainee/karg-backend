@@ -8,7 +8,7 @@ namespace karg.BLL.DTO.Partners
         public string Name { get; set; }
 
         [StringLength(8000, ErrorMessage = "Max length is 8000 characters")]
-        public Uri Uri { get; set; }
+        public string Uri { get; set; }
 
         public List<string> Images { get; set; }
     }

@@ -106,7 +106,7 @@ namespace karg.BLL.Services.Entities
                 }
 
                 existingPartner.Name = patchedPartner.Name;
-                existingPartner.Uri = patchedPartner.Uri;
+                existingPartner.Uri = new Uri(patchedPartner.Uri);
 
                 await _partnerRepository.Update(existingPartner);
 
