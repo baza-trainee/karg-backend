@@ -45,7 +45,7 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var paginatedYearsResults = await _yearResultService.GetYearsResults(filter, cultureCode);
@@ -82,14 +82,14 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var yearResult = await _yearResultService.GetYearResultById(id, cultureCode);
 
                 if (yearResult == null)
                 {
-                    return NotFound("Year result not found.");
+                    return NotFound("Підсумок не знайдено.");
                 }
 
                 return Ok(yearResult);

@@ -63,20 +63,20 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAdviceById(int id)
+        public async Task<IActionResult> GetRescuerById(int id)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var rescuer = await _rescuerService.GetRescuerById(id);
 
                 if (rescuer == null)
                 {
-                    return NotFound("Rescuer not found.");
+                    return NotFound("Рятувальника не знайшли.");
                 }
 
                 return Ok(rescuer);
@@ -95,17 +95,25 @@ namespace karg.API.Controllers
         /// <response code="201">Returns the newly created rescuer.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
         /// <response code="403">Forbidden. The user does not have the required role to perform this action.</response>
+        /// <response code="409">Conflict. A rescuer with the same email already exists.</response>
         /// <response code="500">If an error occurs while trying to create the rescuer.</response>
         [HttpPost("add")]
         [Authorize(Policy = "Director")]
         [ProducesResponseType(typeof(CreateAndUpdateRescuerDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateRescuer([FromBody] CreateAndUpdateRescuerDTO rescuerDto)
         {
             try
             {
+                var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
+                if (existingRescuer != null)
+                {
+                    return Conflict("Не вдалося створити працівника, оскільки цей email вже використовується.");
+                }
+
                 var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
 
                 return Created("CreateRescuer", newRescuer);
@@ -124,6 +132,7 @@ namespace karg.API.Controllers
         /// <response code="200">Successful request. Returns the updated details of the rescuer.</response>
         /// <response code="400">Bad request. If the JSON Patch document is null.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="409">Conflict. A rescuer with the same email already exists.</response>
         /// <response code="500">Internal server error. An error occurred while trying to update the rescuer details.</response>
         /// <returns>The updated details of the rescuer.</returns>
         [HttpPatch("update")]
@@ -131,6 +140,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateRescuer(int id, [FromBody] JsonPatchDocument<CreateAndUpdateRescuerDTO> patchDoc)
         {
@@ -139,6 +149,17 @@ namespace karg.API.Controllers
                 if (patchDoc == null)
                 {
                     return BadRequest();
+                }
+
+                var emailOperation = patchDoc.Operations.FirstOrDefault(op => op.path.Equals("/email", StringComparison.OrdinalIgnoreCase));
+                if (emailOperation != null)
+                {
+                    var rescuerWithSameEmail = await _rescuerService.GetRescuerByEmail(emailOperation.value?.ToString());
+                    if (rescuerWithSameEmail != null)
+                    {
+                        return Conflict("Працівник з таким email вже існує.");
+
+                    }
                 }
 
                 var resultRescuer = await _rescuerService.UpdateRescuer(id, patchDoc);

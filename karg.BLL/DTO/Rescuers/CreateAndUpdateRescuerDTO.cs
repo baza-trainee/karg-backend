@@ -7,10 +7,10 @@ namespace karg.BLL.DTO.Rescuers
         [StringLength(500, ErrorMessage = "Max length is 500 characters")]
         public string? FullName { get; set; }
 
-        [Phone(ErrorMessage = "Invalid phone number format")]
+        [Phone(ErrorMessage = "Неправильний формат номера телефону")]
         public string? PhoneNumber { get; set; }
 
-        [EmailAddress(ErrorMessage = "Invalid email address format")]
+        [EmailAddress(ErrorMessage = "Неправильний формат електронної пошти")]
         [StringLength(320, ErrorMessage = "Max length is 320 characters")]
         public string? Email { get; set; }
 

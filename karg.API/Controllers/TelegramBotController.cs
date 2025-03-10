@@ -53,7 +53,7 @@ namespace karg.API.Controllers
             {
                 await _telegramBotService.SendAnnouncementAsync(request);
 
-                return Ok("Announcement sent.");
+                return Ok("Оголошення надіслано.");
             }
             catch (Exception exception)
             {

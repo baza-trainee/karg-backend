@@ -65,14 +65,14 @@ namespace karg.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var partner = await _partnerService.GetPartnerById(id);
 
                 if (partner == null)
                 {
-                    return NotFound("Partner not found.");
+                    return NotFound("Партнера не знайдено.");
                 }
 
                 return Ok(partner);
