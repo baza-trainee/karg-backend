@@ -45,7 +45,7 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var paginatedAdvices = await _adviceService.GetAdvices(filter, cultureCode);
@@ -82,14 +82,14 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var advice = await _adviceService.GetAdviceById(id, cultureCode);
 
                 if (advice == null)
                 {
-                    return NotFound("Advice not found.");
+                    return NotFound("Поради не знайдено.");
                 }
 
                 return Ok(advice);

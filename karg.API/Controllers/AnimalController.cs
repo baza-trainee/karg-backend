@@ -45,7 +45,7 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
@@ -82,14 +82,14 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var animal = await _animalService.GetAnimalById(id, cultureCode);
 
                 if (animal == null)
                 {
-                    return NotFound("Animal not found.");
+                    return NotFound("Тварина не знайдена.");
                 }
 
                 return Ok(animal);

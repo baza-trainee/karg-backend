@@ -38,11 +38,6 @@ namespace karg.API.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest("Invalid request parameters provided.");
-                }
-
                 var contacts = await _contactService.GetContacts();
 
                 return Ok(contacts);
@@ -74,14 +69,14 @@ namespace karg.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Invalid request parameters provided.");
+                    return BadRequest("Надано недійсні параметри запиту.");
                 }
 
                 var contact = await _contactService.GetContactById(id);
 
                 if (contact == null)
                 {
-                    return NotFound("Contact not found.");
+                    return NotFound("Контакт не знайдено.");
                 }
 
                 return Ok(contact);
