@@ -69,14 +69,14 @@ namespace karg.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return BadRequest("РќР°РґР°РЅРѕ РЅРµРґС–Р№СЃРЅС– РїР°СЂР°РјРµС‚СЂРё Р·Р°РїРёС‚Сѓ.");
                 }
 
                 var rescuer = await _rescuerService.GetRescuerById(id);
 
                 if (rescuer == null)
                 {
-                    return NotFound("Працівника не знайдено.");
+                    return NotFound("РџСЂР°С†С–РІРЅРёРєР° РЅРµ Р·РЅР°Р№РґРµРЅРѕ.");
                 }
 
                 return Ok(rescuer);
@@ -111,7 +111,7 @@ namespace karg.API.Controllers
                 var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
                 if (existingRescuer != null)
                 {
-                    return Conflict(new { message = "Не вдалося створити працівника, оскільки дана електронна пошта вже використовується." });
+                    return Conflict(new { message = "РќРµ РІРґР°Р»РѕСЃСЏ СЃС‚РІРѕСЂРёС‚Рё РїСЂР°С†С–РІРЅРёРєР°, РѕСЃРєС–Р»СЊРєРё РґР°РЅР° РµР»РµРєС‚СЂРѕРЅРЅР° РїРѕС€С‚Р° РІР¶Рµ РІРёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ." });
                 }
 
                 var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
@@ -157,8 +157,7 @@ namespace karg.API.Controllers
                     var rescuerWithSameEmail = await _rescuerService.GetRescuerByEmail(emailOperation.value?.ToString());
                     if (rescuerWithSameEmail != null)
                     {
-                        return Conflict(new { message = "Працівник з такою електронною поштою вже існує." });
-
+                        return Conflict(new { message = "РџСЂР°С†С–РІРЅРёРє Р· С‚Р°РєРѕСЋ РµР»РµРєС‚СЂРѕРЅРЅРѕСЋ РїРѕС€С‚РѕСЋ РІР¶Рµ С–СЃРЅСѓС”." });
                     }
                 }
 
