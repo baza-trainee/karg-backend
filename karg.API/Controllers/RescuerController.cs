@@ -76,7 +76,7 @@ namespace karg.API.Controllers
 
                 if (rescuer == null)
                 {
-                    return NotFound("Рятувальника не знайшли.");
+                    return NotFound("Працівника не знайдено.");
                 }
 
                 return Ok(rescuer);
@@ -111,7 +111,7 @@ namespace karg.API.Controllers
                 var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
                 if (existingRescuer != null)
                 {
-                    return Conflict(new { message = "Не вдалося створити працівника, оскільки цей email вже використовується." });
+                    return Conflict(new { message = "Не вдалося створити працівника, оскільки дана електронна пошта вже використовується." });
                 }
 
                 var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
@@ -157,7 +157,7 @@ namespace karg.API.Controllers
                     var rescuerWithSameEmail = await _rescuerService.GetRescuerByEmail(emailOperation.value?.ToString());
                     if (rescuerWithSameEmail != null)
                     {
-                        return Conflict(new { message = "Працівник з таким email вже існує." });
+                        return Conflict(new { message = "Працівник з такою електронною поштою вже існує." });
 
                     }
                 }
