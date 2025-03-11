@@ -9,15 +9,25 @@ namespace karg.DAL.Repositories
     {
         public FAQRepository(KargDbContext context) : base(context) { }
 
-        public override async Task<List<FAQ>> GetAll()
+        public async Task<List<FAQ>> GetAll(string nameSearch = null)
         {
-            return await _context.FAQs
+            var faqs = _context.FAQs
                 .AsNoTracking()
                 .Include(faq => faq.Question).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(faq => faq.Answer).ThenInclude(localizationSet => localizationSet.Localizations)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(nameSearch))
+            {
+                string lowerNameSearch = nameSearch.ToLower();
+                faqs = faqs.Where(faq =>
+                    faq.Question.Localizations.Any(localization =>
+                        localization.Value.ToLower().Contains(lowerNameSearch)));
+            }
+
+            return await faqs.ToListAsync();
         }
-        
+
         public override async Task<FAQ> GetById(int faqId)
         {
             return await _context.FAQs
