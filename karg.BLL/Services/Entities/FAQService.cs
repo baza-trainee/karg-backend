@@ -36,7 +36,7 @@ namespace karg.BLL.Services.Entities
         {
             try
             {
-                var faqs = await _faqRepository.GetAll();
+                var faqs = await _faqRepository.GetAll(filter.NameSearch);
                 var paginatedFAQs = await _paginationService.PaginateWithTotalPages(faqs, filter.Page, filter.PageSize);
                 var faqsDto = paginatedFAQs.Items.Select(faq => new FAQDTO
                 {
