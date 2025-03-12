@@ -61,6 +61,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Employee", policy => policy.RequireClaim("Role", new[] { RescuerRole.Employee.ToString() }));
 });
 
+builder.Services.AddMemoryCache();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers().AddNewtonsoftJson();
 

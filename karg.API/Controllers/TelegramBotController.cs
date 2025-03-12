@@ -3,6 +3,7 @@ using Telegram.Bot.Types;
 using System.Text;
 using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Utilities;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace karg.API.Controllers
 {
@@ -11,10 +12,12 @@ namespace karg.API.Controllers
     public class TelegramBotController : Controller
     {
         private readonly ITelegramBotService _telegramBotService;
+        private readonly IMemoryCache _cache;
 
-        public TelegramBotController(ITelegramBotService telegramBotService)
+        public TelegramBotController(ITelegramBotService telegramBotService, IMemoryCache cache)
         {
             _telegramBotService = telegramBotService;
+            _cache = cache;
         }
 
         /// <summary>
@@ -51,7 +54,16 @@ namespace karg.API.Controllers
         {
             try
             {
+                var cacheKey = $"Announcement_{request.PhoneNumber}";
+
+                if (_cache.TryGetValue(cacheKey, out _))
+                {
+                    return StatusCode(StatusCodes.Status429TooManyRequests, "Ви вже надсилали оголошення. Спробуйте через 4 години.");
+                }
+
                 await _telegramBotService.SendAnnouncementAsync(request);
+
+                _cache.Set(cacheKey, true, TimeSpan.FromHours(4));
 
                 return Ok("Оголошення надіслано.");
             }
