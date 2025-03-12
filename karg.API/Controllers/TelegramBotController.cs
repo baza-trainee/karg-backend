@@ -26,8 +26,9 @@ namespace karg.API.Controllers
         /// <param name="update">Update received from Telegram Webhook.</param>
         /// <response code="200">Successfully processed the webhook update.</response>
         /// <response code="500">An internal server error occurred while processing the webhook update.</response>
-        [HttpPost]
-        [Route("webhook")]
+        [HttpPost("webhook")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> HandleWebhookUpdate([FromBody] Update update)
         {
             try
@@ -47,9 +48,12 @@ namespace karg.API.Controllers
         /// </summary>
         /// <param name="request">The adoption request DTO containing details for the announcement.</param>
         /// <response code="200">Successfully sent the announcement.</response>
+        /// <response code="429">Too many requests. The user has already sent an announcement and must wait 4 hours before sending another.</response>
         /// <response code="500">An internal server error occurred while sending the announcement.</response>
-        [HttpPost]
-        [Route("sendannouncement")]
+        [HttpPost("sendannouncement")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SendAnnouncement([FromBody] AdoptionRequestDTO request)
         {
             try
