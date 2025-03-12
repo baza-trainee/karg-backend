@@ -47,9 +47,10 @@ namespace karg.BLL.Services.Entities
                 foreach (var advice in paginatedAdvices.Items)
                 {
                     var adviceDto = _mapper.Map<AdviceDTO>(advice);
+                    var description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
 
                     adviceDto.Images = (await _imageService.GetImagesByEntity("Advice", advice.Id)).Select(image => image.Uri).ToList();
-                    adviceDto.Description = _localizationService.GetLocalizedValue(advice.Description, cultureCode, advice.DescriptionId);
+                    adviceDto.Description = filter.ShortVersion && description.Length > 200 ? description.Substring(0, 200) : description;
                     adviceDto.Title = _localizationService.GetLocalizedValue(advice.Title, cultureCode, advice.TitleId);
                     advicesDto.Add(adviceDto);
                 }
