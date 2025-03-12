@@ -49,10 +49,11 @@ namespace karg.BLL.Services.Entities
                 foreach (var yearResult in paginatedYearsResults.Items)
                 {
                     var yearResultDto = _mapper.Map<YearResultDTO>(yearResult);
+                    var description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
 
                     yearResultDto.Images = (await _imageService.GetImagesByEntity("YearResult", yearResult.Id)).Select(image => image.Uri).ToList();
                     yearResultDto.Title = _localizationService.GetLocalizedValue(yearResult.Title, cultureCode, yearResult.TitleId);
-                    yearResultDto.Description = _localizationService.GetLocalizedValue(yearResult.Description, cultureCode, yearResult.DescriptionId);
+                    yearResultDto.Description = filter.ShortVersion && description.Length > 200 ? description.Substring(0, 200) : description;
                     yearsResultsDto.Add(yearResultDto);
                 }
 

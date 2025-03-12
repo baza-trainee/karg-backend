@@ -7,5 +7,8 @@ namespace karg.BLL.DTO.Advices
     {
         [FromQuery(Name = "nameSearch")]
         public string? NameSearch { get; set; } = null;
+
+        [FromQuery(Name = "shortVersion")]
+        public bool ShortVersion { get; set; } = false;
     }
 }
