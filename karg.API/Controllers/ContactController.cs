@@ -40,7 +40,7 @@ namespace karg.API.Controllers
             {
                 var contacts = await _contactService.GetContacts();
 
-                return Ok(contacts);
+                return StatusCode(StatusCodes.Status200OK, contacts);
             }
             catch (Exception exception)
             {
@@ -69,17 +69,17 @@ namespace karg.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var contact = await _contactService.GetContactById(id);
 
                 if (contact == null)
                 {
-                    return NotFound("Контакт не знайдено.");
+                    return StatusCode(StatusCodes.Status404NotFound, "Контакт не знайдено.");
                 }
 
-                return Ok(contact);
+                return StatusCode(StatusCodes.Status200OK, contact);
             }
             catch (Exception exception)
             {
@@ -109,12 +109,12 @@ namespace karg.API.Controllers
             {
                 if (patchDoc == null)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
                 }
 
                 var resultContact = await _contactService.UpdateContact(id, patchDoc);
 
-                return Ok(resultContact);
+                return StatusCode(StatusCodes.Status200OK, resultContact);
             }
             catch (Exception exception)
             {

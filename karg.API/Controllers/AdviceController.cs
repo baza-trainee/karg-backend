@@ -45,12 +45,12 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var paginatedAdvices = await _adviceService.GetAdvices(filter, cultureCode);
 
-                return Ok(paginatedAdvices);
+                return StatusCode(StatusCodes.Status200OK, paginatedAdvices);
             }
             catch (Exception exception)
             {
@@ -82,17 +82,17 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var advice = await _adviceService.GetAdviceById(id, cultureCode);
 
                 if (advice == null)
                 {
-                    return NotFound("Поради не знайдено.");
+                    return StatusCode(StatusCodes.Status404NotFound, "Поради не знайдено.");
                 }
 
-                return Ok(advice);
+                return StatusCode(StatusCodes.Status200OK, advice);
             }
             catch (Exception exception)
             {
@@ -119,7 +119,7 @@ namespace karg.API.Controllers
             {
                 var newAdvice = await _adviceService.CreateAdvice(adviceDto);
 
-                return Created("CreateAdvice", newAdvice);
+                return StatusCode(StatusCodes.Status201Created, newAdvice);
             }
             catch (Exception exception)
             {
@@ -149,12 +149,12 @@ namespace karg.API.Controllers
             {
                 if (patchDoc == null)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
                 }
 
                 var resultAdvice = await _adviceService.UpdateAdvice(id, patchDoc);
 
-                return Ok(resultAdvice);
+                return StatusCode(StatusCodes.Status200OK, resultAdvice);
             }
             catch (Exception exception)
             {
@@ -181,7 +181,7 @@ namespace karg.API.Controllers
             {
                 await _adviceService.DeleteAdvice(id);
 
-                return NoContent();
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception exception)
             {

@@ -4,6 +4,8 @@ using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Telegram.Bot.Types;
 
 namespace karg.API.Controllers
 {
@@ -38,7 +40,7 @@ namespace karg.API.Controllers
             {
                 var paginatedRescuers = await _rescuerService.GetRescuers(filter);
 
-                return Ok(paginatedRescuers);
+                return StatusCode(StatusCodes.Status200OK, paginatedRescuers);
             }
             catch (Exception exception)
             {
@@ -53,6 +55,7 @@ namespace karg.API.Controllers
         /// <response code="200">Successful request. Returns the details of the specified rescuer.</response>
         /// <response code="400">Invalid request parameters provided.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the required permissions to view this rescuer.</response>
         /// <response code="404">No rescuer found with the specified identifier.</response>
         /// <response code="500">An internal server error occurred while trying to retrieve the rescuer details.</response>
         /// <returns>The details of the specified rescuer.</returns>
@@ -61,6 +64,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetRescuerById(int id)
@@ -69,17 +73,24 @@ namespace karg.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
+                }
+
+                var rescuerIdClaim = User.FindFirst("Id")?.Value;
+
+                if (Convert.ToInt32(rescuerIdClaim) != id)
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, "У вас недостатньо прав для перегляду цієї інформації");
                 }
 
                 var rescuer = await _rescuerService.GetRescuerById(id);
 
                 if (rescuer == null)
                 {
-                    return NotFound("Працівника не знайдено.");
+                    return StatusCode(StatusCodes.Status404NotFound, "Працівника не знайдено.");
                 }
 
-                return Ok(rescuer);
+                return StatusCode(StatusCodes.Status200OK, rescuer);
             }
             catch (Exception exception)
             {
@@ -109,14 +120,15 @@ namespace karg.API.Controllers
             try
             {
                 var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
+
                 if (existingRescuer != null)
                 {
-                    return Conflict(new { message = "Не вдалося створити працівника, оскільки дана електронна пошта вже використовується." });
+                    return StatusCode(StatusCodes.Status409Conflict, "Працівник з такою електронною поштою вже існує.");
                 }
 
                 var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
 
-                return Created("CreateRescuer", newRescuer);
+                return StatusCode(StatusCodes.Status201Created, newRescuer);
             }
             catch (Exception exception)
             {
@@ -132,6 +144,7 @@ namespace karg.API.Controllers
         /// <response code="200">Successful request. Returns the updated details of the rescuer.</response>
         /// <response code="400">Bad request. If the JSON Patch document is null.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the required permissions to update this rescuer.</response>
         /// <response code="409">Conflict. A rescuer with the same email already exists.</response>
         /// <response code="500">Internal server error. An error occurred while trying to update the rescuer details.</response>
         /// <returns>The updated details of the rescuer.</returns>
@@ -140,6 +153,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateRescuer(int id, [FromBody] JsonPatchDocument<CreateAndUpdateRescuerDTO> patchDoc)
@@ -148,22 +162,31 @@ namespace karg.API.Controllers
             {
                 if (patchDoc == null)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
+                }
+
+                var rescuerIdClaim = User.FindFirst("Id")?.Value;
+                var rescuerRoleClaim = User.FindFirst("Role")?.Value;
+
+                if (!(Convert.ToInt32(rescuerIdClaim) == id || rescuerRoleClaim.Equals("Director", StringComparison.OrdinalIgnoreCase)))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, "У вас недостатньо прав для оновлення цього користувача.");
                 }
 
                 var emailOperation = patchDoc.Operations.FirstOrDefault(op => op.path.Equals("/email", StringComparison.OrdinalIgnoreCase));
+
                 if (emailOperation != null)
                 {
                     var rescuerWithSameEmail = await _rescuerService.GetRescuerByEmail(emailOperation.value?.ToString());
                     if (rescuerWithSameEmail != null)
                     {
-                        return Conflict(new { message = "Працівник з такою електронною поштою вже існує." });
+                        return StatusCode(StatusCodes.Status409Conflict, "Працівник з такою електронною поштою вже існує.");
                     }
                 }
 
                 var resultRescuer = await _rescuerService.UpdateRescuer(id, patchDoc);
 
-                return Ok(resultRescuer);
+                return StatusCode(StatusCodes.Status200OK, resultRescuer);
             }
             catch (Exception exception)
             {
@@ -192,7 +215,7 @@ namespace karg.API.Controllers
             {
                 await _rescuerService.DeleteRescuer(id);
 
-                return NoContent();
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception exception)
             {

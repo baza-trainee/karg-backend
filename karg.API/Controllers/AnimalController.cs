@@ -45,12 +45,12 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
 
-                return Ok(paginatedAnimals);
+                return StatusCode(StatusCodes.Status200OK, paginatedAnimals);
             }
             catch(Exception exception)
             {
@@ -82,17 +82,17 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var animal = await _animalService.GetAnimalById(id, cultureCode);
 
                 if (animal == null)
                 {
-                    return NotFound("Тварина не знайдена.");
+                    return StatusCode(StatusCodes.Status404NotFound, "Тварина не знайдена.");
                 }
 
-                return Ok(animal);
+                return StatusCode(StatusCodes.Status200OK, animal);
             }
             catch (Exception exception)
             {
@@ -119,7 +119,7 @@ namespace karg.API.Controllers
             {
                 var newAnimal = await _animalService.CreateAnimal(animalDto);
 
-                return Created("CreateAnimal", newAnimal);
+                return StatusCode(StatusCodes.Status201Created, newAnimal);
             }
             catch(Exception exception)
             {
@@ -149,12 +149,12 @@ namespace karg.API.Controllers
             {
                 if (patchDoc == null)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
                 }
 
                 var resultAnimal = await _animalService.UpdateAnimal(id, patchDoc);
 
-                return Ok(resultAnimal);
+                return StatusCode(StatusCodes.Status200OK, resultAnimal);
             }
             catch (Exception exception)
             {
@@ -181,7 +181,7 @@ namespace karg.API.Controllers
             {
                 await _animalService.DeleteAnimal(id);
 
-                return NoContent();
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception exception)
             {

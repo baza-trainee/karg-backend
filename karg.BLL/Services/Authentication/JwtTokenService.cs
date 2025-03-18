@@ -59,6 +59,7 @@ namespace karg.BLL.Services.Authentication
 
             var claims = new[]
             {
+                new Claim("Id", rescuer.Id.ToString()),
                 new Claim("Fullname", rescuer.FullName),
                 new Claim("Role", rescuer.Role),
                 new Claim("Email", rescuer.Email),
