@@ -36,7 +36,7 @@ namespace karg.API.Controllers
             {
                 var paginatedPartners = await _partnerService.GetPartners(filter);
 
-                return Ok(paginatedPartners);
+                return StatusCode(StatusCodes.Status200OK, paginatedPartners);
             }
             catch (Exception exception)
             {
@@ -65,17 +65,17 @@ namespace karg.API.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var partner = await _partnerService.GetPartnerById(id);
 
                 if (partner == null)
                 {
-                    return NotFound("Партнера не знайдено.");
+                    return StatusCode(StatusCodes.Status404NotFound, "Партнера не знайдено.");
                 }
 
-                return Ok(partner);
+                return StatusCode(StatusCodes.Status200OK, partner);
             }
             catch (Exception exception)
             {
@@ -102,7 +102,7 @@ namespace karg.API.Controllers
             {
                 var newPartner = await _partnerService.CreatePartner(partnerDto);
 
-                return Created("CreatePartner", newPartner);
+                return StatusCode(StatusCodes.Status201Created, newPartner);
             }
             catch (Exception exception)
             {
@@ -132,12 +132,12 @@ namespace karg.API.Controllers
             {
                 if (patchDoc == null)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
                 }
 
                 var resultPartner = await _partnerService.UpdatePartner(id, patchDoc);
 
-                return Ok(resultPartner);
+                return StatusCode(StatusCodes.Status200OK, resultPartner);
             }
             catch (Exception exception)
             {
@@ -164,7 +164,7 @@ namespace karg.API.Controllers
             {
                 await _partnerService.DeletePartner(id);
 
-                return NoContent();
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception exception)
             {

@@ -40,10 +40,10 @@ namespace karg.API.Controllers
 
                 if (authResult.Status == 0)
                 {
-                    return BadRequest(authResult);
+                    return StatusCode(StatusCodes.Status400BadRequest, authResult);
                 }
-                
-                return Ok(authResult);
+
+                return StatusCode(StatusCodes.Status200OK, authResult);
             }
             catch (Exception exception)
             {
@@ -71,10 +71,10 @@ namespace karg.API.Controllers
 
                 if (resetResult.Status == 0)
                 {
-                    return BadRequest(resetResult);
+                    return StatusCode(StatusCodes.Status400BadRequest, resetResult);
                 }
 
-                return Ok(resetResult);
+                return StatusCode(StatusCodes.Status200OK, resetResult);
             }
             catch (Exception exception)
             {
@@ -103,10 +103,10 @@ namespace karg.API.Controllers
 
                 if (emailSendResult.Status == 0)
                 {
-                    return BadRequest(emailSendResult);
+                    return StatusCode(StatusCodes.Status400BadRequest, emailSendResult);
                 }
 
-                return Ok(emailSendResult);
+                return StatusCode(StatusCodes.Status200OK, emailSendResult);
             }
             catch (Exception exception)
             {

@@ -45,12 +45,12 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var paginatedYearsResults = await _yearResultService.GetYearsResults(filter, cultureCode);
 
-                return Ok(paginatedYearsResults);
+                return StatusCode(StatusCodes.Status200OK, paginatedYearsResults);
             }
             catch (Exception exception)
             {
@@ -82,17 +82,17 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var yearResult = await _yearResultService.GetYearResultById(id, cultureCode);
 
                 if (yearResult == null)
                 {
-                    return NotFound("Підсумок не знайдено.");
+                    return StatusCode(StatusCodes.Status404NotFound, "Підсумок не знайдено.");
                 }
 
-                return Ok(yearResult);
+                return StatusCode(StatusCodes.Status200OK, yearResult);
             }
             catch (Exception exception)
             {
@@ -119,7 +119,7 @@ namespace karg.API.Controllers
             {
                 var newYearResult = await _yearResultService.CreateYearResult(yearResultDto);
 
-                return Created("CreateYearResult", newYearResult);
+                return StatusCode(StatusCodes.Status201Created, newYearResult);
             }
             catch (Exception exception)
             {
@@ -149,12 +149,12 @@ namespace karg.API.Controllers
             {
                 if (patchDoc == null)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
                 }
 
                 var resultYearResult = await _yearResultService.UpdateYearResult(id, patchDoc);
 
-                return Ok(resultYearResult);
+                return StatusCode(StatusCodes.Status200OK, resultYearResult);
             }
             catch (Exception exception)
             {
@@ -181,7 +181,7 @@ namespace karg.API.Controllers
             {
                 await _yearResultService.DeleteYearResult(id);
 
-                return NoContent();
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception exception)
             {

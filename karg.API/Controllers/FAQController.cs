@@ -44,12 +44,12 @@ namespace karg.API.Controllers
 
                 if (!isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var paginatedFAQs = await _faqService.GetFAQs(filter, cultureCode);
 
-                return Ok(paginatedFAQs);
+                return StatusCode(StatusCodes.Status200OK, paginatedFAQs);
             }
             catch (Exception exception)
             {
@@ -81,17 +81,17 @@ namespace karg.API.Controllers
 
                 if (!ModelState.IsValid || !isValidCultureCode)
                 {
-                    return BadRequest("Надано недійсні параметри запиту.");
+                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
                 var faq = await _faqService.GetFAQById(id, cultureCode);
 
                 if (faq == null)
                 {
-                    return NotFound("FAQ не знайдено.");
+                    return StatusCode(StatusCodes.Status404NotFound, "FAQ не знайдено.");
                 }
 
-                return Ok(faq);
+                return StatusCode(StatusCodes.Status200OK, faq);
             }
             catch (Exception exception)
             {
@@ -118,7 +118,7 @@ namespace karg.API.Controllers
             {
                 await _faqService.CreateFAQ(faqDto);
 
-                return Created("CreateFAQ", faqDto);
+                return StatusCode(StatusCodes.Status201Created, faqDto);
             }
             catch (Exception exception)
             {
@@ -148,12 +148,12 @@ namespace karg.API.Controllers
             {
                 if (patchDoc == null)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
                 }
 
                 var resultFAQ = await _faqService.UpdateFAQ(id, patchDoc);
 
-                return Ok(resultFAQ);
+                return StatusCode(StatusCodes.Status200OK, resultFAQ);
             }
             catch (Exception exception)
             {
@@ -180,7 +180,7 @@ namespace karg.API.Controllers
             {
                 await _faqService.DeleteFAQ(id);
 
-                return NoContent();
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception exception)
             {

@@ -35,7 +35,7 @@ namespace karg.API.Controllers
             {
                 await _telegramBotService.HandleWebhookUpdateAsync(update);
 
-                return Ok();
+                return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception exception)
             {
@@ -69,7 +69,7 @@ namespace karg.API.Controllers
 
                 _cache.Set(cacheKey, true, TimeSpan.FromHours(4));
 
-                return Ok("Оголошення надіслано.");
+                return StatusCode(StatusCodes.Status200OK, "Оголошення надіслано.");
             }
             catch (Exception exception)
             {
