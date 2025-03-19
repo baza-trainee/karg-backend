@@ -77,10 +77,11 @@ namespace karg.API.Controllers
                 }
 
                 var rescuerIdClaim = User.FindFirst("Id")?.Value;
+                var rescuerRoleClaim = User.FindFirst("Role")?.Value;
 
-                if (Convert.ToInt32(rescuerIdClaim) != id)
+                if (!(Convert.ToInt32(rescuerIdClaim) == id || rescuerRoleClaim.Equals("Director", StringComparison.OrdinalIgnoreCase)))
                 {
-                    return StatusCode(StatusCodes.Status403Forbidden, "У вас недостатньо прав для перегляду цієї інформації");
+                    return StatusCode(StatusCodes.Status403Forbidden, "У вас недостатньо прав для перегляду цієї інформації.");
                 }
 
                 var rescuer = await _rescuerService.GetRescuerById(id);
