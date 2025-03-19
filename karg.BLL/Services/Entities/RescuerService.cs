@@ -103,13 +103,22 @@ namespace karg.BLL.Services.Entities
             try
             {
                 var rescuer = _mapper.Map<Rescuer>(rescuerDto);
-                var jwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { FullName = rescuer.FullName, Email = rescuer.Email, Role = rescuer.Role.ToString() });
-                var jwtTokenId = await _jwtTokenService.AddJwtToken(jwtToken);
+                var jwtTokenId = await _jwtTokenService.AddJwtToken(string.Empty);
 
                 rescuer.TokenId = jwtTokenId;
                 rescuer.Current_Password = string.Empty;
 
                 var rescuerId = await _rescuerRepository.Add(rescuer);
+                var jwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO
+                {
+                    Id = rescuerId,
+                    FullName = rescuer.FullName,
+                    Email = rescuer.Email,
+                    Role = rescuer.Role.ToString()
+                });
+
+                await _jwtTokenService.UpdateJwtToken(jwtTokenId, jwtToken);
+
                 rescuerDto.Images = await _imageService.UploadImages(nameof(Rescuer), rescuerId, rescuerDto.Images, false);
 
                 return rescuerDto;
