@@ -60,7 +60,8 @@ namespace karg.BLL.Services.Entities
                 return new PaginatedResult<AnimalDTO>
                 {
                     Items = animalsDto,
-                    TotalPages = paginatedAnimals.TotalPages
+                    TotalPages = paginatedAnimals.TotalPages,
+                    TotalItems = animals.Count
                 };
             }
             catch (Exception exception)

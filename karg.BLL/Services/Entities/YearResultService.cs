@@ -60,7 +60,8 @@ namespace karg.BLL.Services.Entities
                 return new PaginatedResult<YearResultDTO>
                 {
                     Items = yearsResultsDto,
-                    TotalPages = paginatedYearsResults.TotalPages
+                    TotalPages = paginatedYearsResults.TotalPages,
+                    TotalItems = yearsResults.Count()
                 };
             }
             catch (Exception exception)
