@@ -1,3 +1,4 @@
+using karg.API.Middlewares;
 using karg.BLL.Interfaces.Authentication;
 using karg.BLL.Interfaces.Email;
 using karg.BLL.Interfaces.Entities;
@@ -188,7 +189,7 @@ app.UseCors("corspolicy");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
+app.UseMiddleware<TokenValidationMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

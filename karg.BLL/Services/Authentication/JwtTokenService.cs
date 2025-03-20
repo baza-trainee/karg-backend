@@ -135,6 +135,5 @@ namespace karg.BLL.Services.Authentication
                 throw new ApplicationException($"Invalid JWT token: {exception.Message}");
             }
         }
-
     }
 }
