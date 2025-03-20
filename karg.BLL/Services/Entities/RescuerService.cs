@@ -53,7 +53,8 @@ namespace karg.BLL.Services.Entities
                 return new PaginatedResult<RescuerDTO>
                 {
                     Items = rescuersDto,
-                    TotalPages = paginatedRescuers.TotalPages
+                    TotalPages = paginatedRescuers.TotalPages,
+                    TotalItems = rescuers.Count()
                 };
             }
             catch (Exception exception)

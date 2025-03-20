@@ -58,7 +58,8 @@ namespace karg.BLL.Services.Entities
                 return new PaginatedResult<AdviceDTO>
                 {
                     Items = advicesDto,
-                    TotalPages = paginatedAdvices.TotalPages
+                    TotalPages = paginatedAdvices.TotalPages,
+                    TotalItems = advices.Count()
                 };
             }
             catch (Exception exception)
