@@ -76,14 +76,6 @@ namespace karg.API.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
                 }
 
-                var rescuerIdClaim = User.FindFirst("Id")?.Value;
-                var rescuerRoleClaim = User.FindFirst("Role")?.Value;
-
-                if (!(Convert.ToInt32(rescuerIdClaim) == id || rescuerRoleClaim.Equals("Director", StringComparison.OrdinalIgnoreCase)))
-                {
-                    return StatusCode(StatusCodes.Status403Forbidden, "У вас недостатньо прав для перегляду цієї інформації.");
-                }
-
                 var rescuer = await _rescuerService.GetRescuerById(id);
 
                 if (rescuer == null)
@@ -164,14 +156,6 @@ namespace karg.API.Controllers
                 if (patchDoc == null)
                 {
                     return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
-
-                var rescuerIdClaim = User.FindFirst("Id")?.Value;
-                var rescuerRoleClaim = User.FindFirst("Role")?.Value;
-
-                if (!(Convert.ToInt32(rescuerIdClaim) == id || rescuerRoleClaim.Equals("Director", StringComparison.OrdinalIgnoreCase)))
-                {
-                    return StatusCode(StatusCodes.Status403Forbidden, "У вас недостатньо прав для оновлення цього користувача.");
                 }
 
                 var emailOperation = patchDoc.Operations.FirstOrDefault(op => op.path.Equals("/email", StringComparison.OrdinalIgnoreCase));
