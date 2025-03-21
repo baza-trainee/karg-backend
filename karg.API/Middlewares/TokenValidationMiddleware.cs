@@ -11,6 +11,7 @@ namespace karg.API.Middlewares
         private readonly RequestDelegate _next;
         private readonly ILogger<TokenValidationMiddleware> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private const string ForbiddenMessage = "У вас недостатньо прав для доступу або ваш токен недійсний.";
 
         public TokenValidationMiddleware(RequestDelegate next, ILogger<TokenValidationMiddleware> logger, IServiceScopeFactory serviceScopeFactory)
         {
@@ -34,7 +35,7 @@ namespace karg.API.Middlewares
             if (string.IsNullOrEmpty(token))
             {
                 _logger.LogWarning("Forbidden access attempt.");
-                await WriteForbiddenResponse(context, "У вас недостатньо прав для доступу або ваш токен недійсний.");
+                await WriteForbiddenResponse(context, ForbiddenMessage);
                 return;
             }
 
@@ -53,7 +54,7 @@ namespace karg.API.Middlewares
                     if (await jwtTokenService.GetJwtTokenById(rescuer.TokenId) != token)
                     {
                         _logger.LogWarning("Forbidden access attempt.");
-                        await WriteForbiddenResponse(context, "У вас недостатньо прав для доступу або ваш токен недійсний.");
+                        await WriteForbiddenResponse(context, ForbiddenMessage);
                         return;
                     }
 
@@ -64,7 +65,7 @@ namespace karg.API.Middlewares
 
                     if (IsRescuerController(endpoint) && idFromQuery != null && !HasAccess(rescuerId, rescuerRole, idFromQuery))
                     {
-                        await WriteForbiddenResponse(context, "У вас недостатньо прав для оновлення цього користувача.");
+                        await WriteForbiddenResponse(context, ForbiddenMessage);
                         return;
                     }
 
@@ -74,7 +75,7 @@ namespace karg.API.Middlewares
                 catch
                 {
                     _logger.LogWarning("Invalid token.");
-                    await WriteForbiddenResponse(context, "У вас недостатньо прав для доступу або ваш токен недійсний.");
+                    await WriteForbiddenResponse(context, ForbiddenMessage);
                 }
             }
         }
