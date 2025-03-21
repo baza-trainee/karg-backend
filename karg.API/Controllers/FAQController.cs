@@ -27,14 +27,12 @@ namespace karg.API.Controllers
         /// <param name="cultureCode">Optional. The culture code for language-specific FAQs.</param>
         /// <response code="200">Successful request. Returns a list of all FAQs.</response>
         /// <response code="400">Invalid request parameters provided.</response>
-        /// <response code="404">No FAQs found for the specified culture code.</response>
         /// <response code="500">An internal server error occurred while trying to get the list of FAQs.</response>
         /// <returns>List of all FAQs.</returns>
         [HttpGet("getall")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllFAQs([FromQuery] FAQsFilterDTO filter, string cultureCode = "ua")
         {
@@ -106,11 +104,13 @@ namespace karg.API.Controllers
         /// <returns>The newly created FAQ.</returns>
         /// <response code="201">Returns the newly created FAQ.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the necessary permissions to perform this action.</response>
         /// <response code="500">If an error occurs while trying to create the FAQ.</response>
         [HttpPost("add")]
         [Authorize]
         [ProducesResponseType(typeof(CreateAndUpdateFAQDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateFAQ([FromBody] CreateAndUpdateFAQDTO faqDto)
         {
@@ -134,6 +134,7 @@ namespace karg.API.Controllers
         /// <response code="200">Successful request. Returns the updated details of the FAQ.</response>
         /// <response code="400">Bad request. If the JSON Patch document is null.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the necessary permissions to perform this action.</response>
         /// <response code="500">Internal server error. An error occurred while trying to update the FAQ details.</response>
         /// <returns>The updated details of the FAQ.</returns>
         [HttpPatch("update")]
@@ -141,6 +142,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateFAQ(int id, [FromBody] JsonPatchDocument<CreateAndUpdateFAQDTO> patchDoc)
         {
@@ -167,12 +169,14 @@ namespace karg.API.Controllers
         /// <param name="id">The unique identifier of the FAQ to be deleted.</param>
         /// <response code="204">Successful request. The FAQ has been deleted.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the necessary permissions to perform this action.</response>
         /// <response code="500">An internal server error occurred while trying to delete the FAQ.</response>
         /// <returns>No content.</returns>
         [HttpDelete("delete")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteFAQ(int id)
         {

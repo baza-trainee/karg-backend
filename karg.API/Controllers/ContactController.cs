@@ -25,14 +25,12 @@ namespace karg.API.Controllers
         /// </summary>
         /// <response code="200">Successful request. Returns a list of contacts.</response>
         /// <response code="400">Invalid request parameters provided.</response>
-        /// <response code="404">No contacts found.</response>
         /// <response code="500">An internal server error occurred while trying to get the list of contacts.</response>
         /// <returns>List of contacts.</returns>
         [HttpGet("getall")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllContacts()
         {
@@ -95,6 +93,7 @@ namespace karg.API.Controllers
         /// <response code="200">Successful request. Returns the updated details of the contact.</response>
         /// <response code="400">Bad request. If the JSON Patch document is null.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
+        /// <response code="403">Forbidden. The user does not have the necessary permissions to perform this action.</response>
         /// <response code="500">Internal server error. An error occurred while trying to update the contact details.</response>
         /// <returns>The updated details of the contact.</returns>
         [HttpPatch("update")]
@@ -102,6 +101,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateContact(int id, [FromBody] JsonPatchDocument<UpdateContactDTO> patchDoc)
         {

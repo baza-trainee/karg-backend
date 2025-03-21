@@ -25,14 +25,12 @@ namespace karg.API.Controllers
         /// </summary>
         /// <response code="200">Successful request. Returns a list of rescuers.</response>
         /// <response code="401">Unauthorized. The request requires user authentication.</response>
-        /// <response code="404">Rescuers not found. No rescuers are available in the system.</response>
         /// <response code="500">An internal server error occurred while trying to get the list of rescuers.</response>
         /// <returns>List of rescuers.</returns>
         [HttpGet("getall")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllRescuers([FromQuery] RescuersFilterDTO filter)
         {
