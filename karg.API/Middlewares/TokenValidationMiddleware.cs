@@ -93,9 +93,11 @@ namespace karg.API.Middlewares
 
         private bool IsRescuerController(Endpoint endpoint)
         {
-            return endpoint?.Metadata
-                .OfType<ControllerActionDescriptor>()
-                .FirstOrDefault()?.ControllerName == "RescuerController";
+            var controllerDescriptor = endpoint?.Metadata
+               .OfType<ControllerActionDescriptor>()
+               .FirstOrDefault();
+
+            return string.Equals(controllerDescriptor?.ControllerName, "Rescuer");
         }
 
         private bool HasAccess(string rescuerId, string rescuerRole, string idFromQuery)
@@ -103,5 +105,4 @@ namespace karg.API.Middlewares
             return rescuerId == idFromQuery || rescuerRole.Equals("Director", StringComparison.OrdinalIgnoreCase);
         }
     }
-
 }
