@@ -187,7 +187,7 @@ namespace karg.API.Controllers
         /// <response code="500">An internal server error occurred while trying to delete the rescuer.</response>
         /// <returns>No content.</returns>
         [HttpDelete("delete")]
-        [Authorize(Policy = "Director")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]

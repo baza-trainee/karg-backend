@@ -60,7 +60,9 @@ namespace karg.API.Middlewares
                     context.Items["Id"] = rescuerId;
                     context.Items["Role"] = rescuerRole;
 
-                    if (IsRescuerController(endpoint) && !HasAccess(rescuerId, rescuerRole, context.Request.Query["id"].FirstOrDefault()))
+                    var idFromQuery = context.Request.Query["id"].FirstOrDefault();
+
+                    if (IsRescuerController(endpoint) && idFromQuery != null && !HasAccess(rescuerId, rescuerRole, idFromQuery))
                     {
                         await WriteForbiddenResponse(context, "У вас недостатньо прав для оновлення цього користувача.");
                         return;
