@@ -148,7 +148,7 @@ namespace karg.BLL.Services.Entities
                 existingRescuer.PhoneNumber = patchedRescuer.PhoneNumber;
                 existingRescuer.Email = patchedRescuer.Email;
 
-                var newJwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { FullName = existingRescuer.FullName, Email = existingRescuer.Email, Role = existingRescuer.Role.ToString() });
+                var newJwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { Id = rescuerId, FullName = existingRescuer.FullName, Email = existingRescuer.Email, Role = existingRescuer.Role.ToString() });
 
                 await _jwtTokenService.UpdateJwtToken(existingRescuer.TokenId, newJwtToken);
                 await _rescuerRepository.Update(existingRescuer);
