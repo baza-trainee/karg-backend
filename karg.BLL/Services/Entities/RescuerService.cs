@@ -120,6 +120,7 @@ namespace karg.BLL.Services.Entities
 
                 await _jwtTokenService.UpdateJwtToken(jwtTokenId, jwtToken);
 
+                rescuerDto.Token = jwtToken;
                 rescuerDto.Images = await _imageService.UploadImages(nameof(Rescuer), rescuerId, rescuerDto.Images, false);
 
                 return rescuerDto;
@@ -149,6 +150,7 @@ namespace karg.BLL.Services.Entities
                 existingRescuer.Email = patchedRescuer.Email;
 
                 var newJwtToken = _jwtTokenService.GenerateJwtToken(new RescuerJwtTokenDTO { Id = rescuerId, FullName = existingRescuer.FullName, Email = existingRescuer.Email, Role = existingRescuer.Role.ToString() });
+                patchedRescuer.Token = newJwtToken;
 
                 await _jwtTokenService.UpdateJwtToken(existingRescuer.TokenId, newJwtToken);
                 await _rescuerRepository.Update(existingRescuer);
