@@ -14,11 +14,13 @@ namespace karg.API.Controllers
     {
         private IYearResultService _yearResultService;
         private ICultureService _cultureService;
+        private readonly ILogger<YearResultController> _logger;
 
-        public YearResultController(IYearResultService yearResultService, ICultureService cultureService)
+        public YearResultController(IYearResultService yearResultService, ICultureService cultureService, ILogger<YearResultController> logger)
         {
             _yearResultService = yearResultService;
             _cultureService = cultureService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -37,23 +39,20 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllYearsResults([FromQuery] YearsResultsFilterDTO filter, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching all year results with filter: {@Filter} and culture: {CultureCode}", filter, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!ModelState.IsValid || !isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var paginatedYearsResults = await _yearResultService.GetYearsResults(filter, cultureCode);
-
-                return StatusCode(StatusCodes.Status200OK, paginatedYearsResults);
+                _logger.LogWarning("Invalid request parameters for fetching all year results.");
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+
+            var paginatedYearResults = await _yearResultService.GetYearsResults(filter, cultureCode);
+
+            _logger.LogInformation("Successfully retrieved {Count} year results", paginatedYearResults.TotalItems);
+            return StatusCode(StatusCodes.Status200OK, paginatedYearResults);
         }
 
         /// <summary>
@@ -74,28 +73,26 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetYearResultById(int id, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching year result with ID: {Id} and culture: {CultureCode}", id, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!ModelState.IsValid || !isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var yearResult = await _yearResultService.GetYearResultById(id, cultureCode);
-
-                if (yearResult == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Підсумок не знайдено.");
-                }
-
-                return StatusCode(StatusCodes.Status200OK, yearResult);
+                _logger.LogWarning("Invalid request parameters for fetching year result ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
+
+            var yearResult = await _yearResultService.GetYearResultById(id, cultureCode);
+
+            if (yearResult == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Year result with ID: {Id} not found", id);
+                return StatusCode(StatusCodes.Status404NotFound, "Підсумок не знайдено.");
             }
+
+            _logger.LogInformation("Successfully retrieved year result with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, yearResult);
         }
 
         /// <summary>
@@ -115,16 +112,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateYearResult([FromBody] CreateAndUpdateYearResultDTO yearResultDto)
         {
-            try
-            {
-                var newYearResult = await _yearResultService.CreateYearResult(yearResultDto);
+            _logger.LogInformation("Creating a new year result: {@YearResult}", yearResultDto);
 
-                return StatusCode(StatusCodes.Status201Created, newYearResult);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            var newYearResult = await _yearResultService.CreateYearResult(yearResultDto);
+
+            _logger.LogInformation("Successfully created new year result.");
+            return StatusCode(StatusCodes.Status201Created, newYearResult);
         }
 
         /// <summary>
@@ -147,21 +140,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateYearResult(int id, [FromBody] JsonPatchDocument<CreateAndUpdateYearResultDTO> patchDoc)
         {
-            try
-            {
-                if (patchDoc == null)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
+            _logger.LogInformation("Updating year result with ID: {Id}", id);
 
-                var resultYearResult = await _yearResultService.UpdateYearResult(id, patchDoc);
-
-                return StatusCode(StatusCodes.Status200OK, resultYearResult);
-            }
-            catch (Exception exception)
+            if (patchDoc == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Invalid request for updating year result with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
             }
+
+            var updatedYearResult = await _yearResultService.UpdateYearResult(id, patchDoc);
+
+            _logger.LogInformation("Successfully updated year result with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, updatedYearResult);
         }
 
         /// <summary>
@@ -181,16 +171,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteYearResult(int id)
         {
-            try
-            {
-                await _yearResultService.DeleteYearResult(id);
+            _logger.LogInformation("Deleting year result with ID: {Id}", id);
 
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            await _yearResultService.DeleteYearResult(id);
+
+            _logger.LogInformation("Successfully deleted year result with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

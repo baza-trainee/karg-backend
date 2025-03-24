@@ -4,7 +4,6 @@ using karg.BLL.DTO.Advices;
 using Microsoft.AspNetCore.JsonPatch;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
-using karg.BLL.DTO.Utilities;
 
 namespace karg.API.Controllers
 {
@@ -14,11 +13,13 @@ namespace karg.API.Controllers
     {
         private IAdviceService _adviceService;
         private ICultureService _cultureService;
+        private readonly ILogger<AdviceController> _logger;
 
-        public AdviceController(IAdviceService adviceService, ICultureService cultureService)
+        public AdviceController(IAdviceService adviceService, ICultureService cultureService, ILogger<AdviceController> logger)
         {
             _adviceService = adviceService;
             _cultureService = cultureService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -37,23 +38,20 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllAdvices([FromQuery] AdvicesFilterDTO filter, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching all advices with filter: {@Filter} and culture: {CultureCode}", filter, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!ModelState.IsValid || !isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var paginatedAdvices = await _adviceService.GetAdvices(filter, cultureCode);
-
-                return StatusCode(StatusCodes.Status200OK, paginatedAdvices);
+                _logger.LogWarning("Invalid request parameters for fetching all advices.");
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+
+            var paginatedAdvices = await _adviceService.GetAdvices(filter, cultureCode);
+
+            _logger.LogInformation("Successfully retrieved {Count} advices", paginatedAdvices.TotalItems);
+            return StatusCode(StatusCodes.Status200OK, paginatedAdvices);
         }
 
         /// <summary>
@@ -74,28 +72,26 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAdviceById(int id, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching advice with ID: {Id} and culture: {CultureCode}", id, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!ModelState.IsValid || !isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var advice = await _adviceService.GetAdviceById(id, cultureCode);
-
-                if (advice == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Поради не знайдено.");
-                }
-
-                return StatusCode(StatusCodes.Status200OK, advice);
+                _logger.LogWarning("Invalid request parameters for fetching advice ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
+
+            var advice = await _adviceService.GetAdviceById(id, cultureCode);
+
+            if (advice == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Advice with ID: {Id} not found", id);
+                return StatusCode(StatusCodes.Status404NotFound, "Поради не знайдено.");
             }
+
+            _logger.LogInformation("Successfully retrieved advice with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, advice);
         }
 
         /// <summary>
@@ -115,16 +111,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateAdvice([FromBody] CreateAndUpdateAdviceDTO adviceDto)
         {
-            try
-            {
-                var newAdvice = await _adviceService.CreateAdvice(adviceDto);
+            _logger.LogInformation("Creating a new advice: {@Advice}", adviceDto);
 
-                return StatusCode(StatusCodes.Status201Created, newAdvice);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            var newAdvice = await _adviceService.CreateAdvice(adviceDto);
+
+            _logger.LogInformation("Successfully created new advice.");
+            return StatusCode(StatusCodes.Status201Created, newAdvice);
         }
 
         /// <summary>
@@ -147,21 +139,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateAdvice(int id, [FromBody] JsonPatchDocument<CreateAndUpdateAdviceDTO> patchDoc)
         {
-            try
-            {
-                if (patchDoc == null)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
+            _logger.LogInformation("Updating advice with ID: {Id}", id);
 
-                var resultAdvice = await _adviceService.UpdateAdvice(id, patchDoc);
-
-                return StatusCode(StatusCodes.Status200OK, resultAdvice);
-            }
-            catch (Exception exception)
+            if (patchDoc == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Invalid request for updating advice with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
             }
+
+            var resultAdvice = await _adviceService.UpdateAdvice(id, patchDoc);
+
+            _logger.LogInformation("Successfully updated advice with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, resultAdvice);
         }
 
         /// <summary>
@@ -181,16 +170,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteAdvice(int id)
         {
-            try
-            {
-                await _adviceService.DeleteAdvice(id);
+            _logger.LogInformation("Deleting advice with ID: {Id}", id);
 
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            await _adviceService.DeleteAdvice(id);
+
+            _logger.LogInformation("Successfully deleted advice with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

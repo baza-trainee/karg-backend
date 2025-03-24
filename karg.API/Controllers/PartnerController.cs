@@ -11,11 +11,13 @@ namespace karg.API.Controllers
     [Route("api/partner")]
     public class PartnerController : Controller
     {
-        private IPartnerService _partnerService {  get; set; }
+        private readonly IPartnerService _partnerService;
+        private readonly ILogger<PartnerController> _logger;
 
-        public PartnerController(IPartnerService partnerService)
+        public PartnerController(IPartnerService partnerService, ILogger<PartnerController> logger)
         {
             _partnerService = partnerService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -30,16 +32,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllPartners([FromQuery] PartnerFilterDTO filter)
         {
-            try
-            {
-                var paginatedPartners = await _partnerService.GetPartners(filter);
+            _logger.LogInformation("Fetching all partners with filter: {@Filter}", filter);
 
-                return StatusCode(StatusCodes.Status200OK, paginatedPartners);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            var paginatedPartners = await _partnerService.GetPartners(filter);
+
+            _logger.LogInformation("Successfully retrieved {Count} partners", paginatedPartners.TotalItems);
+            return StatusCode(StatusCodes.Status200OK, paginatedPartners);
         }
 
         /// <summary>
@@ -59,26 +57,24 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPartnerById(int id)
         {
-            try
+            _logger.LogInformation("Fetching partner with ID: {Id}", id);
+
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var partner = await _partnerService.GetPartnerById(id);
-
-                if (partner == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Партнера не знайдено.");
-                }
-
-                return StatusCode(StatusCodes.Status200OK, partner);
+                _logger.LogWarning("Invalid request parameters for fetching partner ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
+
+            var partner = await _partnerService.GetPartnerById(id);
+
+            if (partner == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Partner with ID: {Id} not found", id);
+                return StatusCode(StatusCodes.Status404NotFound, "Партнера не знайдено.");
             }
+
+            _logger.LogInformation("Successfully retrieved partner with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, partner);
         }
 
         /// <summary>
@@ -98,16 +94,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreatePartner([FromBody] CreateAndUpdatePartnerDTO partnerDto)
         {
-            try
-            {
-                var newPartner = await _partnerService.CreatePartner(partnerDto);
+            _logger.LogInformation("Creating a new partner: {@Partner}", partnerDto);
 
-                return StatusCode(StatusCodes.Status201Created, newPartner);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            var newPartner = await _partnerService.CreatePartner(partnerDto);
+
+            _logger.LogInformation("Successfully created new partner.");
+            return StatusCode(StatusCodes.Status201Created, newPartner);
         }
 
         /// <summary>
@@ -130,21 +122,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdatePartner(int id, [FromBody] JsonPatchDocument<CreateAndUpdatePartnerDTO> patchDoc)
         {
-            try
-            {
-                if (patchDoc == null)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
+            _logger.LogInformation("Updating partner with ID: {Id}", id);
 
-                var resultPartner = await _partnerService.UpdatePartner(id, patchDoc);
-
-                return StatusCode(StatusCodes.Status200OK, resultPartner);
-            }
-            catch (Exception exception)
+            if (patchDoc == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Invalid request for updating partner with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
             }
+
+            var resultPartner = await _partnerService.UpdatePartner(id, patchDoc);
+
+            _logger.LogInformation("Successfully updated partner with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, resultPartner);
         }
 
         /// <summary>
@@ -164,16 +153,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeletePartner(int id)
         {
-            try
-            {
-                await _partnerService.DeletePartner(id);
+            _logger.LogInformation("Deleting partner with ID: {Id}", id);
 
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            await _partnerService.DeletePartner(id);
+
+            _logger.LogInformation("Successfully deleted partner with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

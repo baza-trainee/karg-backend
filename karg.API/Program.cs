@@ -161,6 +161,8 @@ builder.Services.AddAutoMapper(typeof(ContactProfile));
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<KargDbContext>();

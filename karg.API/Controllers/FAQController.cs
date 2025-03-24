@@ -5,6 +5,7 @@ using karg.BLL.Interfaces.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace karg.API.Controllers
 {
@@ -12,13 +13,15 @@ namespace karg.API.Controllers
     [Route("api/faq")]
     public class FAQController : Controller
     {
-        private IFAQService _faqService;
-        private ICultureService _cultureService;
+        private readonly IFAQService _faqService;
+        private readonly ICultureService _cultureService;
+        private readonly ILogger<FAQController> _logger;
 
-        public FAQController(IFAQService faqService, ICultureService cultureService)
+        public FAQController(IFAQService faqService, ICultureService cultureService, ILogger<FAQController> logger)
         {
             _faqService = faqService;
             _cultureService = cultureService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -36,23 +39,20 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllFAQs([FromQuery] FAQsFilterDTO filter, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching all FAQs with filter: {@Filter} and culture: {CultureCode}",  filter, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var paginatedFAQs = await _faqService.GetFAQs(filter, cultureCode);
-
-                return StatusCode(StatusCodes.Status200OK, paginatedFAQs);
+                _logger.LogWarning("Invalid request parameters for fetching all FAQs");
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+
+            var paginatedFAQs = await _faqService.GetFAQs(filter, cultureCode);
+
+            _logger.LogInformation("Successfully retrieved {Count} FAQs", paginatedFAQs.TotalItems);
+            return StatusCode(StatusCodes.Status200OK, paginatedFAQs);
         }
 
         /// <summary>
@@ -73,28 +73,26 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetFAQById(int id, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching FAQ with ID: {Id} and culture code: {CultureCode}", id, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!ModelState.IsValid || !isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var faq = await _faqService.GetFAQById(id, cultureCode);
-
-                if (faq == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "FAQ не знайдено.");
-                }
-
-                return StatusCode(StatusCodes.Status200OK, faq);
+                _logger.LogWarning("Invalid parameters for GetFAQById with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
+
+            var faq = await _faqService.GetFAQById(id, cultureCode);
+
+            if (faq == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("FAQ with ID: {Id} not found", id);
+                return StatusCode(StatusCodes.Status404NotFound, "FAQ не знайдено.");
             }
+
+            _logger.LogInformation("Successfully retrieved FAQ with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, faq);
         }
 
         /// <summary>
@@ -114,16 +112,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateFAQ([FromBody] CreateAndUpdateFAQDTO faqDto)
         {
-            try
-            {
-                await _faqService.CreateFAQ(faqDto);
+            _logger.LogInformation("Creating a new FAQ: {@FAQ}", faqDto);
 
-                return StatusCode(StatusCodes.Status201Created, faqDto);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            await _faqService.CreateFAQ(faqDto);
+
+            _logger.LogInformation("Successfully created a new FAQ");
+            return StatusCode(StatusCodes.Status201Created, faqDto);
         }
 
         /// <summary>
@@ -146,21 +140,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateFAQ(int id, [FromBody] JsonPatchDocument<CreateAndUpdateFAQDTO> patchDoc)
         {
-            try
-            {
-                if (patchDoc == null)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
+            _logger.LogInformation("Updating FAQ with ID: {Id}", id);
 
-                var resultFAQ = await _faqService.UpdateFAQ(id, patchDoc);
-
-                return StatusCode(StatusCodes.Status200OK, resultFAQ);
-            }
-            catch (Exception exception)
+            if (patchDoc == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Invalid request for updating FAQ with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
             }
+
+            var resultFAQ = await _faqService.UpdateFAQ(id, patchDoc);
+
+            _logger.LogInformation("Successfully updated FAQ with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, resultFAQ);
         }
 
         /// <summary>
@@ -180,16 +171,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteFAQ(int id)
         {
-            try
-            {
-                await _faqService.DeleteFAQ(id);
+            _logger.LogInformation("Deleting FAQ with ID: {Id}", id);
 
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            await _faqService.DeleteFAQ(id);
+
+            _logger.LogInformation("Successfully deleted FAQ with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

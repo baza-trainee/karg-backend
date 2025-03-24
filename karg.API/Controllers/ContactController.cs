@@ -13,11 +13,13 @@ namespace karg.API.Controllers
     [Route("api/contact")]
     public class ContactController : Controller
     {
-        private IContactService _contactService;
+        private readonly IContactService _contactService;
+        private readonly ILogger<ContactController> _logger;
 
-        public ContactController(IContactService contactService)
+        public ContactController(IContactService contactService, ILogger<ContactController> logger)
         {
             _contactService = contactService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -34,16 +36,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllContacts()
         {
-            try
-            {
-                var contacts = await _contactService.GetContacts();
+            _logger.LogInformation("Fetching all contacts");
 
-                return StatusCode(StatusCodes.Status200OK, contacts);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            var contacts = await _contactService.GetContacts();
+
+            _logger.LogInformation("Successfully retrieved {Count} contacts", contacts.Count);
+            return StatusCode(StatusCodes.Status200OK, contacts);
         }
 
         /// <summary>
@@ -63,26 +61,24 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetContactById(int id)
         {
-            try
+            _logger.LogInformation("Fetching contact with ID: {Id}", id);
+
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var contact = await _contactService.GetContactById(id);
-
-                if (contact == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Контакт не знайдено.");
-                }
-
-                return StatusCode(StatusCodes.Status200OK, contact);
+                _logger.LogWarning("Invalid request parameters for fetching contact ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
+
+            var contact = await _contactService.GetContactById(id);
+
+            if (contact == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Contact with ID: {Id} not found", id);
+                return StatusCode(StatusCodes.Status404NotFound, "Контакт не знайдено.");
             }
+
+            _logger.LogInformation("Successfully retrieved contact with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, contact);
         }
 
         /// <summary>
@@ -105,21 +101,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateContact(int id, [FromBody] JsonPatchDocument<UpdateContactDTO> patchDoc)
         {
-            try
-            {
-                if (patchDoc == null)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
+            _logger.LogInformation("Updating contact with ID: {Id}", id);
 
-                var resultContact = await _contactService.UpdateContact(id, patchDoc);
-
-                return StatusCode(StatusCodes.Status200OK, resultContact);
-            }
-            catch (Exception exception)
+            if (patchDoc == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Invalid request for updating contact with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
             }
+
+            var resultContact = await _contactService.UpdateContact(id, patchDoc);
+
+            _logger.LogInformation("Successfully updated contact with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, resultContact);
         }
     }
 }
