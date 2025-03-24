@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace karg.BLL.DTO.Rescuers
 {
@@ -13,6 +15,10 @@ namespace karg.BLL.DTO.Rescuers
         [EmailAddress(ErrorMessage = "Неправильний формат електронної пошти")]
         [StringLength(320, ErrorMessage = "Max length is 320 characters")]
         public string? Email { get; set; }
+
+        [BindNever]
+        [JsonIgnore]
+        public string? Token { get; set; }
 
         public List<string>? Images { get; set; }
     }
