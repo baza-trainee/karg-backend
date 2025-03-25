@@ -51,7 +51,7 @@ namespace karg.API.Controllers
 
             var paginatedYearResults = await _yearResultService.GetYearsResults(filter, cultureCode);
 
-            _logger.LogInformation("Successfully retrieved {Count} year results", paginatedYearResults.TotalItems);
+            _logger.LogInformation("Successfully retrieved {Count} year results", paginatedYearResults.Items.Count);
             return StatusCode(StatusCodes.Status200OK, paginatedYearResults);
         }
 

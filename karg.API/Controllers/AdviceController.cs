@@ -50,7 +50,7 @@ namespace karg.API.Controllers
 
             var paginatedAdvices = await _adviceService.GetAdvices(filter, cultureCode);
 
-            _logger.LogInformation("Successfully retrieved {Count} advices", paginatedAdvices.TotalItems);
+            _logger.LogInformation("Successfully retrieved {Count} advices", paginatedAdvices.Items.Count);
             return StatusCode(StatusCodes.Status200OK, paginatedAdvices);
         }
 

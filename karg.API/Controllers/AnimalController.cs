@@ -51,7 +51,7 @@ namespace karg.API.Controllers
             }
 
             var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
-            _logger.LogInformation("Successfully retrieved {Count} animals", paginatedAnimals.TotalItems);
+            _logger.LogInformation("Successfully retrieved {Count} animals", paginatedAnimals.Items.Count);
 
             return StatusCode(StatusCodes.Status200OK, paginatedAnimals);
         }

@@ -36,7 +36,7 @@ namespace karg.API.Controllers
 
             var paginatedPartners = await _partnerService.GetPartners(filter);
 
-            _logger.LogInformation("Successfully retrieved {Count} partners", paginatedPartners.TotalItems);
+            _logger.LogInformation("Successfully retrieved {Count} partners", paginatedPartners.Items.Count);
             return StatusCode(StatusCodes.Status200OK, paginatedPartners);
         }
 
