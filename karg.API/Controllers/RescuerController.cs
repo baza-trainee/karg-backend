@@ -37,7 +37,7 @@ namespace karg.API.Controllers
 
             var paginatedRescuers = await _rescuerService.GetRescuers(filter);
 
-            _logger.LogInformation("Successfully retrieved {Count} rescuers", paginatedRescuers.TotalItems);
+            _logger.LogInformation("Successfully retrieved {Count} rescuers", paginatedRescuers.Items.Count);
             return StatusCode(StatusCodes.Status200OK, paginatedRescuers);
         }
 

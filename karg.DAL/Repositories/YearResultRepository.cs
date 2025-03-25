@@ -16,6 +16,7 @@ namespace karg.DAL.Repositories
                 .Include(yearResult => yearResult.Title).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .OrderByDescending(yearResult => yearResult.Id)
+                .AsSplitQuery()
                 .ToListAsync();
         }
 
@@ -25,6 +26,7 @@ namespace karg.DAL.Repositories
                 .AsNoTracking()
                 .Include(yearResult => yearResult.Title).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(yearResult => yearResult.Description).ThenInclude(localizationSet => localizationSet.Localizations)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(yearResult => yearResult.Id == yearResultId);
         }
     }

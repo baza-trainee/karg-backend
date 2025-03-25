@@ -51,7 +51,7 @@ namespace karg.API.Controllers
 
             var paginatedFAQs = await _faqService.GetFAQs(filter, cultureCode);
 
-            _logger.LogInformation("Successfully retrieved {Count} FAQs", paginatedFAQs.TotalItems);
+            _logger.LogInformation("Successfully retrieved {Count} FAQs", paginatedFAQs.Items.Count);
             return StatusCode(StatusCodes.Status200OK, paginatedFAQs);
         }
 

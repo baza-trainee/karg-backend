@@ -15,7 +15,7 @@ namespace karg.DAL.Repositories
                 .AsNoTracking()
                 .Include(faq => faq.Question).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(faq => faq.Answer).ThenInclude(localizationSet => localizationSet.Localizations)
-                .AsQueryable();
+                .AsSplitQuery();
 
             if (!string.IsNullOrWhiteSpace(nameSearch))
             {
@@ -34,6 +34,7 @@ namespace karg.DAL.Repositories
                 .AsNoTracking()
                 .Include(faq => faq.Question).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(faq => faq.Answer).ThenInclude(localizationSet => localizationSet.Localizations)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(faq => faq.Id == faqId);
         }
     }
