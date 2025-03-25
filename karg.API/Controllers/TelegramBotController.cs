@@ -13,11 +13,13 @@ namespace karg.API.Controllers
     {
         private readonly ITelegramBotService _telegramBotService;
         private readonly IMemoryCache _cache;
+        private readonly ILogger<TelegramBotController> _logger;
 
-        public TelegramBotController(ITelegramBotService telegramBotService, IMemoryCache cache)
+        public TelegramBotController(ITelegramBotService telegramBotService, IMemoryCache cache, ILogger<TelegramBotController> logger)
         {
             _telegramBotService = telegramBotService;
             _cache = cache;
+            _logger = logger;
         }
 
         /// <summary>
@@ -31,16 +33,11 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> HandleWebhookUpdate([FromBody] Update update)
         {
-            try
-            {
-                await _telegramBotService.HandleWebhookUpdateAsync(update);
+            _logger.LogInformation("Received webhook update: {@Update}", update);
+            await _telegramBotService.HandleWebhookUpdateAsync(update);
 
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            _logger.LogInformation("Successfully handled webhook update.");
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         /// <summary>
@@ -56,25 +53,22 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SendAnnouncement([FromBody] AdoptionRequestDTO request)
         {
-            try
+            var cacheKey = $"Announcement_{request.PhoneNumber}";
+
+            if (_cache.TryGetValue(cacheKey, out _))
             {
-                var cacheKey = $"Announcement_{request.PhoneNumber}";
-
-                if (_cache.TryGetValue(cacheKey, out _))
-                {
-                    return StatusCode(StatusCodes.Status429TooManyRequests, "Ви вже надсилали оголошення. Спробуйте через 4 години.");
-                }
-
-                await _telegramBotService.SendAnnouncementAsync(request);
-
-                _cache.Set(cacheKey, true, TimeSpan.FromHours(4));
-
-                return StatusCode(StatusCodes.Status200OK, "Оголошення надіслано.");
+                _logger.LogWarning("Request from phone number {PhoneNumber} has already sent an announcement within the last 4 hours.", request.PhoneNumber);
+                return StatusCode(StatusCodes.Status429TooManyRequests, "Ви вже надсилали оголошення. Спробуйте через 4 години.");
             }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+
+            _logger.LogInformation("Sending announcement for phone number: {PhoneNumber}", request.PhoneNumber);
+
+            await _telegramBotService.SendAnnouncementAsync(request);
+
+            _cache.Set(cacheKey, true, TimeSpan.FromHours(4));
+
+            _logger.LogInformation("Successfully sent announcement for phone number: {PhoneNumber}", request.PhoneNumber);
+            return StatusCode(StatusCodes.Status200OK, "Оголошення надіслано.");
         }
     }
 }

@@ -10,13 +10,15 @@ namespace karg.API.Controllers
     [Route("api/authentication")]
     public class AuthenticationController : Controller
     {
-        private IAuthenticationService _authenticationService;
-        private IEmailService _emailService;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<AuthenticationController> _logger;
 
-        public AuthenticationController(IAuthenticationService authenticationService, IEmailService emailService)
+        public AuthenticationController(IAuthenticationService authenticationService, IEmailService emailService, ILogger<AuthenticationController> logger)
         {
             _authenticationService = authenticationService;
             _emailService = emailService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,23 +34,20 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([FromBody]LoginDTO loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            try
-            {
-                var authResult = await _authenticationService.Authenticate(loginDto);
+            _logger.LogInformation("Attempting to log in with email: {Email}", loginDto.Email);
 
-                if (authResult.Status == 0)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, authResult);
-                }
+            var authResult = await _authenticationService.Authenticate(loginDto);
 
-                return StatusCode(StatusCodes.Status200OK, authResult);
-            }
-            catch (Exception exception)
+            if (authResult.Status == 0)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Failed login attempt for email: {Email}", loginDto.Email);
+                return StatusCode(StatusCodes.Status400BadRequest, authResult);
             }
+
+            _logger.LogInformation("Successfully logged in with email: {Email}", loginDto.Email);
+            return StatusCode(StatusCodes.Status200OK, authResult);
         }
 
         /// <summary>
@@ -65,21 +64,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO credentials)
         {
-            try
-            {
-                var resetResult = await _authenticationService.ResetPassword(credentials);
+            _logger.LogInformation("Attempting to reset password with token: {Token}", credentials.Token);
 
-                if (resetResult.Status == 0)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, resetResult);
-                }
+            var resetResult = await _authenticationService.ResetPassword(credentials);
 
-                return StatusCode(StatusCodes.Status200OK, resetResult);
-            }
-            catch (Exception exception)
+            if (resetResult.Status == 0)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Failed password reset attempt with token: {Token}", credentials.Token);
+                return StatusCode(StatusCodes.Status400BadRequest, resetResult);
             }
+
+            _logger.LogInformation("Successfully reset password with token: {Token}", credentials.Token);
+            return StatusCode(StatusCodes.Status200OK, resetResult);
         }
 
         /// <summary>
@@ -95,23 +91,20 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> SendResetPasswordEmail([FromBody]SendResetPasswordEmailDTO emailDto)
+        public async Task<IActionResult> SendResetPasswordEmail([FromBody] SendResetPasswordEmailDTO emailDto)
         {
-            try
-            {
-                var emailSendResult = await _emailService.SendPasswordResetEmail(emailDto.Email);
+            _logger.LogInformation("Attempting to send password reset email to: {Email}", emailDto.Email);
 
-                if (emailSendResult.Status == 0)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, emailSendResult);
-                }
+            var emailSendResult = await _emailService.SendPasswordResetEmail(emailDto.Email);
 
-                return StatusCode(StatusCodes.Status200OK, emailSendResult);
-            }
-            catch (Exception exception)
+            if (emailSendResult.Status == 0)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Failed to send password reset email to: {Email}", emailDto.Email);
+                return StatusCode(StatusCodes.Status400BadRequest, emailSendResult);
             }
+
+            _logger.LogInformation("Successfully sent password reset email to: {Email}", emailDto.Email);
+            return StatusCode(StatusCodes.Status200OK, emailSendResult);
         }
     }
 }

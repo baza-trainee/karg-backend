@@ -1,11 +1,8 @@
 using karg.BLL.DTO.Rescuers;
-using karg.BLL.DTO.Utilities;
 using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Telegram.Bot.Types;
 
 namespace karg.API.Controllers
 {
@@ -13,11 +10,13 @@ namespace karg.API.Controllers
     [Route("api/rescuer")]
     public class RescuerController : Controller
     {
-        private IRescuerService _rescuerService;
+        private readonly IRescuerService _rescuerService;
+        private readonly ILogger<RescuerController> _logger;
 
-        public RescuerController(IRescuerService rescuerService)
+        public RescuerController(IRescuerService rescuerService, ILogger<RescuerController> logger)
         {
             _rescuerService = rescuerService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -34,16 +33,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllRescuers([FromQuery] RescuersFilterDTO filter)
         {
-            try
-            {
-                var paginatedRescuers = await _rescuerService.GetRescuers(filter);
+            _logger.LogInformation("Fetching all rescuers with filter: {@Filter}", filter);
 
-                return StatusCode(StatusCodes.Status200OK, paginatedRescuers);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            var paginatedRescuers = await _rescuerService.GetRescuers(filter);
+
+            _logger.LogInformation("Successfully retrieved {Count} rescuers", paginatedRescuers.TotalItems);
+            return StatusCode(StatusCodes.Status200OK, paginatedRescuers);
         }
 
         /// <summary>
@@ -67,26 +62,23 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetRescuerById(int id)
         {
-            try
+            _logger.LogInformation("Fetching rescuer with ID: {RescuerId}", id);
+
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var rescuer = await _rescuerService.GetRescuerById(id);
-
-                if (rescuer == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Працівника не знайдено.");
-                }
-
-                return StatusCode(StatusCodes.Status200OK, rescuer);
+                _logger.LogWarning("Invalid request parameters for rescuer ID: {RescuerId}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
+
+            var rescuer = await _rescuerService.GetRescuerById(id);
+
+            if (rescuer == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Rescuer not found with ID: {RescuerId}", id);
+                return StatusCode(StatusCodes.Status404NotFound, "Працівника не знайдено.");
             }
+
+            return StatusCode(StatusCodes.Status200OK, rescuer);
         }
 
         /// <summary>
@@ -108,23 +100,20 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateRescuer([FromBody] CreateAndUpdateRescuerDTO rescuerDto)
         {
-            try
+            _logger.LogInformation("Creating a new rescuer: {@Rescuer}", rescuerDto);
+
+            var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
+
+            if (existingRescuer != null)
             {
-                var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
-
-                if (existingRescuer != null)
-                {
-                    return StatusCode(StatusCodes.Status409Conflict, "Працівник з такою електронною поштою вже існує.");
-                }
-
-                var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
-
-                return StatusCode(StatusCodes.Status201Created, newRescuer);
+                _logger.LogWarning("Rescuer creation failed: Email {Email} already exists", rescuerDto.Email);
+                return StatusCode(StatusCodes.Status409Conflict, "Працівник з такою електронною поштою вже існує.");
             }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+
+            var newRescuer = await _rescuerService.CreateRescuer(rescuerDto);
+
+            _logger.LogInformation("Successfully created new rescuer.");
+            return StatusCode(StatusCodes.Status201Created, newRescuer);
         }
 
         /// <summary>
@@ -149,32 +138,30 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateRescuer(int id, [FromBody] JsonPatchDocument<CreateAndUpdateRescuerDTO> patchDoc)
         {
-            try
+            _logger.LogInformation("Updating rescuer with ID: {Id}", id);
+
+            if (patchDoc == null)
             {
-                if (patchDoc == null)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
-
-                var emailOperation = patchDoc.Operations.FirstOrDefault(op => op.path.Equals("/email", StringComparison.OrdinalIgnoreCase));
-
-                if (emailOperation != null)
-                {
-                    var rescuerWithSameEmail = await _rescuerService.GetRescuerByEmail(emailOperation.value?.ToString());
-                    if (rescuerWithSameEmail != null)
-                    {
-                        return StatusCode(StatusCodes.Status409Conflict, "Працівник з такою електронною поштою вже існує.");
-                    }
-                }
-
-                var resultRescuer = await _rescuerService.UpdateRescuer(id, patchDoc);
-
-                return StatusCode(StatusCodes.Status200OK, resultRescuer);
+                _logger.LogWarning("Invalid request for updating rescuer with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
             }
-            catch (Exception exception)
+
+            var emailOperation = patchDoc.Operations.FirstOrDefault(op => op.path.Equals("/email", StringComparison.OrdinalIgnoreCase));
+
+            if (emailOperation != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                var rescuerWithSameEmail = await _rescuerService.GetRescuerByEmail(emailOperation.value?.ToString());
+                if (rescuerWithSameEmail != null)
+                {
+                    _logger.LogWarning("Update failed: Email {Email} already exists", emailOperation.value);
+                    return StatusCode(StatusCodes.Status409Conflict, "Працівник з такою електронною поштою вже існує.");
+                }
             }
+
+            var resultRescuer = await _rescuerService.UpdateRescuer(id, patchDoc);
+
+            _logger.LogInformation("Successfully updated rescuer with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, resultRescuer);
         }
 
         /// <summary>
@@ -194,16 +181,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteRescuer(int id)
         {
-            try
-            {
-                await _rescuerService.DeleteRescuer(id);
+            _logger.LogInformation("Deleting rescuer with ID: {Id}", id);
 
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            await _rescuerService.DeleteRescuer(id);
+
+            _logger.LogInformation("Successfully deleted rescuer with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

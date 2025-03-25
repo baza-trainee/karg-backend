@@ -5,6 +5,7 @@ using karg.BLL.Interfaces.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace karg.API.Controllers
 {
@@ -12,13 +13,15 @@ namespace karg.API.Controllers
     [Route("api/animal")]
     public class AnimalController : Controller
     {
-        private IAnimalService _animalService;
-        private ICultureService _cultureService;
+        private readonly IAnimalService _animalService;
+        private readonly ICultureService _cultureService;
+        private readonly ILogger<AnimalController> _logger;
 
-        public AnimalController(IAnimalService animalService, ICultureService cultureService)
+        public AnimalController(IAnimalService animalService, ICultureService cultureService, ILogger<AnimalController> logger)
         {
             _animalService = animalService;
             _cultureService = cultureService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -35,25 +38,22 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllAnimals([FromQuery]AnimalsFilterDTO filter, string cultureCode = "ua")
+        public async Task<IActionResult> GetAllAnimals([FromQuery] AnimalsFilterDTO filter, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching all animals with filter: {@Filter} and culture: {CultureCode}", filter, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!ModelState.IsValid || !isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
-
-                return StatusCode(StatusCodes.Status200OK, paginatedAnimals);
+                _logger.LogWarning("Invalid request parameters for fetching animals.");
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch(Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+
+            var paginatedAnimals = await _animalService.GetAnimals(filter, cultureCode);
+            _logger.LogInformation("Successfully retrieved {Count} animals", paginatedAnimals.TotalItems);
+
+            return StatusCode(StatusCodes.Status200OK, paginatedAnimals);
         }
 
         /// <summary>
@@ -74,28 +74,25 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAnimalById(int id, string cultureCode = "ua")
         {
-            try
+            _logger.LogInformation("Fetching animal with ID: {Id} and culture: {CultureCode}", id, cultureCode);
+
+            var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
+
+            if (!ModelState.IsValid || !isValidCultureCode)
             {
-                var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
-
-                if (!ModelState.IsValid || !isValidCultureCode)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
-                }
-
-                var animal = await _animalService.GetAnimalById(id, cultureCode);
-
-                if (animal == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, "Тварина не знайдена.");
-                }
-
-                return StatusCode(StatusCodes.Status200OK, animal);
+                _logger.LogWarning("Invalid request parameters for fetching animal ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Надано недійсні параметри запиту.");
             }
-            catch (Exception exception)
+
+            var animal = await _animalService.GetAnimalById(id, cultureCode);
+
+            if (animal == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Animal with ID: {Id} not found", id);
+                return StatusCode(StatusCodes.Status404NotFound, "Тварина не знайдена.");
             }
+            _logger.LogInformation("Successfully retrieved animal with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, animal);
         }
 
         /// <summary>
@@ -115,16 +112,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateAnimal([FromBody] CreateAndUpdateAnimalDTO animalDto)
         {
-            try
-            {
-                var newAnimal = await _animalService.CreateAnimal(animalDto);
+            _logger.LogInformation("Creating a new animal: {@AnimalDto}", animalDto);
 
-                return StatusCode(StatusCodes.Status201Created, newAnimal);
-            }
-            catch(Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            var newAnimal = await _animalService.CreateAnimal(animalDto);
+
+            _logger.LogInformation("Successfully created new animal.");
+            return StatusCode(StatusCodes.Status201Created, newAnimal);
         }
 
         /// <summary>
@@ -147,21 +140,18 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateAnimal(int id, [FromBody] JsonPatchDocument<CreateAndUpdateAnimalDTO> patchDoc)
         {
-            try
-            {
-                if (patchDoc == null)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
-                }
+            _logger.LogInformation("Updating animal with ID: {Id}", id);
 
-                var resultAnimal = await _animalService.UpdateAnimal(id, patchDoc);
-
-                return StatusCode(StatusCodes.Status200OK, resultAnimal);
-            }
-            catch (Exception exception)
+            if (patchDoc == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                _logger.LogWarning("Invalid request for updating animal with ID: {Id}", id);
+                return StatusCode(StatusCodes.Status400BadRequest, "Недійсний запит.");
             }
+
+            var resultAnimal = await _animalService.UpdateAnimal(id, patchDoc);
+
+            _logger.LogInformation("Successfully updated animal with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status200OK, resultAnimal);
         }
 
         /// <summary>
@@ -181,16 +171,12 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteAnimal(int id)
         {
-            try
-            {
-                await _animalService.DeleteAnimal(id);
+            _logger.LogInformation("Deleting animal with ID: {Id}", id);
 
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
-            }
+            await _animalService.DeleteAnimal(id);
+
+            _logger.LogInformation("Successfully deleted animal with ID: {Id}", id);
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }
