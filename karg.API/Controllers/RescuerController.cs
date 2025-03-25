@@ -3,6 +3,7 @@ using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace karg.API.Controllers
 {
@@ -33,7 +34,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllRescuers([FromQuery] RescuersFilterDTO filter)
         {
-            _logger.LogInformation("Fetching all rescuers with filter: {@Filter}", filter);
+            _logger.LogInformation("Fetching all rescuers with filter: {@Filter}", JsonSerializer.Serialize(filter));
 
             var paginatedRescuers = await _rescuerService.GetRescuers(filter);
 

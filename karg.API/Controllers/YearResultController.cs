@@ -5,6 +5,7 @@ using karg.BLL.Interfaces.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace karg.API.Controllers
 {
@@ -39,7 +40,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllYearsResults([FromQuery] YearsResultsFilterDTO filter, string cultureCode = "ua")
         {
-            _logger.LogInformation("Fetching all year results with filter: {@Filter} and culture: {CultureCode}", filter, cultureCode);
+            _logger.LogInformation("Fetching all year results with filter: {@Filter} and culture: {CultureCode}", JsonSerializer.Serialize(filter), cultureCode);
 
             var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
 
