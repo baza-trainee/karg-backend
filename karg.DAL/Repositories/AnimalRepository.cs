@@ -18,8 +18,8 @@ namespace karg.DAL.Repositories
                 .Include(animal => animal.Name).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Story).ThenInclude(localizationSet => localizationSet.Localizations)
-                .AsQueryable();
-
+                .AsSplitQuery();
+            
             if (!string.IsNullOrWhiteSpace(categoryFilter) && Enum.TryParse<AnimalCategory>(categoryFilter, true, out var category))
             {
                 animals = animals.Where(animal => animal.Category == category);
@@ -50,6 +50,7 @@ namespace karg.DAL.Repositories
                 .Include(animal => animal.Name).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Description).ThenInclude(localizationSet => localizationSet.Localizations)
                 .Include(animal => animal.Story).ThenInclude(localizationSet => localizationSet.Localizations)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(animal => animal.Id == animalId);
         }
     }
