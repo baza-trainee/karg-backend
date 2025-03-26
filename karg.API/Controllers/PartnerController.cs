@@ -4,6 +4,7 @@ using karg.BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace karg.API.Controllers
 {
@@ -32,7 +33,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllPartners([FromQuery] PartnerFilterDTO filter)
         {
-            _logger.LogInformation("Fetching all partners with filter: {@Filter}", filter);
+            _logger.LogInformation("Fetching all partners with filter: {@Filter}", JsonSerializer.Serialize(filter));
 
             var paginatedPartners = await _partnerService.GetPartners(filter);
 

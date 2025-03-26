@@ -4,6 +4,7 @@ using karg.BLL.DTO.Advices;
 using Microsoft.AspNetCore.JsonPatch;
 using karg.BLL.Interfaces.Entities;
 using karg.BLL.Interfaces.Localization;
+using System.Text.Json;
 
 namespace karg.API.Controllers
 {
@@ -38,7 +39,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllAdvices([FromQuery] AdvicesFilterDTO filter, string cultureCode = "ua")
         {
-            _logger.LogInformation("Fetching all advices with filter: {@Filter} and culture: {CultureCode}", filter, cultureCode);
+            _logger.LogInformation("Fetching all advices with filter: {FilterJson} and culture: {CultureCode}", JsonSerializer.Serialize(filter), cultureCode);
 
             var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
 

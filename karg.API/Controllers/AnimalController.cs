@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace karg.API.Controllers
 {
@@ -40,7 +41,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllAnimals([FromQuery] AnimalsFilterDTO filter, string cultureCode = "ua")
         {
-            _logger.LogInformation("Fetching all animals with filter: {@Filter} and culture: {CultureCode}", filter, cultureCode);
+            _logger.LogInformation("Fetching all animals with filter: {@Filter} and culture: {CultureCode}", JsonSerializer.Serialize(filter), cultureCode);
 
             var isValidCultureCode = await _cultureService.IsCultureCodeInDatabase(cultureCode);
 
