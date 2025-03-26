@@ -113,7 +113,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateFAQ([FromBody] CreateAndUpdateFAQDTO faqDto)
         {
-            _logger.LogInformation("Creating a new FAQ: {@FAQ}", faqDto);
+            _logger.LogInformation("Creating a new FAQ: {@FAQ}", JsonSerializer.Serialize(faqDto));
 
             await _faqService.CreateFAQ(faqDto);
 

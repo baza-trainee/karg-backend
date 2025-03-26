@@ -113,7 +113,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateAnimal([FromBody] CreateAndUpdateAnimalDTO animalDto)
         {
-            _logger.LogInformation("Creating a new animal: {@AnimalDto}", animalDto);
+            _logger.LogInformation("Creating a new animal: {@AnimalDto}", JsonSerializer.Serialize(animalDto));
 
             var newAnimal = await _animalService.CreateAnimal(animalDto);
 

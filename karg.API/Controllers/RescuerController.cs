@@ -101,7 +101,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateRescuer([FromBody] CreateAndUpdateRescuerDTO rescuerDto)
         {
-            _logger.LogInformation("Creating a new rescuer: {@Rescuer}", rescuerDto);
+            _logger.LogInformation("Creating a new rescuer: {@Rescuer}", JsonSerializer.Serialize(rescuerDto));
 
             var existingRescuer = await _rescuerService.GetRescuerByEmail(rescuerDto.Email);
 
