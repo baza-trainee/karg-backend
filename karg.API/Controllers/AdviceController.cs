@@ -112,7 +112,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateAdvice([FromBody] CreateAndUpdateAdviceDTO adviceDto)
         {
-            _logger.LogInformation("Creating a new advice: {@Advice}", adviceDto);
+            _logger.LogInformation("Creating a new advice: {@Advice}", JsonSerializer.Serialize(adviceDto));
 
             var newAdvice = await _adviceService.CreateAdvice(adviceDto);
 

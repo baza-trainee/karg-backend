@@ -95,7 +95,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreatePartner([FromBody] CreateAndUpdatePartnerDTO partnerDto)
         {
-            _logger.LogInformation("Creating a new partner: {@Partner}", partnerDto);
+            _logger.LogInformation("Creating a new partner: {@Partner}", JsonSerializer.Serialize(partnerDto));
 
             var newPartner = await _partnerService.CreatePartner(partnerDto);
 

@@ -113,7 +113,7 @@ namespace karg.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateYearResult([FromBody] CreateAndUpdateYearResultDTO yearResultDto)
         {
-            _logger.LogInformation("Creating a new year result: {@YearResult}", yearResultDto);
+            _logger.LogInformation("Creating a new year result: {@YearResult}", JsonSerializer.Serialize(yearResultDto));
 
             var newYearResult = await _yearResultService.CreateYearResult(yearResultDto);
 
