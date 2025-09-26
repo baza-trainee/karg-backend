@@ -58,6 +58,17 @@ namespace karg.BLL.Services.Utilities
             }
         }
 
+        public async Task DeleteChatId(long chatId)
+        {
+            var chatIds = await LoadChatIds();
+            if (chatIds.Contains(chatId))
+            {
+                chatIds.Remove(chatId);
+
+                await File.WriteAllLinesAsync(_chatIdsFilePath, chatIds.Select(id => id.ToString()));
+            }
+        }
+
         public async Task<List<long>> LoadChatIds()
         {
             if (!File.Exists(_chatIdsFilePath))
