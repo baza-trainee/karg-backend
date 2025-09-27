@@ -46,14 +46,22 @@ namespace karg.BLL.Services.Utilities
 
                 foreach (var chatId in chatIds)
                 {
-                    if (!string.IsNullOrEmpty(request.AnimalImageUri))
+                    try
                     {
-                        var inputFile = InputFile.FromUri(request.AnimalImageUri);
-                        await _botClient.SendPhotoAsync(chatId, inputFile, caption: adoptionInfo);
+                        if (!string.IsNullOrEmpty(request.AnimalImageUri))
+                        {
+                            var inputFile = InputFile.FromUri(request.AnimalImageUri);
+                            await _botClient.SendPhotoAsync(chatId, inputFile, caption: adoptionInfo);
+                        }
+                        else
+                        {
+                            await _botClient.SendTextMessageAsync(chatId, adoptionInfo);
+                        }
                     }
-                    else
+                    catch (Telegram.Bot.Exceptions.ApiRequestException exception)
+                        when (exception.Message.Contains("bot was blocked") || exception.Message.Contains("chat not found"))
                     {
-                        await _botClient.SendTextMessageAsync(chatId, adoptionInfo);
+                        await _fileService.DeleteChatId(chatId);
                     }
                 }
             }

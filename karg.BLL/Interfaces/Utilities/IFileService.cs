@@ -7,6 +7,7 @@
         string CreateDirectory(string path);
         void DeleteDirectory(string path);
         Task SaveChatId(long chatId);
+        Task DeleteChatId(long chatId);
         Task<List<long>> LoadChatIds();
     }
 }
