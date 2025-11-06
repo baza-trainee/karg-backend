@@ -1,0 +1,18 @@
+﻿using karg.DAL.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+
+namespace karg.DAL.Context.EntityConfigurations
+{
+    internal class FAQConfiguration : IEntityTypeConfiguration<FAQ>
+    {
+        public void Configure(EntityTypeBuilder<FAQ> builder)
+        {
+            builder.ToTable("FAQs");
+
+            builder.HasKey(faq => faq.Id);
+
+            builder.Property(faq => faq.Id).ValueGeneratedOnAdd();
+        }
+    }
+}

@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace karg.DAL.Models.Enums
+{
+    public enum AnimalCategory
+    {
+        Cat,
+        Dog,
+        Other
+    }
+}
